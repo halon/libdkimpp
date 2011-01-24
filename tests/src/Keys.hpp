@@ -1,0 +1,20 @@
+
+#define DKIM_PRIVATEKEY \
+			"MIICXQIBAAKBgQCuwlKS6Lv26yM7IiRN6Ob3h/AfCcQtwcOZbyFz/kjCLgTR0c/R"\
+			"y6iyZew2J8SY6MCdjUC7FaOaXaf0ajdKImwmdNW5IzS0ltOZxmD8YpCxyoDjjrmh"\
+			"iDEbwuXFcuCIoAEPpUppqC1GXkTl6lk8xmlx/JywnJqKSG6IawYJcGyf+wIDAQAB"\
+			"AoGAAthhFck6PjPn1++fXbFcCU2qSCcVjZUpBRd9GPFb5+Vt6Kic1JKXRYhJRzxw"\
+			"g/jOIgKJukII7tt1f5I3IjrbPeIntFqV0uW4iNfe0/ZBMa/wQrkbpp7VhVydQcDG"\
+			"S9tNaVQslBElU/83/LTiwi3L3JIIajOnbdiRiOSe91byaokCQQDWxQqENhtGWEBv"\
+			"00ioOtV8jY/o2Kf1c3OuHXp2/2rBp6Sw2s0sjc8pSsDNztXsHmRRbH1p/8BbJ8xa"\
+			"Ki/AaPaPAkEA0E7wxVcD80mMlbuRZhWTGHWv7j8XNSLbofMmv2gLAsDp+X8mBq9E"\
+			"Ni46A/Tpt/lkESjyKVYM3dRraeeduiZV1QJACmofqm2dQPoCleme+llwBMwwkFAB"\
+			"RQvGLklLqP2VxbJFcDYMAP8Xbp8rXk+LXBnVL4WdR0iZoVH6vNyS2De+zQJBAIJf"\
+			"Na+8oxtMB/Han8iNbi+b0I1C7UpzU5TLco/PFT0W8hkV6/25Ce8DBYpeaTycmHVo"\
+			"9A7M7WaUwNlafcv4nDUCQQCTcXXQnPw56z6HiwDf4+LIlFsj6Iw2aA8AHsvyRE99"\
+			"loxh4jHIsTbcHk6+7cR+C3pkJrpS2BUjgnFtGhELD0KJ"
+#define DKIM_PUBLICKEY \
+			"MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCuwlKS6Lv26yM7IiRN6Ob3h/Af"\
+			"CcQtwcOZbyFz/kjCLgTR0c/Ry6iyZew2J8SY6MCdjUC7FaOaXaf0ajdKImwmdNW5"\
+			"IzS0ltOZxmD8YpCxyoDjjrmhiDEbwuXFcuCIoAEPpUppqC1GXkTl6lk8xmlx/Jyw"\
+			"nJqKSG6IawYJcGyf+wIDAQAB"
