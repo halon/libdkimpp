@@ -23,7 +23,7 @@ extern char *__progname;
 
 void usage(const char* name, FILE* fp, int status)
 {
-	fprintf(fp, 
+	fprintf(fp,
 			"\n"
 			" libdkimtest build on " __DATE__ " (c) Halon Security <support@halon.se>\n"
 			"\n"
@@ -69,7 +69,7 @@ int main(int argc, char* argv[])
 		usage(argv[0], stderr, 2);
 
 	// longopts
-	static struct option longopts[] = { 
+	static struct option longopts[] = {
 		{ "help",		no_argument,		0x0,		'h'	},
 		{ "doubledots",	no_argument,		0x0,		'D'	},
 		{ "validate",	no_argument,		0x0,		'v'	},
@@ -77,7 +77,7 @@ int main(int argc, char* argv[])
 		{ "domain",		required_argument,	0x0,		'd'	},
 		{ "keyfile",	required_argument,	0x0,		'k'	},
 		{ 0x0,			0,					0x0,		0	}
-	}; 
+	};
 
 	// fetching arguments..
 	opterr = 0;
@@ -172,7 +172,7 @@ int main(int argc, char* argv[])
 		try {
 			std::list<ADSP> adsp;
 			mail.GetADSP(adsp);
-			for(std::list<ADSP>::const_iterator i = adsp.begin(); i != adsp.end(); ++i)
+			for (std::list<ADSP>::const_iterator i = adsp.begin(); i != adsp.end(); ++i)
 			{
 				printf("[%s][ADSP][%s] %s/%s\n", argv[x], i->GetDomain().c_str(), i->GetResultAsString().c_str(), i->GetReason().c_str());
 			}
@@ -183,7 +183,7 @@ int main(int argc, char* argv[])
 		}
 
 		// then list all valid SDID's
-		for(Validatory::SignatureList::const_iterator i = mail.GetSignatures().begin();
+		for (Validatory::SignatureList::const_iterator i = mail.GetSignatures().begin();
 				i != mail.GetSignatures().end(); ++i)
 		{
 			DKIM::PublicKey pub;

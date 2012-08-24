@@ -15,7 +15,7 @@ $ make && make install
 
 TESTING ---------------------------------------------------------------
 libdkim++ has extensive unit test coverage and aims to fully comply
-with the current RFC. 
+with the current RFC.
 
 (after compiling)
 $ cd build

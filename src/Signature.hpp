@@ -47,7 +47,7 @@ namespace DKIM
 
 			// Get Functions
 
-			const Algorithm GetAlgorithm() const
+			Algorithm GetAlgorithm() const
 			{ return m_algorithm; }
 
 			const std::string& GetSignatureData() const
@@ -56,10 +56,10 @@ namespace DKIM
 			const std::string& GetBodyHash() const
 			{ return m_bh; }
 
-			const CanonMode GetCanonModeHeader() const
+			CanonMode GetCanonModeHeader() const
 			{ return m_header; }
 
-			const CanonMode GetCanonModeBody() const
+			CanonMode GetCanonModeBody() const
 			{ return m_body; }
 
 			const std::string& GetDomain() const
@@ -74,13 +74,13 @@ namespace DKIM
 			const std::string& GetMailDomain() const
 			{ return m_mailDomain; }
 
-			const unsigned long GetBodySize() const
+			unsigned long GetBodySize() const
 			{ return m_bodySize; }
 
-			const bool GetBodySizeLimit() const
+			bool GetBodySizeLimit() const
 			{ return m_bodySizeLimit; }
 
-			const QueryType GetQueryType() const
+			QueryType GetQueryType() const
 			{ return m_queryType; }
 
 			const std::string& GetSelector() const

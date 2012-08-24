@@ -99,7 +99,7 @@ void Signature::Parse(const std::string& signature) throw (DKIM::PermanentError)
 		m_algorithm = DKIM_A_SHA256;
 	else if (a.GetValue() == "rsa-sha1")
 		m_algorithm = DKIM_A_SHA1;
-	else 
+	else
 		throw DKIM::PermanentError(StringFormat("Unsupported signature algorithm %s (a supports rsa-sha1, rsa-sha256)",
 					a.GetValue().c_str()
 					)
@@ -126,13 +126,13 @@ void Signature::Parse(const std::string& signature) throw (DKIM::PermanentError)
 	TagListEntry c;
 	if (m_tagList.GetTag("c", c))
 	{
-		std::string body,header;
+		std::string body, header;
 
 		size_t split = c.GetValue().find("/");
 		if (split == std::string::npos)
 		{
 			header = c.GetValue();
-			body = "simple"; 
+			body = "simple";
 		} else {
 			header = c.GetValue().substr(0, split);
 			body = c.GetValue().substr(split + 1);
@@ -166,7 +166,7 @@ void Signature::Parse(const std::string& signature) throw (DKIM::PermanentError)
 	m_headers = DKIM::Tokenizer::ValueList(h.GetValue());
 
 	bool signedFrom = false;
-	for(std::list<std::string>::const_iterator i = m_headers.begin(); i != m_headers.end(); ++i)
+	for (std::list<std::string>::const_iterator i = m_headers.begin(); i != m_headers.end(); ++i)
 	{
 		if (strcasecmp(i->c_str(), "from") == 0)
 		{

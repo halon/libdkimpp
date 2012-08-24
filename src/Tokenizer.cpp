@@ -42,7 +42,7 @@ std::string DKIM::Tokenizer::ReadWhiteSpace(std::istream& stream, WhiteSpaceType
 					_s += (char)stream.get(); // read '\r'
 
 					if (stream.peek() != '\n')
-						throw DKIM::PermanentError(StringFormat("CR without matching LF, 0x%x at position %d",
+						throw DKIM::PermanentError(StringFormat("CR without matching LF, 0x%x at position %ld",
 									stream.peek(),
 									(size_t)stream.tellg()
 									)
@@ -76,7 +76,7 @@ std::string DKIM::Tokenizer::ReadWhiteSpace(std::istream& stream, WhiteSpaceType
 				std::string _s;
 				std::string _t;
 
-				while(!(_t = ReadWhiteSpace(stream, READ_WSP)).empty())
+				while (!(_t = ReadWhiteSpace(stream, READ_WSP)).empty())
 				{ _s += _t; }
 
 				if ((_t = ReadWhiteSpace(stream, READ_CRLF)).empty())
@@ -87,13 +87,13 @@ std::string DKIM::Tokenizer::ReadWhiteSpace(std::istream& stream, WhiteSpaceType
 					goto unwind;
 				_s += _t;
 
-				while(!(_t = ReadWhiteSpace(stream, READ_WSP)).empty())
+				while (!(_t = ReadWhiteSpace(stream, READ_WSP)).empty())
 				{ _s += _t; }
 
 				return _s;
 unwind:
 				stream.clear();
-				for(int i = _s.size(); i > 0; i--)
+				for (size_t i = _s.size(); i > 0; i--)
 				{
 					stream.putback(_s[i-1]);
 				}
@@ -113,19 +113,19 @@ std::list<std::string> DKIM::Tokenizer::ValueList(const std::string& input)
 
 	std::stringstream data(input);
 		
-	while ( true )
+	while (true)
 	{
 		std::string value;
 
 		// [ FWS ]
-		while(!ReadWhiteSpace(data, READ_FWS).empty());
+		while (!ReadWhiteSpace(data, READ_FWS).empty());
 
 		// ...
 		if (data.peek() == EOF) break;
 
 		// tag-value
 		std::string value_buf;
-		while ( true )
+		while (true)
 		{
 			std::string ws = ReadWhiteSpace(data, READ_FWS);
 			if (ws.empty())
@@ -146,7 +146,7 @@ std::list<std::string> DKIM::Tokenizer::ValueList(const std::string& input)
 		}
 
 		if (value.empty())
-			throw DKIM::PermanentError(StringFormat("Invalid list value (empty), expecting value at position %d",
+			throw DKIM::PermanentError(StringFormat("Invalid list value (empty), expecting value at position %ld",
 						(size_t)data.tellg()
 						)
 					);
@@ -165,7 +165,7 @@ DKIM::Tokenizer::AddressListTokens DKIM::Tokenizer::NextAddressListToken(std::st
 {
 	token.clear();
 
-	while ( data.peek() != EOF)
+	while (data.peek() != EOF)
 	{
 		if (!ReadWhiteSpace(data, READ_FWS).empty())
 		{
@@ -176,7 +176,7 @@ DKIM::Tokenizer::AddressListTokens DKIM::Tokenizer::NextAddressListToken(std::st
 		{
 			if (!token.empty()) return TOK_ATOM;
 			data.get();
-			while(true)
+			while (true)
 			{
 				char c = (char)data.get();
 
@@ -199,7 +199,7 @@ DKIM::Tokenizer::AddressListTokens DKIM::Tokenizer::NextAddressListToken(std::st
 			if (!token.empty()) return TOK_ATOM;
 			data.get(); // throw away (
 			int depth = 1;
-			while(depth != 0)
+			while (depth != 0)
 			{
 				if (data.peek() == EOF)
 					throw DKIM::PermanentError("unclosed comment");
@@ -211,9 +211,9 @@ DKIM::Tokenizer::AddressListTokens DKIM::Tokenizer::NextAddressListToken(std::st
 					token += (char)data.get();
 				}
 				if (data.peek() == '(')
-					depth++;
+					++depth;
 				if (data.peek() == ')')
-					depth--;
+					--depth;
 				if (depth > 0)
 					token += (char)data.get();
 				else
@@ -289,19 +289,19 @@ std::list<std::string> DKIM::Tokenizer::ParseAddressList(const std::string& inpu
 					throw DKIM::PermanentError("unclosed < addr-spec >");
 				}
 
-				if (tokens.size() == 0) break;
+				if (tokens.empty()) break;
 				
 				// do recrusive..
 				if (lasttype == TOK_QUOTED && tokens.size() == 1)
 				{
 					std::list<std::string> addresses = ParseAddressList((*tokens.begin()));
-					for(std::list<std::string>::const_iterator i = addresses.begin(); i != addresses.end(); i++)
+					for (std::list<std::string>::const_iterator i = addresses.begin(); i != addresses.end(); ++i)
 					{
 						list.push_back(*i);
 					}
 				} else {
 					std::string tmp;
-					for(std::list<std::string>::const_iterator i = tokens.begin(); i != tokens.end(); i++)
+					for (std::list<std::string>::const_iterator i = tokens.begin(); i != tokens.end(); ++i)
 					{
 						tmp += *i;
 					}

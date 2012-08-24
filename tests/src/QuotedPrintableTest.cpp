@@ -35,4 +35,4 @@ class QuotedPrintableTest : public CppUnit::TestFixture {
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION( QuotedPrintableTest );
-CPPUNIT_TEST_SUITE_NAMED_REGISTRATION( QuotedPrintableTest, "QuotedPrintableTest"  );
+CPPUNIT_TEST_SUITE_NAMED_REGISTRATION( QuotedPrintableTest, "QuotedPrintableTest" );

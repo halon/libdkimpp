@@ -66,8 +66,8 @@ namespace DKIM {
 			const std::list<std::string>& GetFlags() const
 			{ return m_flags; }
 
-			const bool SoftFail() const
-			{ 
+			bool SoftFail() const
+			{
 				if (find(m_flags.begin(), m_flags.end(), "y") != m_flags.end())
 					return true;
 				return false;

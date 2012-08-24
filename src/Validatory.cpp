@@ -36,7 +36,7 @@ using DKIM::TagList;
 using DKIM::TagListEntry;
 
 #include <algorithm>
-#include <sstream> 
+#include <sstream>
 #include <memory.h>
 
 //#define DEBUG
@@ -47,10 +47,10 @@ Validatory::Validatory(std::istream& stream, bool doubleDots)
 	EVP_MD_CTX_init( &m_ctx_head );
 	EVP_MD_CTX_init( &m_ctx_body );
 
-	while(m_msg.ParseLine(m_file, doubleDots) && !m_msg.IsDone()) { }
+	while (m_msg.ParseLine(m_file, doubleDots) && !m_msg.IsDone()) { }
 
 	DKIM::Message::HeaderList::const_iterator i;
-	for(i = m_msg.GetHeaders().begin(); i != m_msg.GetHeaders().end(); ++i)
+	for (i = m_msg.GetHeaders().begin(); i != m_msg.GetHeaders().end(); ++i)
 	{
 		// headers should be matched in lower-case
 		std::string headerName = (*i)->GetName();
@@ -103,7 +103,7 @@ void Validatory::GetSignature(const Message::HeaderList::const_iterator& headerI
 		m_file.seekg(m_msg.GetBodyOffset(), std::istream::beg);
 
 		std::string s;
-		while(std::getline(m_file, s) || m_file.peek() != EOF)
+		while (std::getline(m_file, s) || m_file.peek() != EOF)
 		{
 			// double dots (postfix file may have .., instead of .)
 			if (m_doubleDots && s.substr(0, 2) == "..")
@@ -120,7 +120,7 @@ void Validatory::GetSignature(const Message::HeaderList::const_iterator& headerI
 			std::vector<std::string> output;
 			if (canonicalbody.FilterLine(s, output))
 			{
-				for(std::vector<std::string>::const_iterator i = output.begin();
+				for (std::vector<std::string>::const_iterator i = output.begin();
 						i != output.end(); ++i)
 				{
 					if (limitBody && bodySize == 0) break;
@@ -142,7 +142,7 @@ void Validatory::GetSignature(const Message::HeaderList::const_iterator& headerI
 		std::vector<std::string> output;
 		if (canonicalbody.Done(output))
 		{
-			for(std::vector<std::string>::const_iterator i = output.begin();
+			for (std::vector<std::string>::const_iterator i = output.begin();
 					i != output.end(); ++i)
 			{
 				if (limitBody && bodySize == 0) break;
@@ -272,7 +272,7 @@ void Validatory::CheckSignature(const Message::HeaderList::const_iterator& heade
 
 	// add all headers to our cache (they will be pop of the end)
 	std::map<std::string, Message::HeaderList> headerCache;
-	for(Message::HeaderList::const_iterator hIter = m_msg.GetHeaders().begin();
+	for (Message::HeaderList::const_iterator hIter = m_msg.GetHeaders().begin();
 			hIter != m_msg.GetHeaders().end();
 			++hIter)
 	{
@@ -282,7 +282,7 @@ void Validatory::CheckSignature(const Message::HeaderList::const_iterator& heade
 	}
 
 	// add all signed headers to our hash
-	for(std::list<std::string>::const_iterator hIter = sig.GetSignedHeaders().begin();
+	for (std::list<std::string>::const_iterator hIter = sig.GetSignedHeaders().begin();
 			hIter != sig.GetSignedHeaders().end(); ++hIter)
 	{
 		std::string tmp;
@@ -345,7 +345,7 @@ void Validatory::GetADSP(std::list<DKIM::ADSP>& adsp)
 	 */
 	std::list<std::string> senders;
 
-	for(DKIM::Message::HeaderList::const_iterator i = m_msg.GetHeaders().begin();
+	for (DKIM::Message::HeaderList::const_iterator i = m_msg.GetHeaders().begin();
 		i != m_msg.GetHeaders().end(); ++i)
 	{
 		std::string headerName = (*i)->GetName();
@@ -359,7 +359,7 @@ void Validatory::GetADSP(std::list<DKIM::ADSP>& adsp)
 			header = DKIM::Conversion::EncodedWord::Decode(header);
 
 			std::list<std::string> addrlist = DKIM::Tokenizer::ParseAddressList(header);
-			for(std::list<std::string>::const_iterator aIter = addrlist.begin(); aIter != addrlist.end(); ++aIter)
+			for (std::list<std::string>::const_iterator aIter = addrlist.begin(); aIter != addrlist.end(); ++aIter)
 			{
 				// if no address is claimed to follow a ADSP, try the next one
 				if (aIter->empty()) continue;
@@ -378,7 +378,7 @@ void Validatory::GetADSP(std::list<DKIM::ADSP>& adsp)
 
 	std::map<std::string, std::pair<int, std::string> > dkimResult;
 
-	for(Validatory::SignatureList::const_iterator i = GetSignatures().begin();
+	for (Validatory::SignatureList::const_iterator i = GetSignatures().begin();
 			i != GetSignatures().end(); ++i)
 	{
 		DKIM::PublicKey pub;
@@ -399,7 +399,7 @@ void Validatory::GetADSP(std::list<DKIM::ADSP>& adsp)
 		}
 	}
 
-	for(std::list<std::string>::const_iterator i = senders.begin(); i != senders.end(); ++i)
+	for (std::list<std::string>::const_iterator i = senders.begin(); i != senders.end(); ++i)
 	{
 		std::string query = "_adsp._domainkey." + *i;
 		std::string adspRecord;

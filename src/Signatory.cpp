@@ -55,7 +55,7 @@ Signatory::~Signatory()
 std::string Signatory::CreateSignature(const SignatoryOptions& options)
 	throw (DKIM::PermanentError)
 {
-	while(m_msg.ParseLine(m_file, m_doubleDots) && !m_msg.IsDone()) { }
+	while (m_msg.ParseLine(m_file, m_doubleDots) && !m_msg.IsDone()) { }
 
 	// create signature for our body (message data)
 	switch (options.GetAlgorithm())
@@ -81,7 +81,7 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 		m_file.seekg(m_msg.GetBodyOffset());
 
 		std::string s;
-		while(std::getline(m_file, s) || m_file.peek() != EOF)
+		while (std::getline(m_file, s) || m_file.peek() != EOF)
 		{
 			// double dots (postfix file may have .., instead of .)
 			if (m_doubleDots && s.substr(0, 2) == "..")
@@ -97,7 +97,7 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 			std::vector<std::string> output;
 			if (canonicalbody.FilterLine(s, output))
 			{
-				for(std::vector<std::string>::const_iterator i = output.begin();
+				for (std::vector<std::string>::const_iterator i = output.begin();
 						i != output.end(); ++i)
 				{
 					if (limitBody && bodySize == 0) break;
@@ -115,7 +115,7 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 		std::vector<std::string> output;
 		if (canonicalbody.Done(output))
 		{
-			for(std::vector<std::string>::const_iterator i = output.begin();
+			for (std::vector<std::string>::const_iterator i = output.begin();
 					i != output.end(); ++i)
 			{
 				if (limitBody && bodySize == 0) break;
@@ -156,7 +156,7 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 
 	// add all headers to our cache (they will be pop of the end)
 	std::map<std::string, Message::HeaderList> headerCache;
-	for(Message::HeaderList::const_iterator hIter = m_msg.GetHeaders().begin();
+	for (Message::HeaderList::const_iterator hIter = m_msg.GetHeaders().begin();
 			hIter != m_msg.GetHeaders().end();
 			++hIter)
 	{
@@ -168,7 +168,7 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 			headersToSign.push_back(name);
 	}
 
-	while(!headersToSign.empty())
+	while (!headersToSign.empty())
 	{
 		std::string tmp;
 		std::string name = headersToSign.front();
@@ -208,10 +208,10 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 	free(limit);
 
 	std::string headerlist = "\th=";
-	for(std::list<std::string>::const_iterator i = signedHeaders.begin();
+	for (std::list<std::string>::const_iterator i = signedHeaders.begin();
 		i != signedHeaders.end(); ++i)
 	{
-		bool insertColon = (i==signedHeaders.begin())?false:true;
+		bool insertColon = (i == signedHeaders.begin())?false:true;
 		if (headerlist.size() + i->size() + (insertColon?1:0) > 80)
 		{
 			dkimHeader += headerlist + (insertColon?":":"") + "\r\n";
@@ -219,7 +219,7 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 		} else {
 			headerlist += (insertColon?":":"") + *i;
 		}
-	} 
+	}
 	dkimHeader += headerlist + ";\r\n";
 	dkimHeader += "\tbh=" + Base64().Encode(tmp) + ";\r\n";
 	dkimHeader += "\tb=";
@@ -241,7 +241,7 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 
 	int offset = 3; // "\tb=";
 	std::string split = Base64().Encode(tmp3);
-	while(!split.empty())
+	while (!split.empty())
 	{
 		dkimHeader += split.substr(0, 80 - offset);
 		split.erase(0, 80 - offset);

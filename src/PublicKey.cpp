@@ -83,7 +83,7 @@ void PublicKey::Parse(const std::string& signature) throw (DKIM::PermanentError)
 			throw DKIM::PermanentError("Acceptable hash algorithms is empty (h)");
 
 		std::list<std::string> algo = DKIM::Tokenizer::ValueList(h.GetValue());
-		for(std::list<std::string>::const_iterator a = algo.begin();
+		for (std::list<std::string>::const_iterator a = algo.begin();
 				a != algo.end(); ++a)
 		{
 			if (*a == "sha256")
@@ -133,7 +133,7 @@ void PublicKey::Parse(const std::string& signature) throw (DKIM::PermanentError)
 			throw DKIM::PermanentError("Service type is empty (s)");
 
 		std::list<std::string> type = DKIM::Tokenizer::ValueList(s.GetValue());
-		for(std::list<std::string>::const_iterator a = type.begin();
+		for (std::list<std::string>::const_iterator a = type.begin();
 				a != type.end(); ++a)
 		{
 			if (*a == "email")
@@ -146,7 +146,7 @@ void PublicKey::Parse(const std::string& signature) throw (DKIM::PermanentError)
 		}
 	}
 
-	// Flags 
+	// Flags
 	TagListEntry t;
 	if (m_tagList.GetTag("t", t))
 	{

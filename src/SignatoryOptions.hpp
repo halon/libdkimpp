@@ -62,19 +62,19 @@ namespace DKIM
 			{ return m_domain; }
 			const std::string& GetSelector() const
 			{ return m_selector; }
-			const Algorithm GetAlgorithm() const
+			Algorithm GetAlgorithm() const
 			{ return m_algorithm; }
 			const std::list<std::string>& GetHeaders() const
 			{ return m_headers; }
-			const bool GetSignEmptyHeaders() const
+			bool GetSignEmptyHeaders() const
 			{ return m_signEmptyHeaders; }
-			const unsigned long GetBodyLength() const
+			unsigned long GetBodyLength() const
 			{ return m_bodyLength; }
-			const bool GetBodySignLength() const
+			bool GetBodySignLength() const
 			{ return m_bodySignLength; }
-			const CanonMode GetCanonModeHeader() const
+			CanonMode GetCanonModeHeader() const
 			{ return m_canonHead; }
-			const CanonMode GetCanonModeBody() const
+			CanonMode GetCanonModeBody() const
 			{ return m_canonBody; }
 		private:
 			EVP_PKEY* m_privateKey;

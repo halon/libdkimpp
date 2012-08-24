@@ -98,13 +98,13 @@ void TagList::Parse(const std::string& input)
 {
 	std::stringstream data(input);
 
-	while ( true )
+	while (true)
 	{
 		std::string name;
 		std::string value;
 
 		// [ FWS ]
-		while(!ReadWhiteSpace(data, DKIM::Tokenizer::READ_FWS).empty());
+		while (!ReadWhiteSpace(data, DKIM::Tokenizer::READ_FWS).empty());
 
 		// ...
 		if (data.peek() == EOF) break;
@@ -116,7 +116,7 @@ void TagList::Parse(const std::string& input)
 		   ) {
 			name += (char)data.get();
 		}
-		while(
+		while (
 				(data.peek() >= 'a' && data.peek() <= 'z') ||
 				(data.peek() >= '0' && data.peek() <= '9') ||
 				(data.peek() == '_')
@@ -125,7 +125,7 @@ void TagList::Parse(const std::string& input)
 		}
 
 		if (name.empty())
-			throw DKIM::PermanentError(StringFormat("Invalid tag name (empty), expecting name at position %d",
+			throw DKIM::PermanentError(StringFormat("Invalid tag name (empty), expecting name at position %ld",
 						(size_t)data.tellg()
 						)
 					);
@@ -136,11 +136,11 @@ void TagList::Parse(const std::string& input)
 					);
 
 		// [ FWS ]
-		while(!ReadWhiteSpace(data, DKIM::Tokenizer::READ_FWS).empty());
+		while (!ReadWhiteSpace(data, DKIM::Tokenizer::READ_FWS).empty());
 
 		// =
 		if (data.peek() != '=')
-			throw DKIM::PermanentError(StringFormat("Invalid tag list; unexpected 0x%x, expecting = at position %d",
+			throw DKIM::PermanentError(StringFormat("Invalid tag list; unexpected 0x%x, expecting = at position %ld",
 							data.peek(),
 							(size_t)data.tellg()	
 						)
@@ -149,7 +149,7 @@ void TagList::Parse(const std::string& input)
 			data.get(); // discard '='
 
 		// [ FWS ]
-		while(!ReadWhiteSpace(data, DKIM::Tokenizer::READ_FWS).empty());
+		while (!ReadWhiteSpace(data, DKIM::Tokenizer::READ_FWS).empty());
 
 		TagListEntry tagEntry;
 		tagEntry.SetValueOffset(data.tellg());
@@ -174,7 +174,7 @@ void TagList::Parse(const std::string& input)
 
 			std::string ws = ReadWhiteSpace(data, DKIM::Tokenizer::READ_FWS);
 			if (ws.empty())
-				throw DKIM::PermanentError(StringFormat("Invalid tag value (invalid data), unexpected 0x%x at position %d",
+				throw DKIM::PermanentError(StringFormat("Invalid tag value (invalid data), unexpected 0x%x at position %ld",
 							data.peek(),
 							(size_t)data.tellg()
 							)

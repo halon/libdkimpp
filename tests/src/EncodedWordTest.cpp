@@ -51,4 +51,4 @@ class EncodedWordTest : public CppUnit::TestFixture {
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION( EncodedWordTest );
-CPPUNIT_TEST_SUITE_NAMED_REGISTRATION( EncodedWordTest, "EncodedWordTest"  );
+CPPUNIT_TEST_SUITE_NAMED_REGISTRATION( EncodedWordTest, "EncodedWordTest" );

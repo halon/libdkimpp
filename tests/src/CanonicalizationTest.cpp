@@ -81,7 +81,7 @@ class CanonicalizationTest : public CppUnit::TestFixture {
 				);
 		output.clear();
 		CPPUNIT_ASSERT (
-					canonicalbody.FilterLine("", output) == 0 
+					canonicalbody.FilterLine("", output) == 0
 				);
 		output.clear();
 		CPPUNIT_ASSERT (
@@ -190,7 +190,7 @@ class CanonicalizationTest : public CppUnit::TestFixture {
 				);
 
 		/*
-		 * merge multiple wsp 
+		 * merge multiple wsp
 		 */
 
 		output.clear();
@@ -210,4 +210,4 @@ class CanonicalizationTest : public CppUnit::TestFixture {
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION( CanonicalizationTest );
-CPPUNIT_TEST_SUITE_NAMED_REGISTRATION( CanonicalizationTest, "CanonicalizationTest"  );
+CPPUNIT_TEST_SUITE_NAMED_REGISTRATION( CanonicalizationTest, "CanonicalizationTest" );

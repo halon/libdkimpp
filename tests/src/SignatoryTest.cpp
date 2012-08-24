@@ -65,4 +65,4 @@ class SignatoryTest : public CppUnit::TestFixture {
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION( SignatoryTest );
-CPPUNIT_TEST_SUITE_NAMED_REGISTRATION( SignatoryTest, "SignatoryTest"  );
+CPPUNIT_TEST_SUITE_NAMED_REGISTRATION( SignatoryTest, "SignatoryTest" );

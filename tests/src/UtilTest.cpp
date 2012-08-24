@@ -36,4 +36,4 @@ class UtilTest : public CppUnit::TestFixture {
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION( UtilTest );
-CPPUNIT_TEST_SUITE_NAMED_REGISTRATION( UtilTest, "UtilTest"  );
+CPPUNIT_TEST_SUITE_NAMED_REGISTRATION( UtilTest, "UtilTest" );

@@ -67,7 +67,6 @@ class TokenizerTest : public CppUnit::TestFixture {
 		}
 		{
 			std::stringstream input("\r\n \r");
-			std::string skipped;
 			CPPUNIT_ASSERT ( ReadWhiteSpace(input, ::READ_FWS) == "\r\n " );
 			CPPUNIT_ASSERT_THROW ( ReadWhiteSpace(input, ::READ_FWS) , std::runtime_error );
 		}
@@ -141,4 +140,4 @@ class TokenizerTest : public CppUnit::TestFixture {
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION( TokenizerTest );
-CPPUNIT_TEST_SUITE_NAMED_REGISTRATION( TokenizerTest, "TokenizerTest"  );
+CPPUNIT_TEST_SUITE_NAMED_REGISTRATION( TokenizerTest, "TokenizerTest" );

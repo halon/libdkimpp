@@ -82,7 +82,7 @@ std::string CanonicalizationHeader::FilterHeader(const std::string& input) const
 	std::stringstream data(output);
 
 	std::string x;
-	while ( true )
+	while (true)
 	{
 		bool found = false;
 		while (!ReadWhiteSpace(data, DKIM::Tokenizer::READ_FWS).empty())
@@ -162,7 +162,7 @@ size_t CanonicalizationBody::FilterLine(const std::string& input, std::vector<st
 			   character.
 			 */
 			size_t nextWSP = 0;
-			while((nextWSP = s.find_first_of(" \t", nextWSP)) != std::string::npos)
+			while ((nextWSP = s.find_first_of(" \t", nextWSP)) != std::string::npos)
 			{
 				size_t lastWSP = s.find_first_not_of(" \t", nextWSP);
 				s.replace(nextWSP, lastWSP - nextWSP, " ");
@@ -181,13 +181,13 @@ size_t CanonicalizationBody::FilterLine(const std::string& input, std::vector<st
 	   line" is defined in Section 3.4.3.
 	 */
 	if (s.empty()) {
-		m_emptyLines++;
+		++m_emptyLines;
 		return 0;
 	}
 
 	m_emptyBody = false;
 
-	for(; m_emptyLines; m_emptyLines--)
+	for (; m_emptyLines; --m_emptyLines)
 	{
 		output.push_back("\r\n");
 	}

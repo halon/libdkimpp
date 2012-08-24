@@ -55,4 +55,4 @@ class TagListTest : public CppUnit::TestFixture {
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION( TagListTest );
-CPPUNIT_TEST_SUITE_NAMED_REGISTRATION( TagListTest, "TagListTest"  );
+CPPUNIT_TEST_SUITE_NAMED_REGISTRATION( TagListTest, "TagListTest" );

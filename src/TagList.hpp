@@ -40,7 +40,7 @@ namespace DKIM {
 			/* Get */
 			const std::string& GetValue() const
 			{ return m_value; }
-			const std::streamoff GetValueOffset() const
+			std::streamoff GetValueOffset() const
 			{ return m_valueOffset; }
 		private:
 			std::string m_value;

@@ -36,12 +36,12 @@ std::string EncodedWord::Decode(const std::string& input)
 	std::stringstream data(input);
 
 	// [ FWS ]
-	while(!ReadWhiteSpace(data, READ_FWS).empty());
+	while (!ReadWhiteSpace(data, READ_FWS).empty());
 
 	std::string ws;
-	while ( true )
+	while (true)
 	{
-		while ( true )
+		while (true)
 		{
 			std::string w = ReadWhiteSpace(data, READ_WSP);
 			if (!w.empty())
@@ -71,7 +71,7 @@ std::string EncodedWord::Decode(const std::string& input)
 			if (!fail && data.peek() == '?')
 			{
 				buffer += (char)data.get();
-				while( ! fail )
+				while (!fail)
 				{
 					if (data.peek() == EOF) { fail = true; break; }
 					if (data.peek() == '?')
@@ -84,7 +84,7 @@ std::string EncodedWord::Decode(const std::string& input)
 			if (!fail && data.peek() == '?')
 			{
 				buffer += (char)data.get();
-				while( ! fail )
+				while (!fail)
 				{
 					if (data.peek() == EOF) { fail = true; break; }
 					if (data.peek() == '?')
@@ -97,7 +97,7 @@ std::string EncodedWord::Decode(const std::string& input)
 			if (!fail && data.peek() == '?')
 			{
 				buffer += (char)data.get();
-				while( ! fail )
+				while (!fail)
 				{
 					if (data.peek() == EOF) { fail = true; break; }
 					if (data.peek() == '?')
@@ -135,7 +135,7 @@ std::string EncodedWord::Decode(const std::string& input)
 				} catch(...) {
 				}
 				fail = true;
-			} while ( false );
+			} while (false);
 
 			if (!fail)
 			{

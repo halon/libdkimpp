@@ -58,7 +58,7 @@ bool Resolver::GetTXT(const std::string& domain, std::string& result)
 	// Resolve failed
 	if (answer_length < 0)
 	{
-		// permanent errors 
+		// permanent errors
 		if (m_res.res_h_errno == NO_DATA)
 			return true;
 		if (m_res.res_h_errno == HOST_NOT_FOUND)
@@ -78,9 +78,9 @@ bool Resolver::GetTXT(const std::string& domain, std::string& result)
 	// Skip request query...
 	int qc = ntohs((unsigned short)((HEADER*)&answer)->qdcount);
 	int x, s;
-	for(x = 0, s = dn_skipname(answerptr, answer + answer_length);
+	for (x = 0, s = dn_skipname(answerptr, answer + answer_length);
 			x < qc && s >= 0;
-			x++, s = dn_skipname(answerptr, answer + answer_length))
+			++x, s = dn_skipname(answerptr, answer + answer_length))
 	{
 		if (s >= 0)
 			answerptr += s + QFIXEDSZ;
@@ -89,7 +89,7 @@ bool Resolver::GetTXT(const std::string& domain, std::string& result)
 	if (qc == x)
 	{
 		int cc = ntohs((unsigned short)((HEADER*)&answer)->ancount);
-		for(int i = 0; i < cc; i++)
+		for (int i = 0; i < cc; ++i)
 		{
 			if ((s=dn_skipname(answerptr, answer + answer_length)) < 0)
 			{
@@ -108,7 +108,7 @@ bool Resolver::GetTXT(const std::string& domain, std::string& result)
 						const unsigned char* ptr = answerptr;
 						size_t rec_len_left = s;
 
-						while(rec_len_left > 0)
+						while (rec_len_left > 0)
 						{
 							size_t txt_len = *ptr;
 							if (txt_len > rec_len_left)

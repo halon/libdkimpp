@@ -29,7 +29,7 @@ using DKIM::Conversion::Base64;
 std::string Base64::Decode(const std::string& data)
 	throw (DKIM::PermanentError)
 {
-	BIO *i,*o,*l;
+	BIO *i, *o, *l;
 	i = BIO_new(BIO_f_base64());
 	BIO_set_flags(i, BIO_FLAGS_BASE64_NO_NL);
 	o = BIO_new(BIO_s_mem());
@@ -40,7 +40,7 @@ std::string Base64::Decode(const std::string& data)
 	char b[1024];
 	int r;
 	std::string result;
-	while((r=BIO_read(l, b, sizeof(b))) > 0)
+	while ((r = BIO_read(l, b, sizeof(b))) > 0)
 	{
 		result.append(b, r);
 	}
@@ -52,7 +52,7 @@ std::string Base64::Decode(const std::string& data)
 std::string Base64::Encode(const std::string& data)
 	throw (DKIM::PermanentError)
 {
-	BIO *i,*o,*l;
+	BIO *i, *o, *l;
 	i = BIO_new(BIO_f_base64());
 	o = BIO_new(BIO_s_mem());
 	l = BIO_push(i, o);
@@ -62,13 +62,13 @@ std::string Base64::Encode(const std::string& data)
 	std::string str;
 
 	char buf[256];
-	int bread;
-	while((bread=BIO_read(o, buf, sizeof(buf))) > 0)
+	int r;
+	while ((r = BIO_read(o, buf, sizeof(buf))) > 0)
 	{
-		if (buf[bread-1]=='\n') bread--;
-		str.append(buf,bread);
+		if (buf[r - 1] == '\n') --r;
+		str.append(buf, r);
 	}
 
-	BIO_free_all(l); 
+	BIO_free_all(l);
 	return str;
 }
