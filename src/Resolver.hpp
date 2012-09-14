@@ -22,9 +22,9 @@
 #define _DKIM_RESOLVER_HPP_
 
 #include <string>
-#if defined(__FreeBSD__)
- #include <netinet/in.h>
- #include <arpa/nameser.h>
+#if defined __FreeBSD__ || __OpenBSD__
+#include <netinet/in.h>
+#include <arpa/nameser.h>
 #endif
 #include <resolv.h>
 

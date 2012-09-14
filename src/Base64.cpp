@@ -35,7 +35,7 @@ std::string Base64::Decode(const std::string& data)
 	o = BIO_new(BIO_s_mem());
 	l = BIO_push(i, o);
 	BIO_write(o, data.c_str(), data.size());
-	BIO_flush(o);
+	(void) BIO_flush(o);
 
 	char b[1024];
 	int r;
@@ -58,7 +58,7 @@ std::string Base64::Encode(const std::string& data)
 	l = BIO_push(i, o);
 	BIO_set_flags(l, BIO_FLAGS_BASE64_NO_NL);
 	BIO_write(l, data.c_str(), data.size());
-	BIO_flush(l);
+	(void) BIO_flush(l);
 	std::string str;
 
 	char buf[256];

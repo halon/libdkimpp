@@ -80,7 +80,7 @@ SignatoryOptions& SignatoryOptions::SetPrivateKey(const std::string& privatekey)
 		if (!o)
 			throw DKIM::PermanentError("BIO could not be created for RSA key");
 		BIO_write(o, privatekey.c_str(), privatekey.size());
-		BIO_flush(o);
+		(void) BIO_flush(o);
 		m_rsa = PEM_read_bio_RSAPrivateKey(o, 0x0, 0x0, 0x0);
 		BIO_free_all(o);
 		if (!m_rsa)

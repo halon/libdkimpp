@@ -24,6 +24,7 @@
 #include <arpa/nameser.h>
 #include <netdb.h>
 #include <memory.h>
+#include <errno.h>
 
 using DKIM::Util::Resolver;
 
@@ -33,7 +34,12 @@ using DKIM::Util::Resolver;
 Resolver::Resolver()
 {
 	memset((void*)&m_res, '\0', sizeof(m_res));
+#ifdef HAS_RES_NINIT
 	res_ninit(&m_res);
+#else
+	res_init();
+	m_res = _res;
+#endif
 }
 
 /*
@@ -41,7 +47,11 @@ Resolver::Resolver()
  */
 Resolver::~Resolver()
 {
+#ifdef HAS_RES_NINIT
 	res_nclose(&m_res);
+#else
+	res_close();
+#endif
 }
 
 /*
@@ -53,17 +63,26 @@ bool Resolver::GetTXT(const std::string& domain, std::string& result)
 	unsigned char answer[PACKETSZ];
 	memset(answer, 0, PACKETSZ);
 
+#ifdef HAS_RES_NINIT
 	int answer_length = res_nquery(&m_res, domain.c_str(), C_IN, T_TXT, answer, PACKETSZ);
+#else
+	int answer_length = res_query(domain.c_str(), C_IN, T_TXT, answer, PACKETSZ);
+#endif
 
 	// Resolve failed
 	if (answer_length < 0)
 	{
+#ifdef HAS_RES_NINIT
+		int err = m_res.res_h_errno;
+#else
+		int err = errno;
+#endif
 		// permanent errors
-		if (m_res.res_h_errno == NO_DATA)
+		if (err == NO_DATA)
 			return true;
-		if (m_res.res_h_errno == HOST_NOT_FOUND)
+		if (err == HOST_NOT_FOUND)
 			return true;
-		if (m_res.res_h_errno == NO_RECOVERY)
+		if (err == NO_RECOVERY)
 			return true;
 
 		// TRY_AGAIN

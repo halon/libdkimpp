@@ -9,9 +9,16 @@ depends on OpenSSL (which is normally shipped with *NIX distributions).
 
 (while standing in the libdkimpp folder)
 $ mkdir build
-$ cd build
-$ cmake ../
-$ make && make install
+$ cd build
+$ cmake ../
+$ make && make install
+
+You might need to add some packages, like cppunit which can be done by
+running "pkg_add -r cppunit" or "apt-get install cppunit" depending
+on operating system.
+
+Because some systems (like OpenBSD) lacks a reentrant resolver, this
+library might not be thread-safe on all platforms.
 
 TESTING ---------------------------------------------------------------
 libdkim++ has extensive unit test coverage and aims to fully comply
