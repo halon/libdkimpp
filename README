@@ -53,3 +53,9 @@ Test project /home/erik/Desktop/libdkimpp/build
 100% tests passed, 0 tests failed out of 9
 Total Test time (real) =   0.08 sec
 
+RELEASEING -------------------------------------------------------------
+To release a new version, update CHANGELOG and change the version in
+CMakeLists.txt. Run this command to build the .tar.gz archive.
+
+$ git archive --prefix libdkim++1.0.6/ --format tar.gz \
+	-o libdkim++1.0.6.tar.gz master
