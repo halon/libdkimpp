@@ -1,5 +1,6 @@
 Changelog for libdkim++
 
+1.0.6	3/27/2013	Fixed res_ninit and h_errno
 1.0.5	2/22/2013	Added a .pc file
 1.0.4	9/12/2012	OpenBSD support
 1.0.3	1/24/2011	Initial public release
