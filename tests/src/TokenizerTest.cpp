@@ -136,6 +136,28 @@ class TokenizerTest : public CppUnit::TestFixture {
 		CPPUNIT_ASSERT ( (list = ParseAddressList(mail)).size() == 1 );
 		CPPUNIT_ASSERT ( (*list.begin()) == "jdoe@machine.example" );
 
+		mail = "User, Company Inc <foo@example.org>";
+		CPPUNIT_ASSERT ( (list = ParseAddressList(mail)).size() == 1 );
+		CPPUNIT_ASSERT ( (*list.begin()) == "foo@example.org" );
+
+		mail = "User, Company Inc <foo@example.org>, <bar@example.org>";
+		CPPUNIT_ASSERT ( (list = ParseAddressList(mail)).size() == 2 );
+		CPPUNIT_ASSERT ( (*list.begin()) == "foo@example.org" );
+		list.pop_front();
+		CPPUNIT_ASSERT ( (*list.begin()) == "bar@example.org" );
+
+		mail = "Pete(A \\\\wonderful \\) chap) <pete(his account)@silly.test(his host)>";
+		CPPUNIT_ASSERT ( (list = ParseAddressList(mail)).size() == 1 );
+		CPPUNIT_ASSERT ( (*list.begin()) == "pete@silly.test" );
+
+		mail = "A Group(Some people)\r\n :Chris Jones <c@(Chris's host.)public.example>,\r\n" \
+				" joe@example.org,\r\n John <jdoe@one.test> (my dear friend); (the end of the group)";
+		CPPUNIT_ASSERT ( (list = ParseAddressList(mail)).size() == 3 );
+		CPPUNIT_ASSERT ( (*list.begin()) == "c@public.example" );
+		list.pop_front();
+		CPPUNIT_ASSERT ( (*list.begin()) == "joe@example.org" );
+		list.pop_front();
+		CPPUNIT_ASSERT ( (*list.begin()) == "jdoe@one.test" );
 	}
 };
 

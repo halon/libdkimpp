@@ -183,8 +183,11 @@ DKIM::Tokenizer::AddressListTokens DKIM::Tokenizer::NextAddressListToken(std::st
 				if (c == EOF) {
 					throw DKIM::PermanentError("unclosed string");
 				} else if (c == '\\') {
-					if (data.peek() != '"')
-						throw DKIM::PermanentError("bad escape sequence");
+					if (data.peek() == EOF)
+						throw DKIM::PermanentError("incomplete escape sequence");
+					// rfc822: However, quoting is PERMITTED for any character.
+					//if (data.peek() != '"')
+					//	throw DKIM::PermanentError("bad escape sequence");
 					token += (char)data.get();
 				} else if (c == '"') {
 					break;
@@ -206,8 +209,11 @@ DKIM::Tokenizer::AddressListTokens DKIM::Tokenizer::NextAddressListToken(std::st
 				if (data.peek() == '\\')
 				{
 					data.get();
-					if (data.peek() != ')' && data.peek() != '(')
-						throw DKIM::PermanentError("unclosed comment");
+					if (data.peek() == EOF)
+						throw DKIM::PermanentError("incomplete escape sequence");
+					// rfc822: However, quoting is PERMITTED for any character.
+					//if (data.peek() != ')' && data.peek() != '(')
+					//	throw DKIM::PermanentError("unclosed comment");
 					token += (char)data.get();
 				}
 				if (data.peek() == '(')
@@ -234,7 +240,7 @@ DKIM::Tokenizer::AddressListTokens DKIM::Tokenizer::NextAddressListToken(std::st
 			data.get();
 			return TOK_TAG_CLOSE;
 		}
-		if (data.peek() == ',')
+		if (data.peek() == ',' || data.peek() == ';')
 		{
 			if (!token.empty()) return TOK_ATOM;
 			data.get();
@@ -290,6 +296,13 @@ std::list<std::string> DKIM::Tokenizer::ParseAddressList(const std::string& inpu
 				}
 
 				if (tokens.empty()) break;
+
+				// skip , in unescaped user parts like From: User, Company Inc <foo@example.org>
+				if (type == TOK_SEPARATOR && lasttype != TOK_TAG_CLOSE && tokens.back().find('@') == std::string::npos)
+				{
+					tokens.clear();
+					continue;
+				}
 				
 				// do recrusive..
 				if (lasttype == TOK_QUOTED && tokens.size() == 1)
