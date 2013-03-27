@@ -24,7 +24,6 @@
 #include <arpa/nameser.h>
 #include <netdb.h>
 #include <memory.h>
-#include <errno.h>
 
 using DKIM::Util::Resolver;
 
@@ -75,7 +74,7 @@ bool Resolver::GetTXT(const std::string& domain, std::string& result)
 #ifdef HAS_RES_NINIT
 		int err = m_res.res_h_errno;
 #else
-		int err = errno;
+		int err = h_errno;
 #endif
 		// permanent errors
 		if (err == NO_DATA)
