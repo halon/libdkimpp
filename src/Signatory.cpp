@@ -133,7 +133,7 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 	EVP_DigestFinal_ex(&m_ctx_body, md_value, &md_len);
 	EVP_MD_CTX_cleanup( &m_ctx_body );
 
-	std::string tmp; tmp.append((char*)md_value, md_len);
+	std::string tmp((char*)md_value, md_len);
 
 	// create signature for our header
 	switch (options.GetAlgorithm())
