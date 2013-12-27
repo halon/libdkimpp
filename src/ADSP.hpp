@@ -22,6 +22,7 @@
 #define _DKIM_ADSP_HPP_
 
 #include "Exception.hpp"
+#include <string>
 
 namespace DKIM
 {

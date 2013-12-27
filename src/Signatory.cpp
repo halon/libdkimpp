@@ -228,16 +228,19 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 	EVP_SignUpdate(&m_ctx_head, tmp2.c_str(), tmp2.size());
 
 	unsigned int len;
-	unsigned char data[EVP_PKEY_size(options.GetPrivateKey())];
+	unsigned char* data = new unsigned char[EVP_PKEY_size(options.GetPrivateKey())];
 	if (EVP_SignFinal(&m_ctx_head,
 				data,
 				&len,
 				options.GetPrivateKey()
-				) != 1)
+				) != 1) {
+		free(data);
 		throw DKIM::PermanentError("Message could not be signed");
+	}
 	EVP_MD_CTX_cleanup( &m_ctx_head );
 
 	std::string tmp3; tmp3.assign((const char*)data, len);
+	free(data);
 
 	int offset = 3; // "\tb=";
 	std::string split = Base64().Encode(tmp3);
