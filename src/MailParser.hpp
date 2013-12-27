@@ -28,14 +28,9 @@
 #include <sstream>
 #include <string>
 #include <list>
-
-#ifdef TRY_WITHOUT_TR1 
 #include <memory>
+
 using std::shared_ptr;
-#else
-#include <tr1/memory>
-using std::tr1::shared_ptr;
-#endif
 
 namespace DKIM
 {
