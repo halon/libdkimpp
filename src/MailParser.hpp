@@ -28,9 +28,9 @@
 #include <sstream>
 #include <string>
 #include <list>
-#include <tr1/memory>
+#include <memory>
 
-using std::tr1::shared_ptr;
+using std::shared_ptr;
 
 namespace DKIM
 {
