@@ -77,6 +77,8 @@ namespace DKIM
 			CanonMode GetCanonModeBody() const
 			{ return m_canonBody; }
 		private:
+			SignatoryOptions(const SignatoryOptions&);
+
 			EVP_PKEY* m_privateKey;
 			RSA* m_rsa;
 

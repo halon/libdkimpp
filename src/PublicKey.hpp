@@ -73,6 +73,8 @@ namespace DKIM {
 				return false;
 			}
 		private:
+			PublicKey(const PublicKey&);
+
 			TagList m_tagList;
 
 			std::list<Algorithm> m_algorithms;
