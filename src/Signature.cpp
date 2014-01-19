@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (C) 2009,2010,2011 Halon Security <support@halon.se>
+ * Copyright (C) 2009-2014 Halon Security <support@halon.se>
  *
  * This file is part of libdkim++.
  *
