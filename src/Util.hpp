@@ -35,6 +35,7 @@ namespace DKIM {
 		std::string Algorithm2String(Algorithm algorithm);
 		std::string StringFormat(const char* fmt, ...)
 			__attribute__((format(printf, 1, 2)));
+		bool ValidateDomain(const std::string& domain);
 	}
 }
 

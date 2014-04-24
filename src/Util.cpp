@@ -80,3 +80,42 @@ std::string DKIM::Util::StringFormat(const char* fmt, ...)
 	va_end(args);
 	return result;
 }
+
+static std::string alphanum =
+	"abcdefghijklmnopqrstuvwxyz"
+	"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	"0123456789";
+
+bool ValidateSubDomain(const std::string& subdomain)
+{
+	if (subdomain.empty())
+		return false;
+
+	if (alphanum.find(*subdomain.begin()) == std::string::npos)
+		return false;
+
+	if (alphanum.find(*subdomain.rbegin()) == std::string::npos)
+		return false;
+
+	if (subdomain.find_first_not_of(alphanum + "-") != std::string::npos)
+		return false;
+
+	return true;
+}
+
+bool DKIM::Util::ValidateDomain(const std::string& domain)
+{
+	size_t pos = std::string::npos, lpos = 0;
+	while ((pos = domain.find('.', lpos)) != std::string::npos)
+	{
+		if (!ValidateSubDomain(domain.substr(lpos, pos - lpos)))
+			return false;
+
+		lpos = pos + 1;
+	}
+
+	if (pos == std::string::npos)
+		return ValidateSubDomain(domain.substr(lpos));
+	else
+		return ValidateSubDomain(domain.substr(lpos, pos - lpos));
+}

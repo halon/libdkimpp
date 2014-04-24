@@ -19,6 +19,7 @@
  *
  */
 #include "SignatoryOptions.hpp"
+#include "Util.hpp"
 
 using DKIM::SignatoryOptions;
 
@@ -110,12 +111,18 @@ SignatoryOptions& SignatoryOptions::SetPrivateKey(const std::string& privatekey)
 
 SignatoryOptions& SignatoryOptions::SetSelector(const std::string& selector)
 {
+	if (!DKIM::Util::ValidateDomain(selector))
+		throw DKIM::PermanentError("Invalid selector (s=)");
+
 	m_selector = selector;
 	return *this;
 }
 
 SignatoryOptions& SignatoryOptions::SetDomain(const std::string& domain)
 {
+	if (!DKIM::Util::ValidateDomain(domain))
+		throw DKIM::PermanentError("Invalid domain (d=)");
+
 	m_domain = domain;
 	return *this;
 }
