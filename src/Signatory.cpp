@@ -40,7 +40,7 @@ using DKIM::Util::CanonMode2String;
 #include <map>
 
 Signatory::Signatory(std::istream& file, bool doubleDots)
-: m_file(file) , m_doubleDots(doubleDots)
+: m_file(file), m_doubleDots(doubleDots)
 {
 	EVP_MD_CTX_init( &m_ctx_head );
 	EVP_MD_CTX_init( &m_ctx_body );

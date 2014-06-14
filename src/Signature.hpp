@@ -36,7 +36,7 @@ namespace DKIM
 			typedef enum { DKIM_Q_DNSTXT } QueryType;
 
 			Signature()
-			: m_bodySize(0) , m_bodySizeLimit(false)
+			: m_bodySize(0), m_bodySizeLimit(false)
 			{ Reset(); }
 
 			void Reset();

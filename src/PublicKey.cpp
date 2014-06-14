@@ -39,12 +39,8 @@ void PublicKey::Reset()
 	// tag-h
 	m_algorithms.clear();
 	// tag-p
-	if (m_publicKey)
-	{
-		if (m_publicKey)
-			EVP_PKEY_free(m_publicKey);
-		m_publicKey = 0x0;
-	}
+	EVP_PKEY_free(m_publicKey);
+	m_publicKey = 0x0;
 	// tag-s
 	m_serviceType.clear();
 	// tag-t
