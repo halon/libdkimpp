@@ -40,7 +40,7 @@ std::string Base64::Decode(const std::string& data)
 	char b[1024];
 	int r;
 	std::string result;
-	while ((r = BIO_read(l, b, sizeof(b))) > 0)
+	while ((r = BIO_read(l, b, sizeof b)) > 0)
 		result.append(b, (size_t)r);
 
 	BIO_free_all(l);
@@ -61,7 +61,7 @@ std::string Base64::Encode(const std::string& data)
 
 	char buf[256];
 	int r;
-	while ((r = BIO_read(o, buf, sizeof(buf))) > 0)
+	while ((r = BIO_read(o, buf, sizeof buf)) > 0)
 	{
 		if (buf[r - 1] == '\n') --r;
 		str.append(buf, (size_t)r);

@@ -32,7 +32,7 @@ using DKIM::Util::Resolver;
  */
 Resolver::Resolver()
 {
-	memset((void*)&m_res, '\0', sizeof(m_res));
+	memset(&m_res, 0, sizeof m_res);
 #ifdef HAS_RES_NINIT
 	res_ninit(&m_res);
 #else
