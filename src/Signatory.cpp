@@ -133,7 +133,7 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 	EVP_DigestFinal_ex(&m_ctx_body, md_value, &md_len);
 	EVP_MD_CTX_cleanup( &m_ctx_body );
 
-	std::string tmp((char*)md_value, md_len);
+	std::string bh((char*)md_value, md_len);
 
 	// create signature for our header
 	switch (options.GetAlgorithm())
@@ -221,7 +221,7 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 		}
 	}
 	dkimHeader += headerlist + ";\r\n";
-	dkimHeader += "\tbh=" + Base64().Encode(tmp) + ";\r\n";
+	dkimHeader += "\tbh=" + Base64().Encode(bh) + ";\r\n";
 	dkimHeader += "\tb=";
 
 	std::string tmp2 = canonicalhead.FilterHeader(dkimHeader);
