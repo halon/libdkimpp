@@ -42,7 +42,7 @@ std::string DKIM::Tokenizer::ReadWhiteSpace(std::istream& stream, WhiteSpaceType
 					_s += (char)stream.get(); // read '\r'
 
 					if (stream.peek() != '\n')
-						throw DKIM::PermanentError(StringFormat("CR without matching LF, 0x%x at position %ld",
+						throw DKIM::PermanentError(StringFormat("CR without matching LF, 0x%x at position %zu",
 									stream.peek(),
 									(size_t)stream.tellg()
 									)
@@ -146,7 +146,7 @@ std::list<std::string> DKIM::Tokenizer::ValueList(const std::string& input)
 		}
 
 		if (value.empty())
-			throw DKIM::PermanentError(StringFormat("Invalid list value (empty), expecting value at position %ld",
+			throw DKIM::PermanentError(StringFormat("Invalid list value (empty), expecting value at position %zu",
 						(size_t)data.tellg()
 						)
 					);

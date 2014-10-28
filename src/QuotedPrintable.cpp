@@ -55,7 +55,7 @@ std::string QuotedPrintable::Decode(const std::string& input, bool convert_to_sp
 			if ((data.peek() >= 'A' && data.peek() <= 'F') || (data.peek() >= '0' && data.peek() <= '9'))
 				hex += (char)data.get();
 			else
-				throw DKIM::PermanentError(StringFormat("Quoted-printable decoding failed; unexpected 0x%x, expecting HEX at position %ld",
+				throw DKIM::PermanentError(StringFormat("Quoted-printable decoding failed; unexpected 0x%x, expecting HEX at position %zu",
 							data.peek(),
 							(size_t)data.tellg()	
 							)
@@ -64,7 +64,7 @@ std::string QuotedPrintable::Decode(const std::string& input, bool convert_to_sp
 			if ((data.peek() >= 'A' && data.peek() <= 'F') || (data.peek() >= '0' && data.peek() <= '9'))
 				hex += (char)data.get();
 			else
-				throw DKIM::PermanentError(StringFormat("Quoted-printable decoding failed; unexpected 0x%x, expecting HEX at position %ld",
+				throw DKIM::PermanentError(StringFormat("Quoted-printable decoding failed; unexpected 0x%x, expecting HEX at position %zu",
 							data.peek(),
 							(size_t)data.tellg()	
 							)
@@ -80,7 +80,7 @@ std::string QuotedPrintable::Decode(const std::string& input, bool convert_to_sp
 		} else if (!ReadWhiteSpace(data, DKIM::Tokenizer::READ_FWS).empty()) {
 			//
 		} else {
-			throw DKIM::PermanentError(StringFormat("Quoted-printable decoding failed; unsafe character 0x%x at position %ld",
+			throw DKIM::PermanentError(StringFormat("Quoted-printable decoding failed; unsafe character 0x%x at position %zu",
 						data.peek(),
 						(size_t)data.tellg()	
 						)
