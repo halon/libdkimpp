@@ -21,7 +21,7 @@ bool MyResolver(const std::string& domain, std::string& result, void* data)
 
 extern char *__progname;
 
-void usage(const char* name, FILE* fp, int status)
+void usage(FILE* fp, int status)
 {
 	fprintf(fp,
 			"\n"
@@ -66,7 +66,7 @@ int main(int argc, char* argv[])
 
 	// no arguments
 	if (argc < 2)
-		usage(argv[0], stderr, 2);
+		usage(stderr, 2);
 
 	// longopts
 	static struct option longopts[] = {
@@ -93,7 +93,7 @@ int main(int argc, char* argv[])
 				validate = true;
 				break;
 			case 'h':
-				usage(argv[0], stdout, 0);
+				usage(stdout, 0);
 				break;
 			case 's':
 				selector = optarg;
@@ -107,7 +107,7 @@ int main(int argc, char* argv[])
 			case 0:
 				break;
 			default:
-				usage(argv[0], stderr, 2);
+				usage(stderr, 2);
 				break;
 		}
 	}
@@ -115,10 +115,10 @@ int main(int argc, char* argv[])
 	argv += optind;
 
 	if (argc < 1)
-		usage(argv[0], stderr, 2);
+		usage(stderr, 2);
 
 	if (!validate && (selector.empty() || domain.empty() || keyfile.empty()))
-		usage(argv[0], stderr, 2);
+		usage(stderr, 2);
 
 	//  sign the message..
 	if (!validate)
