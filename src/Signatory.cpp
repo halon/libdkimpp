@@ -242,7 +242,7 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 	std::string tmp3; tmp3.assign((const char*)data, len);
 	free(data);
 
-	int offset = 3; // "\tb=";
+	size_t offset = 3; // "\tb=";
 	std::string split = Base64().Encode(tmp3);
 	while (!split.empty())
 	{
