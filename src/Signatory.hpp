@@ -58,6 +58,6 @@ namespace DKIM
 
 			bool m_doubleDots;
 	};
-};
+}
 
 #endif

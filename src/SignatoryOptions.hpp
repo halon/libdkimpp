@@ -96,6 +96,6 @@ namespace DKIM
 			CanonMode m_canonHead;
 			CanonMode m_canonBody;
 	};
-};
+}
 
 #endif
