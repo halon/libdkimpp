@@ -94,7 +94,7 @@ void Validatory::GetSignature(const Message::HeaderList::const_iterator& headerI
 
 	// if we should limit the size of the body we hash
 	bool limitBody = sig.GetBodySizeLimit();
-	unsigned long bodySize = sig.GetBodySize();
+	size_t bodySize = sig.GetBodySize();
 
 	// if we have a message: seek to GetBodyOffset()
 	if (m_msg.GetBodyOffset() != -1)
@@ -129,8 +129,8 @@ void Validatory::GetSignature(const Message::HeaderList::const_iterator& headerI
 					else printf("[%s]\n", i->c_str());
 #endif
 					EVP_DigestUpdate(&m_ctx_body, i->c_str(),
-							limitBody?_MIN(i->size(), bodySize):i->size());
-					bodySize -= _MIN(i->size(), bodySize);
+							limitBody?std::min(i->size(), bodySize):i->size());
+					bodySize -= std::min(i->size(), bodySize);
 				}
 			}
 		}
@@ -151,8 +151,8 @@ void Validatory::GetSignature(const Message::HeaderList::const_iterator& headerI
 				else printf("[%s]\n", i->c_str());
 #endif
 				EVP_DigestUpdate(&m_ctx_body, i->c_str(),
-						limitBody?_MIN(i->size(), bodySize):i->size());
-				bodySize -= _MIN(i->size(), bodySize);
+						limitBody?std::min(i->size(), bodySize):i->size());
+				bodySize -= std::min(i->size(), bodySize);
 			}
 		}
 	}

@@ -72,7 +72,7 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 
 	// if we should limit the size of the body we hash
 	bool limitBody = options.GetBodySignLength();
-	unsigned long bodySize = options.GetBodyLength();
+	size_t bodySize = options.GetBodyLength();
 
 	// if we have a message: seek to GetBodyOffset()
 	if (m_msg.GetBodyOffset() != -1)
@@ -102,8 +102,8 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 				{
 					if (limitBody && bodySize == 0) break;
 					EVP_DigestUpdate(&m_ctx_body, i->c_str(),
-							limitBody?_MIN(i->size(), bodySize):i->size());
-					bodySize -= _MIN(i->size(), bodySize);
+							limitBody?std::min(i->size(), bodySize):i->size());
+					bodySize -= std::min(i->size(), bodySize);
 				}
 			}
 		}
@@ -120,8 +120,8 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 			{
 				if (limitBody && bodySize == 0) break;
 				EVP_DigestUpdate(&m_ctx_body, i->c_str(),
-						limitBody?_MIN(i->size(), bodySize):i->size());
-				bodySize -= _MIN(i->size(), bodySize);
+						limitBody?std::min(i->size(), bodySize):i->size());
+				bodySize -= std::min(i->size(), bodySize);
 			}
 		}
 	}

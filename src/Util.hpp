@@ -23,9 +23,6 @@
 
 #include "DKIM.hpp"
 
-#define _MAX(x, y) ((x)>(y)?(x):(y))
-#define _MIN(x, y) ((x)<(y)?(x):(y))
-
 #include <string>
 
 namespace DKIM {
