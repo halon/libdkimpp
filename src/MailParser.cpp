@@ -148,7 +148,7 @@ bool Message::ParseLine(std::istream& stream, bool doubleDots)
 	return true;
 }
 
-const std::list<shared_ptr<Header> >& Message::GetHeaders() const
+const std::list<std::shared_ptr<Header> >& Message::GetHeaders() const
 {
 	return m_header;
 }

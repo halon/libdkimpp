@@ -25,10 +25,7 @@
 #include "PublicKey.hpp"
 #include "Signature.hpp"
 #include "MailParser.hpp"
-
 #include "ADSP.hpp"
-
-using DKIM::Message;
 
 #include <openssl/evp.h>
 #include <openssl/pem.h>
@@ -39,7 +36,7 @@ namespace DKIM
 	class Validatory
 	{
 		public:
-			typedef shared_ptr<DKIM::Header> SignatureItem;
+			typedef std::shared_ptr<DKIM::Header> SignatureItem;
 			typedef std::list<SignatureItem> SignatureList;
 
 			Validatory(std::istream& file, bool doubleDots = false);

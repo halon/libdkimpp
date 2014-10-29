@@ -24,13 +24,7 @@
 #include "Exception.hpp"
 #include "DKIM.hpp"
 #include "MailParser.hpp"
-
-using DKIM::Message;
-
 #include "Base64.hpp"
-
-using DKIM::Conversion::Base64;
-
 #include "SignatoryOptions.hpp"
 
 #include <string>

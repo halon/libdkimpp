@@ -89,7 +89,7 @@ SignatoryOptions& SignatoryOptions::SetPrivateKey(const std::string& privatekey)
 		 * Expect the data to be in DER format)
 		 */
 
-		std::string tmp = Base64::Decode(privatekey);
+		std::string tmp = DKIM::Conversion::Base64::Decode(privatekey);
 		const unsigned char *tmp2 = (const unsigned char*)tmp.c_str();
 		m_rsa = d2i_RSAPrivateKey(NULL, &tmp2, tmp.size());
 		if (!m_rsa)

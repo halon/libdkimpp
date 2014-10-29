@@ -30,8 +30,6 @@
 #include <list>
 #include <memory>
 
-using std::shared_ptr;
-
 namespace DKIM
 {
 	class Header
@@ -61,7 +59,7 @@ namespace DKIM
 	class Message
 	{
 		public:
-			typedef std::list<shared_ptr<Header> > HeaderList;
+			typedef std::list<std::shared_ptr<Header> > HeaderList;
 			Message();
 			void Reset();
 			bool IsDone() const;
@@ -69,7 +67,7 @@ namespace DKIM
 			const HeaderList& GetHeaders() const;
 			std::streamoff GetBodyOffset() const;
 		private:
-			shared_ptr<Header> m_tmpHeader;
+			std::shared_ptr<Header> m_tmpHeader;
 			std::streamoff m_bodyOffset;
 
 			HeaderList m_header;
