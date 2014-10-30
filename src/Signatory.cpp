@@ -234,13 +234,13 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 				&len,
 				options.GetPrivateKey()
 				) != 1) {
-		free(data);
+		delete [] data;
 		throw DKIM::PermanentError("Message could not be signed");
 	}
 	EVP_MD_CTX_cleanup( &m_ctx_head );
 
 	std::string tmp3; tmp3.assign((const char*)data, len);
-	free(data);
+	delete [] data;
 
 	size_t offset = 3; // "\tb=";
 	std::string split = Base64().Encode(tmp3);
