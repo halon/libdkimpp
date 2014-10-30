@@ -32,7 +32,7 @@ using DKIM::Util::StringFormat;
 std::string DKIM::Tokenizer::ReadWhiteSpace(std::istream& stream, WhiteSpaceType type)
 	throw (DKIM::PermanentError)
 {
-	switch(type)
+	switch (type)
 	{
 		case READ_CRLF:
 			{
@@ -270,7 +270,7 @@ std::list<std::string> DKIM::Tokenizer::ParseAddressList(const std::string& inpu
 		lasttype = type;
 		type = NextAddressListToken(data, token);
 
-		switch(type)
+		switch (type)
 		{
 			case TOK_QUOTED:
 				tokens.push_back(token);
@@ -304,7 +304,7 @@ std::list<std::string> DKIM::Tokenizer::ParseAddressList(const std::string& inpu
 					continue;
 				}
 				
-				// do recrusive..
+				// do recursive..
 				if (lasttype == TOK_QUOTED && tokens.size() == 1)
 				{
 					std::list<std::string> addresses = ParseAddressList((*tokens.begin()));

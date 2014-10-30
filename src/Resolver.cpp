@@ -119,7 +119,7 @@ bool Resolver::GetTXT(const std::string& domain, std::string& result)
 			answerptr += INT16SZ;
 			answerptr += INT32SZ;
 			GETSHORT(s, answerptr);
-			switch(t)
+			switch (t)
 			{
 				case T_TXT:
 					{

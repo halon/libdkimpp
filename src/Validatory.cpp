@@ -246,7 +246,7 @@ void Validatory::CheckSignature(const Message::HeaderList::const_iterator& heade
 	// if we have a "g"-tag
 	if (find(pub.GetFlags().begin(), pub.GetFlags().end(), "g") != pub.GetFlags().end())
 	{
-		// if its empty... and we dont have a version...
+		// if it's empty... and we don't have a version...
 		if (pub.GetMailLocalPart().empty() && find(pub.GetFlags().begin(), pub.GetFlags().end(), "v") == pub.GetFlags().end())
 		{
 			// do the RECOMMENDED interpretation and treat such records as if the signer did not have a "g" field in the record.
@@ -291,7 +291,7 @@ void Validatory::CheckSignature(const Message::HeaderList::const_iterator& heade
 
 		std::map<std::string, Message::HeaderList>::iterator head = headerCache.find(name);
 
-		// if this occoures
+		// if this occurred
 		// 1. we do not have a header of that name at all
 		// 2. all headers with that name has been included...
 		if (head == headerCache.end() || head->second.size() == 0)

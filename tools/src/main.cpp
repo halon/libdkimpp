@@ -84,7 +84,7 @@ int main(int argc, char* argv[])
 	optind = 0;
 	int ch;
 	while ((ch = getopt_long(argc, argv, "hvs:d:k:D", longopts, 0x0)) != -1) {
-		switch(ch)
+		switch (ch)
 		{
 			case 'D':
 				doubleDots = true;

@@ -30,7 +30,7 @@ SignatoryOptions::SignatoryOptions()
 	m_canonHead = DKIM_C_SIMPLE;
 	m_canonBody = DKIM_C_SIMPLE;
 
-	// headers that should (recommendation) be signed accoding to the RFC
+	// headers that should (recommendation) be signed according to the RFC
 	m_headers.push_back("from");
 	m_headers.push_back("sender");
 	m_headers.push_back("reply-to");

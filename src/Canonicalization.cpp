@@ -143,7 +143,7 @@ size_t CanonicalizationBody::FilterLine(const std::string& input, std::vector<st
 {
 	std::string s = input;
 
-	switch(m_type)
+	switch (m_type)
 	{
 		case DKIM_C_RELAXED:
 		{

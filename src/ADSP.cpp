@@ -92,7 +92,7 @@ ADSP::ADSPResult ADSP::GetResult() const
 
 std::string ADSP::GetResultAsString() const
 {
-	switch(m_result)
+	switch (m_result)
 	{
 		case DKIM_ADSP_NONE:
 			return "none";
