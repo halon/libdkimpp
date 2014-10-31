@@ -104,7 +104,7 @@ void PublicKey::Parse(const std::string& signature) throw (DKIM::PermanentError)
 	TagListEntry p;
 	if (!m_tagList.GetTag("p", p))
 		throw DKIM::PermanentError("Missing public key (p)");
-	
+
 	if (p.GetValue().empty())
 		throw DKIM::PermanentError("Public key is revoked (p)");
 

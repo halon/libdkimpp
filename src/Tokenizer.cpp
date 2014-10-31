@@ -112,7 +112,7 @@ std::list<std::string> DKIM::Tokenizer::ValueList(const std::string& input)
 	std::list<std::string> values;
 
 	std::stringstream data(input);
-		
+
 	while (true)
 	{
 		std::string value;
@@ -303,7 +303,7 @@ std::list<std::string> DKIM::Tokenizer::ParseAddressList(const std::string& inpu
 					tokens.clear();
 					continue;
 				}
-				
+
 				// do recursive..
 				if (lasttype == TOK_QUOTED && tokens.size() == 1)
 				{

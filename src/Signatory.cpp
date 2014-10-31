@@ -193,7 +193,7 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 		}
 		headersToSign.pop_front();
 	}
-	
+
 	std::string dkimHeader;
 	dkimHeader += "DKIM-Signature: v=1; a=" + Algorithm2String(options.GetAlgorithm()) + "; c="
 				+ CanonMode2String(options.GetCanonModeHeader()) + "/" + CanonMode2String(options.GetCanonModeBody()) + ";\r\n";
@@ -201,7 +201,7 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 	char* limit = 0x0;
 	if (options.GetBodySignLength())
 		asprintf(&limit, "%lu", options.GetBodyLength());
-	
+
 	dkimHeader += "\td=" + options.GetDomain() + "; s=" + options.GetSelector() +
 				(!limit?"":"; l=" + std::string(limit))
 				+ ";\r\n";

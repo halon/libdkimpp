@@ -70,7 +70,7 @@ namespace DKIM
 
 			const std::string& GetMailLocalPart() const
 			{ return m_mailLocalPart; }
-			
+
 			const std::string& GetMailDomain() const
 			{ return m_mailDomain; }
 

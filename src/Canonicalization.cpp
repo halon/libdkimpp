@@ -63,7 +63,7 @@ std::string CanonicalizationHeader::FilterHeader(const std::string& input) const
 					)
 				);
 	transform(output.begin(), colon, output.begin(), tolower);
-	
+
 	/**
 	 * Unfold all header field continuation lines as described in
 	 * [RFC2822]; in particular, lines with terminators embedded in

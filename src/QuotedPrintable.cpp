@@ -50,7 +50,7 @@ std::string QuotedPrintable::Decode(const std::string& input, bool convert_to_sp
 		if (data.peek() == '=')
 		{
 			data.get(); // '='
-		
+
 			std::string hex;
 			if ((data.peek() >= 'A' && data.peek() <= 'F') || (data.peek() >= '0' && data.peek() <= '9'))
 				hex += (char)data.get();

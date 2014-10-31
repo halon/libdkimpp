@@ -58,7 +58,7 @@ const std::string& Header::GetName() const
 {
 	return m_name;
 }
-	
+
 const std::string& Header::GetHeader() const
 {
 	return m_header;

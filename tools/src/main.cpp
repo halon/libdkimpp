@@ -53,7 +53,6 @@ void usage(FILE* fp, int status)
 	exit(status);
 }
 
-
 int main(int argc, char* argv[])
 {
 	__progname = argv[0];

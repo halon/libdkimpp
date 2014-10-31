@@ -115,7 +115,6 @@ void Validatory::GetSignature(const Message::HeaderList::const_iterator& headerI
 			if (s.size() > 0 && s[s.size()-1] == '\r')
 				s.erase(s.size()-1);
 
-
 			// canonical body
 			std::vector<std::string> output;
 			if (canonicalbody.FilterLine(s, output))
