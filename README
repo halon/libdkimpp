@@ -1,7 +1,8 @@
 libdkim++ is a lightweight and portable DKIM (RFC4871) library for *NIX,
-supporting both signing and SDID/ADSP verification sponsored by Halon
-Security. libdkim++ has extensive unit test coverage and aims to fully
-comply with the current RFC.
+supporting both signing and DMARC/SDID/ADSP verification sponsored and
+used by Halon Security's (http://halon.se) email delivery platform.
+libdkim++ has extensive unit test coverage and aims to fully comply with
+the current RFC.
 
 COMPILING --------------------------------------------------------------
 This library requires CMake (http://www.cmake.org/) to compile, and
