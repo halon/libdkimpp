@@ -1,0 +1,14 @@
+Makefile
+CMakeCache.txt
+CMakeFiles/
+*.cmake
+Testing/*
+install_manifest.txt
+libdkim++.pc
+tests/CMakeFiles
+tests/Makefile
+tests/UnitTest
+tools/CMakeFiles
+tools/Makefile
+tools/dkimtool
+libdkim++.so
