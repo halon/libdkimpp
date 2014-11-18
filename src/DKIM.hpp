@@ -23,7 +23,7 @@
 
 namespace DKIM
 {
-	typedef enum { DKIM_A_SHA1 , DKIM_A_SHA256 } Algorithm;
+	typedef enum { DKIM_A_SHA1, DKIM_A_SHA256 } Algorithm;
 	typedef enum { DKIM_C_SIMPLE, DKIM_C_RELAXED } CanonMode;
 }
 

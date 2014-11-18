@@ -23,14 +23,14 @@ class QuotedPrintableTest : public CppUnit::TestFixture {
 		CPPUNIT_ASSERT ( QuotedPrintable::Decode(":") == ":" );
 		CPPUNIT_ASSERT ( QuotedPrintable::Decode(" ") == "" );
 
-		CPPUNIT_ASSERT_THROW ( QuotedPrintable::Decode("=") , std::runtime_error );
-		CPPUNIT_ASSERT_THROW ( QuotedPrintable::Decode("=a") , std::runtime_error );
-		CPPUNIT_ASSERT_THROW ( QuotedPrintable::Decode("=a0") , std::runtime_error );
-		CPPUNIT_ASSERT_THROW ( QuotedPrintable::Decode("=a0") , std::runtime_error );
-		CPPUNIT_ASSERT_THROW ( QuotedPrintable::Decode("=g0") , std::runtime_error );
-		CPPUNIT_ASSERT_THROW ( QuotedPrintable::Decode("\r") , std::runtime_error );
-		CPPUNIT_ASSERT_THROW ( QuotedPrintable::Decode("\t \r") , std::runtime_error );
-		CPPUNIT_ASSERT_THROW ( QuotedPrintable::Decode("\n") , std::runtime_error );
+		CPPUNIT_ASSERT_THROW ( QuotedPrintable::Decode("="), std::runtime_error );
+		CPPUNIT_ASSERT_THROW ( QuotedPrintable::Decode("=a"), std::runtime_error );
+		CPPUNIT_ASSERT_THROW ( QuotedPrintable::Decode("=a0"), std::runtime_error );
+		CPPUNIT_ASSERT_THROW ( QuotedPrintable::Decode("=a0"), std::runtime_error );
+		CPPUNIT_ASSERT_THROW ( QuotedPrintable::Decode("=g0"), std::runtime_error );
+		CPPUNIT_ASSERT_THROW ( QuotedPrintable::Decode("\r"), std::runtime_error );
+		CPPUNIT_ASSERT_THROW ( QuotedPrintable::Decode("\t \r"), std::runtime_error );
+		CPPUNIT_ASSERT_THROW ( QuotedPrintable::Decode("\n"), std::runtime_error );
 	}
 };
 

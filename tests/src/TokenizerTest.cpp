@@ -55,7 +55,7 @@ class TokenizerTest : public CppUnit::TestFixture {
 		}
 		{
 			std::stringstream input("\r");
-			CPPUNIT_ASSERT_THROW ( ReadWhiteSpace(input, ::READ_FWS) , std::runtime_error );
+			CPPUNIT_ASSERT_THROW ( ReadWhiteSpace(input, ::READ_FWS), std::runtime_error );
 		}
 		{
 			std::stringstream input(" \n");
@@ -68,7 +68,7 @@ class TokenizerTest : public CppUnit::TestFixture {
 		{
 			std::stringstream input("\r\n \r");
 			CPPUNIT_ASSERT ( ReadWhiteSpace(input, ::READ_FWS) == "\r\n " );
-			CPPUNIT_ASSERT_THROW ( ReadWhiteSpace(input, ::READ_FWS) , std::runtime_error );
+			CPPUNIT_ASSERT_THROW ( ReadWhiteSpace(input, ::READ_FWS), std::runtime_error );
 		}
 	}
 	void testValueList()
@@ -78,7 +78,7 @@ class TokenizerTest : public CppUnit::TestFixture {
 		CPPUNIT_ASSERT ( ValueList("").size() == 0 );
 		CPPUNIT_ASSERT ( ValueList("a").size() == 1 );
 		CPPUNIT_ASSERT ( ValueList("a:b").size() == 2 );
-		CPPUNIT_ASSERT_THROW ( ValueList(":") , std::runtime_error );
+		CPPUNIT_ASSERT_THROW ( ValueList(":"), std::runtime_error );
 		CPPUNIT_ASSERT ( ValueList("a:").size() == 1 );
 
 		result.clear();

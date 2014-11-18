@@ -42,7 +42,7 @@ using DKIM::TagListEntry;
 //#define DEBUG
 
 Validatory::Validatory(std::istream& stream, bool doubleDots)
-: CustomDNSResolver(NULL), CustomDNSData(NULL), m_file(stream) , m_doubleDots(doubleDots)
+: CustomDNSResolver(NULL), CustomDNSData(NULL), m_file(stream), m_doubleDots(doubleDots)
 {
 	EVP_MD_CTX_init( &m_ctx_head );
 	EVP_MD_CTX_init( &m_ctx_body );
