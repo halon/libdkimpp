@@ -59,13 +59,13 @@ Resolver::~Resolver()
  */
 bool Resolver::GetTXT(const std::string& domain, std::string& result)
 {
-	unsigned char answer[PACKETSZ];
-	memset(answer, 0, PACKETSZ);
+	unsigned char answer[64 * 1024];
+	memset(answer, 0, sizeof answer);
 
 #ifdef HAS_RES_NINIT
-	int answer_length = res_nquery(&m_res, domain.c_str(), C_IN, T_TXT, answer, PACKETSZ);
+	int answer_length = res_nquery(&m_res, domain.c_str(), C_IN, T_TXT, answer, sizeof answer);
 #else
-	int answer_length = res_query(domain.c_str(), C_IN, T_TXT, answer, PACKETSZ);
+	int answer_length = res_query(domain.c_str(), C_IN, T_TXT, answer, sizeof answer);
 #endif
 
 	// Resolve failed
@@ -85,6 +85,9 @@ bool Resolver::GetTXT(const std::string& domain, std::string& result)
 			return true;
 
 		// TRY_AGAIN
+		return false;
+	}
+	if (answer_length > sizeof answer) {
 		return false;
 	}
 	// from here on, we will only return true
