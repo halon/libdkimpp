@@ -40,7 +40,7 @@ void PublicKey::Reset()
 	m_algorithms.clear();
 	// tag-p
 	EVP_PKEY_free(m_publicKey);
-	m_publicKey = 0x0;
+	m_publicKey = NULL;
 	// tag-s
 	m_serviceType.clear();
 	// tag-t
@@ -115,7 +115,7 @@ void PublicKey::Parse(const std::string& signature) throw (DKIM::PermanentError)
 	const unsigned char *tmp2 = (const unsigned char*)tmp.c_str();
 	m_publicKey = d2i_PUBKEY(NULL, &tmp2, tmp.size());
 
-	if (m_publicKey == 0x0)
+	if (m_publicKey == NULL)
 		throw DKIM::PermanentError("Public key could not be loaded (invalid DER data)");
 
 	if (m_publicKey->type != EVP_PKEY_RSA && m_publicKey->type != EVP_PKEY_RSA2)

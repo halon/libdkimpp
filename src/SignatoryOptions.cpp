@@ -24,7 +24,7 @@
 using DKIM::SignatoryOptions;
 
 SignatoryOptions::SignatoryOptions()
-: m_privateKey(0x0), m_rsa(0x0)
+: m_privateKey(NULL), m_rsa(NULL)
 {
 	m_algorithm = DKIM_A_SHA256;
 	m_canonHead = DKIM_C_SIMPLE;
@@ -80,7 +80,7 @@ SignatoryOptions& SignatoryOptions::SetPrivateKey(const std::string& privatekey)
 			throw DKIM::PermanentError("BIO could not be created for RSA key");
 		BIO_write(o, privatekey.c_str(), privatekey.size());
 		(void) BIO_flush(o);
-		m_rsa = PEM_read_bio_RSAPrivateKey(o, 0x0, 0x0, 0x0);
+		m_rsa = PEM_read_bio_RSAPrivateKey(o, NULL, NULL, NULL);
 		BIO_free_all(o);
 		if (!m_rsa)
 			throw DKIM::PermanentError("RSA key could not be loaded from PEM");
@@ -103,7 +103,7 @@ SignatoryOptions& SignatoryOptions::SetPrivateKey(const std::string& privatekey)
 	if (EVP_PKEY_assign_RSA(m_privateKey, m_rsa) != 1)
 		throw DKIM::PermanentError("RSA could not be assigned to PKEY");
 
-	m_rsa = 0x0; // freed with pkey
+	m_rsa = NULL; // freed with pkey
 	return *this;
 }
 

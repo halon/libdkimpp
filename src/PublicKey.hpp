@@ -40,7 +40,7 @@ namespace DKIM {
 			typedef enum { DKIM_S_EMAIL } ServiceType;
 
 			PublicKey()
-			: m_publicKey(0x0)
+			: m_publicKey(NULL)
 			{ Reset(); }
 
 			~PublicKey()

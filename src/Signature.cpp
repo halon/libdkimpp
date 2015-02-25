@@ -256,7 +256,7 @@ void Signature::Parse(const std::string& signature) throw (DKIM::PermanentError)
 	TagListEntry x;
 	if (m_tagList.GetTag("x", x))
 	{
-		if (strtol(x.GetValue().c_str(), 0x0, 10) < time(0x0))
+		if (strtol(x.GetValue().c_str(), NULL, 10) < time(NULL))
 			throw DKIM::PermanentError("Signature has expired (x)");
 	}
 

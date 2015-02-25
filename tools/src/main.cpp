@@ -69,20 +69,20 @@ int main(int argc, char* argv[])
 
 	// longopts
 	static struct option longopts[] = {
-		{ "help",		no_argument,		0x0,		'h'	},
-		{ "doubledots",	no_argument,		0x0,		'D'	},
-		{ "validate",	no_argument,		0x0,		'v'	},
-		{ "selector",	required_argument,	0x0,		's'	},
-		{ "domain",		required_argument,	0x0,		'd'	},
-		{ "keyfile",	required_argument,	0x0,		'k'	},
-		{ 0x0,			0,					0x0,		0	}
+		{ "help",		no_argument,		NULL,		'h'	},
+		{ "doubledots",	no_argument,		NULL,		'D'	},
+		{ "validate",	no_argument,		NULL,		'v'	},
+		{ "selector",	required_argument,	NULL,		's'	},
+		{ "domain",		required_argument,	NULL,		'd'	},
+		{ "keyfile",	required_argument,	NULL,		'k'	},
+		{ NULL,			0,					NULL,		0	}
 	};
 
 	// fetching arguments..
 	opterr = 0;
 	optind = 0;
 	int ch;
-	while ((ch = getopt_long(argc, argv, "hvs:d:k:D", longopts, 0x0)) != -1) {
+	while ((ch = getopt_long(argc, argv, "hvs:d:k:D", longopts, NULL)) != -1) {
 		switch (ch)
 		{
 			case 'D':
