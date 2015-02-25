@@ -44,8 +44,8 @@ using DKIM::TagListEntry;
 Validatory::Validatory(std::istream& stream, bool doubleDots)
 : CustomDNSResolver(NULL), CustomDNSData(NULL), m_file(stream), m_doubleDots(doubleDots)
 {
-	EVP_MD_CTX_init( &m_ctx_head );
-	EVP_MD_CTX_init( &m_ctx_body );
+	EVP_MD_CTX_init(&m_ctx_head);
+	EVP_MD_CTX_init(&m_ctx_body);
 
 	while (m_msg.ParseLine(m_file, doubleDots) && !m_msg.IsDone()) { }
 
@@ -64,8 +64,8 @@ Validatory::Validatory(std::istream& stream, bool doubleDots)
 
 Validatory::~Validatory()
 {
-	EVP_MD_CTX_cleanup( &m_ctx_head );
-	EVP_MD_CTX_cleanup( &m_ctx_body );
+	EVP_MD_CTX_cleanup(&m_ctx_head);
+	EVP_MD_CTX_cleanup(&m_ctx_body);
 }
 
 /*
@@ -83,14 +83,14 @@ void Validatory::GetSignature(const Message::HeaderList::const_iterator& headerI
 	switch (sig.GetAlgorithm())
 	{
 		case DKIM::DKIM_A_SHA1:
-			EVP_DigestInit( &m_ctx_body, EVP_sha1() );
+			EVP_DigestInit(&m_ctx_body, EVP_sha1());
 			break;
 		case DKIM::DKIM_A_SHA256:
-			EVP_DigestInit( &m_ctx_body, EVP_sha256() );
+			EVP_DigestInit(&m_ctx_body, EVP_sha256());
 			break;
 	}
 
-	CanonicalizationBody canonicalbody ( sig.GetCanonModeBody() );
+	CanonicalizationBody canonicalbody(sig.GetCanonModeBody());
 
 	// if we should limit the size of the body we hash
 	bool limitBody = sig.GetBodySizeLimit();
@@ -159,7 +159,7 @@ void Validatory::GetSignature(const Message::HeaderList::const_iterator& headerI
 	unsigned char md_value[EVP_MAX_MD_SIZE];
 	unsigned int md_len;
 	EVP_DigestFinal_ex(&m_ctx_body, md_value, &md_len);
-	EVP_MD_CTX_cleanup( &m_ctx_body );
+	EVP_MD_CTX_cleanup(&m_ctx_body);
 
 	if (sig.GetBodyHash().size() != md_len ||
 			memcmp(sig.GetBodyHash().c_str(), md_value, md_len) != 0)
@@ -219,8 +219,8 @@ void Validatory::CheckSignature(const Message::HeaderList::const_iterator& heade
 	throw (DKIM::PermanentError)
 {
 	// multiple signatures (must cleanup)
-	EVP_MD_CTX_cleanup( &m_ctx_body );
-	EVP_MD_CTX_cleanup( &m_ctx_head );
+	EVP_MD_CTX_cleanup(&m_ctx_body);
+	EVP_MD_CTX_cleanup(&m_ctx_head);
 
 	// sanity checking (between sig and pub)
 	if (pub.GetAlgorithms().size() > 0)
@@ -260,14 +260,14 @@ void Validatory::CheckSignature(const Message::HeaderList::const_iterator& heade
 	switch (sig.GetAlgorithm())
 	{
 		case DKIM::DKIM_A_SHA1:
-			EVP_VerifyInit( &m_ctx_head, EVP_sha1() );
+			EVP_VerifyInit(&m_ctx_head, EVP_sha1());
 			break;
 		case DKIM::DKIM_A_SHA256:
-			EVP_VerifyInit( &m_ctx_head, EVP_sha256() );
+			EVP_VerifyInit(&m_ctx_head, EVP_sha256());
 			break;
 	}
 
-	CanonicalizationHeader canonicalhead ( sig.GetCanonModeHeader() );
+	CanonicalizationHeader canonicalhead(sig.GetCanonModeHeader());
 
 	// add all headers to our cache (they will be pop of the end)
 	std::map<std::string, Message::HeaderList> headerCache;
@@ -326,7 +326,7 @@ void Validatory::CheckSignature(const Message::HeaderList::const_iterator& heade
 				pub.GetPublicKey()
 				) != 1)
 		throw DKIM::PermanentError("Signature did not verify");
-	EVP_MD_CTX_cleanup( &m_ctx_head );
+	EVP_MD_CTX_cleanup(&m_ctx_head);
 
 	// success!
 }

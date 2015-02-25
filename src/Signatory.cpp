@@ -43,14 +43,14 @@ using DKIM::Util::StringFormat;
 Signatory::Signatory(std::istream& file, bool doubleDots)
 : m_file(file), m_doubleDots(doubleDots)
 {
-	EVP_MD_CTX_init( &m_ctx_head );
-	EVP_MD_CTX_init( &m_ctx_body );
+	EVP_MD_CTX_init(&m_ctx_head);
+	EVP_MD_CTX_init(&m_ctx_body);
 }
 
 Signatory::~Signatory()
 {
-	EVP_MD_CTX_cleanup( &m_ctx_head );
-	EVP_MD_CTX_cleanup( &m_ctx_body );
+	EVP_MD_CTX_cleanup(&m_ctx_head);
+	EVP_MD_CTX_cleanup(&m_ctx_body);
 }
 
 std::string Signatory::CreateSignature(const SignatoryOptions& options)
@@ -62,14 +62,14 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 	switch (options.GetAlgorithm())
 	{
 		case DKIM::DKIM_A_SHA1:
-			EVP_DigestInit( &m_ctx_body, EVP_sha1() );
+			EVP_DigestInit(&m_ctx_body, EVP_sha1());
 			break;
 		case DKIM::DKIM_A_SHA256:
-			EVP_DigestInit( &m_ctx_body, EVP_sha256() );
+			EVP_DigestInit(&m_ctx_body, EVP_sha256());
 			break;
 	}
 
-	CanonicalizationBody canonicalbody ( options.GetCanonModeBody() );
+	CanonicalizationBody canonicalbody(options.GetCanonModeBody());
 
 	// if we should limit the size of the body we hash
 	bool limitBody = options.GetBodySignLength();
@@ -132,7 +132,7 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 	unsigned char md_value[EVP_MAX_MD_SIZE];
 	unsigned int md_len;
 	EVP_DigestFinal_ex(&m_ctx_body, md_value, &md_len);
-	EVP_MD_CTX_cleanup( &m_ctx_body );
+	EVP_MD_CTX_cleanup(&m_ctx_body);
 
 	std::string bh((char*)md_value, md_len);
 
@@ -140,14 +140,14 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 	switch (options.GetAlgorithm())
 	{
 		case DKIM::DKIM_A_SHA1:
-			EVP_SignInit( &m_ctx_head, EVP_sha1() );
+			EVP_SignInit(&m_ctx_head, EVP_sha1());
 			break;
 		case DKIM::DKIM_A_SHA256:
-			EVP_SignInit( &m_ctx_head, EVP_sha256() );
+			EVP_SignInit(&m_ctx_head, EVP_sha256());
 			break;
 	}
 
-	CanonicalizationHeader canonicalhead ( options.GetCanonModeHeader() );
+	CanonicalizationHeader canonicalhead(options.GetCanonModeHeader());
 
 	std::list<std::string> headersToSign = options.GetHeaders();
 	std::list<std::string> signedHeaders;
@@ -235,7 +235,7 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 		delete [] data;
 		throw DKIM::PermanentError("Message could not be signed");
 	}
-	EVP_MD_CTX_cleanup( &m_ctx_head );
+	EVP_MD_CTX_cleanup(&m_ctx_head);
 
 	std::string tmp3; tmp3.assign((const char*)data, len);
 	delete [] data;

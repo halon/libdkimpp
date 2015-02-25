@@ -110,11 +110,11 @@ std::string CanonicalizationHeader::FilterHeader(const std::string& input) const
 				);
 	size_t colonAfter = x.find_first_not_of(" ", colonSplit + 1);
 	if (colonAfter != std::string::npos)
-		x.erase(colonSplit + 1, ( colonAfter - 1 ) - ( colonSplit ) );
-	size_t colonBefore = x.substr(0, colonSplit ).find_last_not_of(" ");
+		x.erase(colonSplit + 1, (colonAfter - 1) - (colonSplit));
+	size_t colonBefore = x.substr(0, colonSplit).find_last_not_of(" ");
 	if (colonBefore != std::string::npos && colonBefore + 1 != colonSplit)
 	{
-		x.erase(colonBefore + 1, colonSplit - (colonBefore + 1) );
+		x.erase(colonBefore + 1, colonSplit - (colonBefore + 1));
 	}
 
 	return x;

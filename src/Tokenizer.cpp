@@ -130,7 +130,7 @@ std::list<std::string> DKIM::Tokenizer::ValueList(const std::string& input)
 			std::string ws = ReadWhiteSpace(data, READ_FWS);
 			if (ws.empty())
 			{
-				if (data.peek() == ':' || data.peek() == EOF )
+				if (data.peek() == ':' || data.peek() == EOF)
 					break;
 
 				if (!value_buf.empty())
