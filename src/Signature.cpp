@@ -31,7 +31,7 @@
 #include <string.h>
 
 using DKIM::Signature;
-using DKIM::Conversion::Base64;
+using DKIM::Conversion::Base64_Decode;
 using DKIM::Conversion::QuotedPrintable;
 using DKIM::Util::StringFormat;
 
@@ -112,7 +112,7 @@ void Signature::Parse(const std::string& signature) throw (DKIM::PermanentError)
 
 	std::string btmp = b.GetValue();
 	btmp.erase(remove_if(btmp.begin(), btmp.end(), isspace), btmp.end());
-	m_b = Base64::Decode(btmp);
+	m_b = Base64_Decode(btmp);
 
 	// Hash of the canonicalized body
 	TagListEntry bh;
@@ -120,7 +120,7 @@ void Signature::Parse(const std::string& signature) throw (DKIM::PermanentError)
 			throw DKIM::PermanentError("Missing body hash (bh)");
 	std::string bhtmp = bh.GetValue();
 	bhtmp.erase(remove_if(bhtmp.begin(), bhtmp.end(), isspace), bhtmp.end());
-	m_bh = Base64::Decode(bhtmp);
+	m_bh = Base64_Decode(bhtmp);
 
 	// Message canonicalization
 	TagListEntry c;

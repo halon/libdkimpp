@@ -129,7 +129,7 @@ std::string EncodedWord::Decode(const std::string& input)
 					}
 					if (encoding == "b" || encoding == "B")
 					{
-						encdata = DKIM::Conversion::Base64::Decode(encdata);
+						encdata = DKIM::Conversion::Base64_Decode(encdata);
 						break;
 					}
 				} catch(...) {

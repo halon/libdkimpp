@@ -29,7 +29,7 @@ using DKIM::Conversion::CanonicalizationBody;
 
 #include "Base64.hpp"
 
-using DKIM::Conversion::Base64;
+using DKIM::Conversion::Base64_Encode;
 
 #include "Util.hpp"
 
@@ -221,7 +221,7 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 		}
 	}
 	dkimHeader += headerlist + ";\r\n";
-	dkimHeader += "\tbh=" + Base64().Encode(bh) + ";\r\n";
+	dkimHeader += "\tbh=" + Base64_Encode(bh) + ";\r\n";
 	dkimHeader += "\tb=";
 
 	std::string tmp2 = canonicalhead.FilterHeader(dkimHeader);
@@ -243,7 +243,7 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 	delete [] data;
 
 	size_t offset = 3; // "\tb=";
-	std::string split = Base64().Encode(tmp3);
+	std::string split = Base64_Encode(tmp3);
 	while (!split.empty())
 	{
 		dkimHeader += split.substr(0, 80 - offset);

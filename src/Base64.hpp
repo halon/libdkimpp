@@ -27,13 +27,10 @@
 
 namespace DKIM {
 	namespace Conversion {
-		class Base64 {
-			public:
-				static std::string Decode(const std::string& data)
-					throw (DKIM::PermanentError);
-				static std::string Encode(const std::string& data)
-					throw (DKIM::PermanentError);
-		};
+		std::string Base64_Decode(const std::string& data)
+			throw (DKIM::PermanentError);
+		std::string Base64_Encode(const std::string& data)
+			throw (DKIM::PermanentError);
 	}
 }
 

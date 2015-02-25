@@ -27,7 +27,7 @@
 #include <algorithm>
 
 using DKIM::PublicKey;
-using DKIM::Conversion::Base64;
+using DKIM::Conversion::Base64_Decode;
 using DKIM::Util::StringFormat;
 
 void PublicKey::Reset()
@@ -111,7 +111,7 @@ void PublicKey::Parse(const std::string& signature) throw (DKIM::PermanentError)
 	std::string ptmp = p.GetValue();
 	ptmp.erase(remove_if(ptmp.begin(), ptmp.end(), isspace), ptmp.end());
 
-	std::string tmp = Base64::Decode(ptmp);
+	std::string tmp = Base64_Decode(ptmp);
 	const unsigned char *tmp2 = (const unsigned char*)tmp.c_str();
 	m_publicKey = d2i_PUBKEY(NULL, &tmp2, tmp.size());
 
