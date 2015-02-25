@@ -35,6 +35,7 @@ using DKIM::Conversion::Base64_Encode;
 
 using DKIM::Util::Algorithm2String;
 using DKIM::Util::CanonMode2String;
+using DKIM::Util::StringFormat;
 
 #include <algorithm>
 #include <map>
@@ -198,14 +199,11 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 	dkimHeader += "DKIM-Signature: v=1; a=" + Algorithm2String(options.GetAlgorithm()) + "; c="
 				+ CanonMode2String(options.GetCanonModeHeader()) + "/" + CanonMode2String(options.GetCanonModeBody()) + ";\r\n";
 
-	char* limit = 0x0;
+	std::string limit;
 	if (options.GetBodySignLength())
-		asprintf(&limit, "%lu", options.GetBodyLength());
+		limit = StringFormat("; l=%lu", options.GetBodyLength());
 
-	dkimHeader += "\td=" + options.GetDomain() + "; s=" + options.GetSelector() +
-				(!limit?"":"; l=" + std::string(limit))
-				+ ";\r\n";
-	free(limit);
+	dkimHeader += "\td=" + options.GetDomain() + "; s=" + options.GetSelector() + limit + ";\r\n";
 
 	std::string headerlist = "\th=";
 	for (std::list<std::string>::const_iterator i = signedHeaders.begin();
