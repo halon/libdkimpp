@@ -107,7 +107,7 @@ void Signature::Parse(const std::string& signature) throw (DKIM::PermanentError)
 
 	// Signature data
 	TagListEntry b;
-	if (!m_tagList.GetTag("b", b))
+	if (!m_tagList.GetTag("b", b) || b.GetValue().empty())
 		throw DKIM::PermanentError("Missing header signature (b)");
 
 	std::string btmp = b.GetValue();
