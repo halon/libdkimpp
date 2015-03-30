@@ -47,7 +47,7 @@ Resolver::Resolver()
 Resolver::~Resolver()
 {
 #ifdef HAS_RES_NINIT
-	res_nclose(&m_res);
+	res_ndestroy(&m_res);
 #else
 	res_close();
 #endif
