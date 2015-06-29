@@ -132,10 +132,10 @@ bool Resolver::GetTXT(const std::string& domain, std::string& result)
 						while (rec_len_left > 0)
 						{
 							size_t txt_len = *ptr;
-							if (txt_len > rec_len_left)
+							if (txt_len >= rec_len_left)
 								break;
 
-							result.append((const char*)ptr+1, txt_len);
+							result.append((const char*)ptr + 1, txt_len);
 
 							rec_len_left -= txt_len + 1;
 							ptr += txt_len + 1;
