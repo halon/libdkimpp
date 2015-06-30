@@ -118,10 +118,18 @@ bool Resolver::GetTXT(const std::string& domain, std::string& result)
 			}
 			int t;
 			answerptr += s;
+			if (answerptr > answer + answer_length - (INT16SZ + INT16SZ + INT32SZ + INT16SZ))
+			{
+				return false;
+			}
 			GETSHORT(t, answerptr);
 			answerptr += INT16SZ;
 			answerptr += INT32SZ;
 			GETSHORT(s, answerptr);
+			if (answerptr + s < answer || answerptr + s > answer + answer_length)
+			{
+				return false;
+			}
 			switch (t)
 			{
 				case T_TXT:
