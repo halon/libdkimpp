@@ -47,7 +47,11 @@ Resolver::Resolver()
 Resolver::~Resolver()
 {
 #ifdef HAS_RES_NINIT
+#ifdef __linux__
+	res_nclose(&m_res); // nclose seems to be enough for cleanup on Linux
+#else
 	res_ndestroy(&m_res);
+#endif
 #else
 	res_close();
 #endif
