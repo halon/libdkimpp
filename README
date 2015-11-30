@@ -53,10 +53,3 @@ Test project /home/erik/Desktop/libdkimpp/build
 9/9 Test #9: TagListTest ......................   Passed    0.00 sec
 100% tests passed, 0 tests failed out of 9
 Total Test time (real) =   0.08 sec
-
-RELEASEING -------------------------------------------------------------
-To release a new version, update CHANGELOG and change the version in
-CMakeLists.txt. Run this command to build the .tar.gz archive.
-
-$ git archive --prefix libdkim++1.0.7/ --format tar.gz \
-	-o libdkim++1.0.7.tar.gz master
