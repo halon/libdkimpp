@@ -21,6 +21,10 @@ which can be done by running `pkg_add -r cppunit`,
 `apt-get install cppunit` or `yum install cppunit-devel` depending
 on operating system.
 
+* pkg-config
+* cppunit
+* libssl-dev
+
 Because some systems (like OpenBSD) lacks a reentrant resolver, this
 library might not be thread-safe on all platforms.
 
