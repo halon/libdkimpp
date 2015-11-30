@@ -58,5 +58,5 @@ RELEASEING -------------------------------------------------------------
 To release a new version, update CHANGELOG and change the version in
 CMakeLists.txt. Run this command to build the .tar.gz archive.
 
-$ git archive --prefix libdkim++1.0.6/ --format tar.gz \
-	-o libdkim++1.0.6.tar.gz master
+$ git archive --prefix libdkim++1.0.7/ --format tar.gz \
+	-o libdkim++1.0.7.tar.gz master
