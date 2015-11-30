@@ -10,9 +10,7 @@ This library requires CMake (http://www.cmake.org/) to compile, and
 depends on OpenSSL (which is normally shipped with *NIX distributions).
 
 ```
-$ mkdir build
-$ cd build
-$ cmake ../
+$ cmake .
 $ make && make install
 ```
 
