@@ -1,36 +1,42 @@
 libdkim++ is a lightweight and portable DKIM (RFC4871) library for *NIX,
 supporting both signing and DMARC/SDID/ADSP verification sponsored and
-used by Halon Security's (http://halon.se) email delivery platform.
+used by Halon Security's (http://halon.io) SMTP platform.
 libdkim++ has extensive unit test coverage and aims to fully comply with
 the current RFC.
 
-COMPILING --------------------------------------------------------------
+Building
+--------
 This library requires CMake (http://www.cmake.org/) to compile, and
 depends on OpenSSL (which is normally shipped with *NIX distributions).
 
-(while standing in the libdkimpp folder)
+```
 $ mkdir build
 $ cd build
 $ cmake ../
 $ make && make install
+```
 
-You might need to add some packages, like cppunit which can be done by
-running "pkg_add -r cppunit" or "apt-get install cppunit" depending
+You might need to add some packages, like a C++ compiler and `cppunit`
+which can be done by running `pkg_add -r cppunit`,
+`apt-get install cppunit` or `yum install cppunit-devel` depending
 on operating system.
 
 Because some systems (like OpenBSD) lacks a reentrant resolver, this
 library might not be thread-safe on all platforms.
 
-TESTING ---------------------------------------------------------------
+Testing
+-------
 libdkim++ has extensive unit test coverage and aims to fully comply
 with the current RFC.
 
-(after compiling)
+```
 $ cd build
 $ make test
+```
 
 which should result in this output:
 
+```
 Running tests...
 Test project /home/erik/Desktop/libdkimpp/build
    Start 1: QuotedPrintableTest
@@ -53,3 +59,4 @@ Test project /home/erik/Desktop/libdkimpp/build
 9/9 Test #9: TagListTest ......................   Passed    0.00 sec
 100% tests passed, 0 tests failed out of 9
 Total Test time (real) =   0.08 sec
+```
