@@ -21,6 +21,7 @@ which can be done by running `pkg_add -r cppunit`,
 `apt-get install cppunit` or `yum install cppunit-devel` depending
 on operating system.
 
+* cmake
 * pkg-config
 * cppunit
 * libssl-dev
