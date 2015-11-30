@@ -33,7 +33,6 @@ libdkim++ has extensive unit test coverage and aims to fully comply
 with the current RFC.
 
 ```
-$ cd build
 $ make test
 ```
 
