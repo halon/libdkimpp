@@ -123,22 +123,13 @@ int main(int argc, char* argv[])
 	if (!validate)
 	{
 		// readkey
-		std::string key;
-		FILE *f = fopen(keyfile.c_str(), "r");
-		if (!f) {
+		std::ifstream kfp(keyfile);
+		if (!kfp) {
 			fprintf(stderr, "keyfile %s could not be open\n", keyfile.c_str());
 			return 1;
 		}
-		// size
-		fseek(f, 0, SEEK_END);
-		size_t size = ftell(f);
-		fseek(f, 0, SEEK_SET);
-		// read
-		char * buf = new char[size];
-		fread(buf, 1, size, f);
-		key.append(buf, size);
-		delete [] buf;
-		fclose(f);
+		std::string key((std::istreambuf_iterator<char>(kfp)),
+				std::istreambuf_iterator<char>());
 
 		std::ifstream fp(argv[0]);
 		try {
