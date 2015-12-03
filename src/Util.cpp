@@ -74,7 +74,8 @@ std::string DKIM::Util::StringFormat(const char* fmt, ...)
 	va_list args;
 	va_start(args, fmt);
 	char* mem = NULL;
-	vasprintf(&mem, fmt, args);
+	if (vasprintf(&mem, fmt, args) == -1)
+		throw std::bad_alloc();
 	std::string result = mem;
 	free(mem);
 	va_end(args);

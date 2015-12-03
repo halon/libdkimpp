@@ -91,17 +91,18 @@ bool Resolver::GetTXT(const std::string& domain, std::string& result)
 		// TRY_AGAIN
 		return false;
 	}
-	if (answer_length > sizeof answer) {
+	if (answer_length > (int)sizeof answer) {
 		return false;
 	}
 	// from here on, we will only return true
 	// because we got whatever response..
 
 	// Skip header
+	HEADER* header = (HEADER*)&answer;
 	unsigned char* answerptr = answer + sizeof(HEADER);
 
 	// Skip request query...
-	int qc = ntohs((unsigned short)((HEADER*)&answer)->qdcount);
+	int qc = ntohs((unsigned short)header->qdcount);
 	int x, s;
 	for (x = 0, s = dn_skipname(answerptr, answer + answer_length);
 			x < qc && s >= 0;
@@ -113,7 +114,7 @@ bool Resolver::GetTXT(const std::string& domain, std::string& result)
 
 	if (qc == x)
 	{
-		int cc = ntohs((unsigned short)((HEADER*)&answer)->ancount);
+		int cc = ntohs((unsigned short)header->ancount);
 		for (int i = 0; i < cc; ++i)
 		{
 			if ((s=dn_skipname(answerptr, answer + answer_length)) < 0)
