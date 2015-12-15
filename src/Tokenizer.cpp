@@ -287,6 +287,7 @@ std::list<std::string> DKIM::Tokenizer::ParseAddressList(const std::string& inpu
 			break;
 			case TOK_TAG_CLOSE:
 				inOpentag = false;
+				// fall through
 			case TOK_SEPARATOR:
 			case TOK_EOF:
 			{
