@@ -115,8 +115,5 @@ bool DKIM::Util::ValidateDomain(const std::string& domain)
 		lpos = pos + 1;
 	}
 
-	if (pos == std::string::npos)
-		return ValidateSubDomain(domain.substr(lpos));
-	else
-		return ValidateSubDomain(domain.substr(lpos, pos - lpos));
+	return ValidateSubDomain(domain.substr(lpos));
 }
