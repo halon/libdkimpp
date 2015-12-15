@@ -64,19 +64,6 @@ const std::string& Header::GetHeader() const
 	return m_header;
 }
 
-void Header::SetStart(std::streamoff hStart)
-{
-	headerStart = hStart;
-}
-
-void Header::SetEnd(std::streamoff hEnd)
-{
-	headerEnd = hEnd;
-}
-
-std::streamoff Header::GetStart() const { return headerStart; }
-std::streamoff Header::GetEnd() const { return headerEnd; }
-
 Message::Message()
 {
 	Reset();
@@ -97,8 +84,6 @@ bool Message::IsDone() const
 
 bool Message::ParseLine(std::istream& stream, bool doubleDots)
 {
-	std::streamoff startPos = stream.tellg();
-
 	std::string line;
 	if (!std::getline(stream, line))
 	{
@@ -137,13 +122,11 @@ bool Message::ParseLine(std::istream& stream, bool doubleDots)
 		if (m_tmpHeader.get())
 			m_header.push_back(m_tmpHeader);
 		m_tmpHeader.reset(new Header());
-		m_tmpHeader->SetStart(startPos);
 	}
 
 	if (!m_tmpHeader.get())
 		m_tmpHeader.reset(new Header());
 	m_tmpHeader->ParseLine(line);
-	m_tmpHeader->SetEnd(stream.tellg());
 
 	return true;
 }

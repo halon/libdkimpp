@@ -43,15 +43,7 @@ namespace DKIM
 
 			size_t GetValueOffset() const
 			{ return m_valueOffset; }
-
-			void SetStart(std::streamoff hStart);
-			void SetEnd(std::streamoff hEnd);
-			std::streamoff GetStart() const;
-			std::streamoff GetEnd() const;
 		private:
-			std::streamoff headerStart;
-			std::streamoff headerEnd;
-
 			std::string m_name;
 			std::string m_header;
 			size_t m_valueOffset;
