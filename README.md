@@ -4,6 +4,8 @@ used by Halon Security's (http://halon.io) SMTP platform.
 libdkim++ has extensive unit test coverage and aims to fully comply with
 the current RFC.
 
+[![Coverity Scan Build](https://img.shields.io/coverity/scan/7287.svg)](https://scan.coverity.com/projects/halonsecurity-smtpping)
+
 Building
 --------
 This library requires CMake (http://www.cmake.org/) to compile, and
