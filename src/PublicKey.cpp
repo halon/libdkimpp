@@ -118,7 +118,11 @@ void PublicKey::Parse(const std::string& signature) throw (DKIM::PermanentError)
 	if (m_publicKey == NULL)
 		throw DKIM::PermanentError("Public key could not be loaded (invalid DER data)");
 
+#if OPENSSL_VERSION_NUMBER < 0x10100000
 	if (m_publicKey->type != EVP_PKEY_RSA && m_publicKey->type != EVP_PKEY_RSA2)
+#else
+	if (EVP_PKEY_base_id(m_publicKey) != EVP_PKEY_RSA && EVP_PKEY_base_id(m_publicKey) != EVP_PKEY_RSA2)
+#endif
 		throw DKIM::PermanentError("Public key could not be loaded (key type must be RSA/RSA2)");
 
 	// Service Type
