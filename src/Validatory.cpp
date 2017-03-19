@@ -82,7 +82,9 @@ void Validatory::GetSignature(const Message::HeaderList::const_iterator& headerI
 		DKIM::Signature& sig)	
 	throw (DKIM::PermanentError)
 {
+#if OPENSSL_VERSION_NUMBER < 0x10100000
 	EVP_MD_CTX_cleanup(m_ctx_body);
+#endif
 
 	sig.Parse((*headerIter)->GetHeader().substr((*headerIter)->GetValueOffset()));
 
@@ -224,7 +226,9 @@ void Validatory::CheckSignature(const Message::HeaderList::const_iterator& heade
 		const DKIM::PublicKey& pub)
 	throw (DKIM::PermanentError)
 {
+#if OPENSSL_VERSION_NUMBER < 0x10100000
 	EVP_MD_CTX_cleanup(m_ctx_head);
+#endif
 
 	// sanity checking (between sig and pub)
 	if (pub.GetAlgorithms().size() > 0)
@@ -330,7 +334,11 @@ void Validatory::CheckSignature(const Message::HeaderList::const_iterator& heade
 				pub.GetPublicKey()
 				) != 1)
 		throw DKIM::PermanentError("Signature did not verify");
+#if OPENSSL_VERSION_NUMBER < 0x10100000
 	EVP_MD_CTX_cleanup(m_ctx_head);
+#else
+	EVP_MD_CTX_reset(m_ctx_head);
+#endif
 
 	// success!
 }

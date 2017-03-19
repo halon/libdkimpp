@@ -59,8 +59,10 @@ Signatory::~Signatory()
 std::string Signatory::CreateSignature(const SignatoryOptions& options)
 	throw (DKIM::PermanentError)
 {
+#if OPENSSL_VERSION_NUMBER < 0x10100000
 	EVP_MD_CTX_cleanup(m_ctx_head);
 	EVP_MD_CTX_cleanup(m_ctx_body);
+#endif
 
 	while (m_msg.ParseLine(m_file, m_doubleDots) && !m_msg.IsDone()) { }
 
@@ -240,7 +242,11 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 		delete [] data;
 		throw DKIM::PermanentError("Message could not be signed");
 	}
+#if OPENSSL_VERSION_NUMBER < 0x10100000
 	EVP_MD_CTX_cleanup(m_ctx_head);
+#else
+	EVP_MD_CTX_reset(m_ctx_head);
+#endif
 
 	std::string tmp3; tmp3.assign((const char*)data, len);
 	delete [] data;
