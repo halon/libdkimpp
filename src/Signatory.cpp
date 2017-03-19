@@ -248,7 +248,7 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 	EVP_MD_CTX_reset(m_ctx_head);
 #endif
 
-	std::string tmp3; tmp3.assign((const char*)data, len);
+	std::string tmp3((const char*)data, len);
 	delete [] data;
 
 	size_t offset = 3; // "\tb=";
