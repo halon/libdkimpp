@@ -42,10 +42,15 @@ using DKIM::TagListEntry;
 //#define DEBUG
 
 Validatory::Validatory(std::istream& stream, bool doubleDots)
-: CustomDNSResolver(NULL), CustomDNSData(NULL), m_file(stream), m_doubleDots(doubleDots)
+: CustomDNSResolver(NULL)
+, CustomDNSData(NULL)
+, m_file(stream)
+, m_ctx_head(NULL)
+, m_ctx_body(NULL)
+, m_doubleDots(doubleDots)
 {
-	EVP_MD_CTX_init(&m_ctx_head);
-	EVP_MD_CTX_init(&m_ctx_body);
+	m_ctx_head = EVP_MD_CTX_create();
+	m_ctx_body = EVP_MD_CTX_create();
 
 	while (m_msg.ParseLine(m_file, doubleDots) && !m_msg.IsDone()) { }
 
@@ -64,8 +69,8 @@ Validatory::Validatory(std::istream& stream, bool doubleDots)
 
 Validatory::~Validatory()
 {
-	EVP_MD_CTX_cleanup(&m_ctx_head);
-	EVP_MD_CTX_cleanup(&m_ctx_body);
+	EVP_MD_CTX_destroy(m_ctx_head);
+	EVP_MD_CTX_destroy(m_ctx_body);
 }
 
 /*
@@ -77,16 +82,18 @@ void Validatory::GetSignature(const Message::HeaderList::const_iterator& headerI
 		DKIM::Signature& sig)	
 	throw (DKIM::PermanentError)
 {
+	EVP_MD_CTX_cleanup(m_ctx_body);
+
 	sig.Parse((*headerIter)->GetHeader().substr((*headerIter)->GetValueOffset()));
 
 	// create signature for our body (message data)
 	switch (sig.GetAlgorithm())
 	{
 		case DKIM::DKIM_A_SHA1:
-			EVP_DigestInit(&m_ctx_body, EVP_sha1());
+			EVP_DigestInit(m_ctx_body, EVP_sha1());
 			break;
 		case DKIM::DKIM_A_SHA256:
-			EVP_DigestInit(&m_ctx_body, EVP_sha256());
+			EVP_DigestInit(m_ctx_body, EVP_sha256());
 			break;
 	}
 
@@ -127,7 +134,7 @@ void Validatory::GetSignature(const Message::HeaderList::const_iterator& headerI
 					if (*i == "\r\n") printf("[CRLF]\n");
 					else printf("[%s]\n", i->c_str());
 #endif
-					EVP_DigestUpdate(&m_ctx_body, i->c_str(),
+					EVP_DigestUpdate(m_ctx_body, i->c_str(),
 							limitBody?std::min(i->size(), bodySize):i->size());
 					bodySize -= std::min(i->size(), bodySize);
 				}
@@ -149,7 +156,7 @@ void Validatory::GetSignature(const Message::HeaderList::const_iterator& headerI
 				if (*i == "\r\n") printf("[CRLF]\n");
 				else printf("[%s]\n", i->c_str());
 #endif
-				EVP_DigestUpdate(&m_ctx_body, i->c_str(),
+				EVP_DigestUpdate(m_ctx_body, i->c_str(),
 						limitBody?std::min(i->size(), bodySize):i->size());
 				bodySize -= std::min(i->size(), bodySize);
 			}
@@ -158,8 +165,7 @@ void Validatory::GetSignature(const Message::HeaderList::const_iterator& headerI
 
 	unsigned char md_value[EVP_MAX_MD_SIZE];
 	unsigned int md_len;
-	EVP_DigestFinal_ex(&m_ctx_body, md_value, &md_len);
-	EVP_MD_CTX_cleanup(&m_ctx_body);
+	EVP_DigestFinal(m_ctx_body, md_value, &md_len);
 
 	if (sig.GetBodyHash().size() != md_len ||
 			memcmp(sig.GetBodyHash().c_str(), md_value, md_len) != 0)
@@ -218,9 +224,7 @@ void Validatory::CheckSignature(const Message::HeaderList::const_iterator& heade
 		const DKIM::PublicKey& pub)
 	throw (DKIM::PermanentError)
 {
-	// multiple signatures (must cleanup)
-	EVP_MD_CTX_cleanup(&m_ctx_body);
-	EVP_MD_CTX_cleanup(&m_ctx_head);
+	EVP_MD_CTX_cleanup(m_ctx_head);
 
 	// sanity checking (between sig and pub)
 	if (pub.GetAlgorithms().size() > 0)
@@ -260,10 +264,10 @@ void Validatory::CheckSignature(const Message::HeaderList::const_iterator& heade
 	switch (sig.GetAlgorithm())
 	{
 		case DKIM::DKIM_A_SHA1:
-			EVP_VerifyInit(&m_ctx_head, EVP_sha1());
+			EVP_VerifyInit(m_ctx_head, EVP_sha1());
 			break;
 		case DKIM::DKIM_A_SHA256:
-			EVP_VerifyInit(&m_ctx_head, EVP_sha256());
+			EVP_VerifyInit(m_ctx_head, EVP_sha256());
 			break;
 	}
 
@@ -302,7 +306,7 @@ void Validatory::CheckSignature(const Message::HeaderList::const_iterator& heade
 #endif
 		tmp = canonicalhead.FilterHeader(head->second.back()->GetHeader()) + "\r\n";
 		head->second.pop_back();
-		EVP_VerifyUpdate(&m_ctx_head, tmp.c_str(), tmp.size());
+		EVP_VerifyUpdate(m_ctx_head, tmp.c_str(), tmp.size());
 	}
 
 	// add our dkim-signature to the calculation (remove the "b"-tag)
@@ -317,16 +321,16 @@ void Validatory::CheckSignature(const Message::HeaderList::const_iterator& heade
 #ifdef DEBUG
 	printf("[%s]\n", tmp.c_str());
 #endif
-	EVP_VerifyUpdate(&m_ctx_head, tmp.c_str(), tmp.size());
+	EVP_VerifyUpdate(m_ctx_head, tmp.c_str(), tmp.size());
 
 	// verify the header signature
-	if (EVP_VerifyFinal(&m_ctx_head,
+	if (EVP_VerifyFinal(m_ctx_head,
 				(const unsigned char*)sig.GetSignatureData().c_str(),
 				sig.GetSignatureData().size(),
 				pub.GetPublicKey()
 				) != 1)
 		throw DKIM::PermanentError("Signature did not verify");
-	EVP_MD_CTX_cleanup(&m_ctx_head);
+	EVP_MD_CTX_cleanup(m_ctx_head);
 
 	// success!
 }

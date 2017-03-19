@@ -71,8 +71,8 @@ namespace DKIM
 
 			SignatureList m_dkimHeaders;
 
-			EVP_MD_CTX m_ctx_head;
-			EVP_MD_CTX m_ctx_body;
+			EVP_MD_CTX* m_ctx_head;
+			EVP_MD_CTX* m_ctx_body;
 
 			bool m_doubleDots;
 	};
