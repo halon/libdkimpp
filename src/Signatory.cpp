@@ -59,6 +59,9 @@ Signatory::~Signatory()
 std::string Signatory::CreateSignature(const SignatoryOptions& options)
 	throw (DKIM::PermanentError)
 {
+	EVP_MD_CTX_cleanup(m_ctx_head);
+	EVP_MD_CTX_cleanup(m_ctx_body);
+
 	while (m_msg.ParseLine(m_file, m_doubleDots) && !m_msg.IsDone()) { }
 
 	// create signature for our body (message data)
