@@ -41,16 +41,19 @@ using DKIM::Util::StringFormat;
 #include <map>
 
 Signatory::Signatory(std::istream& file, bool doubleDots)
-: m_file(file), m_doubleDots(doubleDots)
+: m_file(file)
+, m_ctx_head(NULL)
+, m_ctx_body(NULL)
+, m_doubleDots(doubleDots)
 {
-	EVP_MD_CTX_init(&m_ctx_head);
-	EVP_MD_CTX_init(&m_ctx_body);
+	m_ctx_head = EVP_MD_CTX_create();
+	m_ctx_body = EVP_MD_CTX_create();
 }
 
 Signatory::~Signatory()
 {
-	EVP_MD_CTX_cleanup(&m_ctx_head);
-	EVP_MD_CTX_cleanup(&m_ctx_body);
+	EVP_MD_CTX_destroy(m_ctx_head);
+	EVP_MD_CTX_destroy(m_ctx_body);
 }
 
 std::string Signatory::CreateSignature(const SignatoryOptions& options)
@@ -62,10 +65,10 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 	switch (options.GetAlgorithm())
 	{
 		case DKIM::DKIM_A_SHA1:
-			EVP_DigestInit(&m_ctx_body, EVP_sha1());
+			EVP_DigestInit(m_ctx_body, EVP_sha1());
 			break;
 		case DKIM::DKIM_A_SHA256:
-			EVP_DigestInit(&m_ctx_body, EVP_sha256());
+			EVP_DigestInit(m_ctx_body, EVP_sha256());
 			break;
 	}
 
@@ -102,7 +105,7 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 						i != output.end(); ++i)
 				{
 					if (limitBody && bodySize == 0) break;
-					EVP_DigestUpdate(&m_ctx_body, i->c_str(),
+					EVP_DigestUpdate(m_ctx_body, i->c_str(),
 							limitBody?std::min(i->size(), bodySize):i->size());
 					bodySize -= std::min(i->size(), bodySize);
 				}
@@ -120,7 +123,7 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 					i != output.end(); ++i)
 			{
 				if (limitBody && bodySize == 0) break;
-				EVP_DigestUpdate(&m_ctx_body, i->c_str(),
+				EVP_DigestUpdate(m_ctx_body, i->c_str(),
 						limitBody?std::min(i->size(), bodySize):i->size());
 				bodySize -= std::min(i->size(), bodySize);
 			}
@@ -131,8 +134,7 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 
 	unsigned char md_value[EVP_MAX_MD_SIZE];
 	unsigned int md_len;
-	EVP_DigestFinal_ex(&m_ctx_body, md_value, &md_len);
-	EVP_MD_CTX_cleanup(&m_ctx_body);
+	EVP_DigestFinal(m_ctx_body, md_value, &md_len);
 
 	std::string bh((char*)md_value, md_len);
 
@@ -140,10 +142,10 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 	switch (options.GetAlgorithm())
 	{
 		case DKIM::DKIM_A_SHA1:
-			EVP_SignInit(&m_ctx_head, EVP_sha1());
+			EVP_SignInit(m_ctx_head, EVP_sha1());
 			break;
 		case DKIM::DKIM_A_SHA256:
-			EVP_SignInit(&m_ctx_head, EVP_sha256());
+			EVP_SignInit(m_ctx_head, EVP_sha256());
 			break;
 	}
 
@@ -188,7 +190,7 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 			}
 			if (!tmp.empty())
 			{
-				EVP_SignUpdate(&m_ctx_head, tmp.c_str(), tmp.size());
+				EVP_SignUpdate(m_ctx_head, tmp.c_str(), tmp.size());
 				signedHeaders.push_back(name);
 			}
 		}
@@ -223,11 +225,11 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 	dkimHeader += "\tb=";
 
 	std::string tmp2 = canonicalhead.FilterHeader(dkimHeader);
-	EVP_SignUpdate(&m_ctx_head, tmp2.c_str(), tmp2.size());
+	EVP_SignUpdate(m_ctx_head, tmp2.c_str(), tmp2.size());
 
 	unsigned int len;
 	unsigned char* data = new unsigned char[EVP_PKEY_size(options.GetPrivateKey())];
-	if (EVP_SignFinal(&m_ctx_head,
+	if (EVP_SignFinal(m_ctx_head,
 				data,
 				&len,
 				options.GetPrivateKey()
@@ -235,7 +237,7 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 		delete [] data;
 		throw DKIM::PermanentError("Message could not be signed");
 	}
-	EVP_MD_CTX_cleanup(&m_ctx_head);
+	EVP_MD_CTX_cleanup(m_ctx_head);
 
 	std::string tmp3; tmp3.assign((const char*)data, len);
 	delete [] data;
