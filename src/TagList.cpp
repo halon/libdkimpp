@@ -111,12 +111,14 @@ void TagList::Parse(const std::string& input)
 
 		// tag-name
 		if (
+				(data.peek() >= 'A' && data.peek() <= 'Z') ||
 				(data.peek() >= 'a' && data.peek() <= 'z') ||
 				(data.peek() >= '0' && data.peek() <= '9')
 		   ) {
 			name += (char)data.get();
 		}
 		while (
+				(data.peek() >= 'A' && data.peek() <= 'Z') ||
 				(data.peek() >= 'a' && data.peek() <= 'z') ||
 				(data.peek() >= '0' && data.peek() <= '9') ||
 				(data.peek() == '_')
