@@ -279,21 +279,17 @@ void Validatory::CheckSignature(const Message::HeaderList::const_iterator& heade
 
 	// add all headers to our cache (they will be pop of the end)
 	std::map<std::string, Message::HeaderList> headerCache;
-	for (Message::HeaderList::const_iterator hIter = m_msg.GetHeaders().begin();
-			hIter != m_msg.GetHeaders().end();
-			++hIter)
+	for (const auto & hIter : m_msg.GetHeaders())
 	{
-		std::string headerName = (*hIter)->GetName();
+		std::string headerName = hIter->GetName();
 		transform(headerName.begin(), headerName.end(), headerName.begin(), tolower);
-		headerCache[headerName].push_back(*hIter);
+		headerCache[headerName].push_back(hIter);
 	}
 
 	// add all signed headers to our hash
-	for (std::list<std::string>::const_iterator hIter = sig.GetSignedHeaders().begin();
-			hIter != sig.GetSignedHeaders().end(); ++hIter)
+	for (auto name : sig.GetSignedHeaders())
 	{
 		std::string tmp;
-		std::string name = *hIter;
 		transform(name.begin(), name.end(), name.begin(), tolower);
 
 		std::map<std::string, Message::HeaderList>::iterator head = headerCache.find(name);
@@ -356,16 +352,15 @@ void Validatory::GetADSP(std::list<DKIM::ADSP>& adsp)
 	 */
 	std::list<std::string> senders;
 
-	for (DKIM::Message::HeaderList::const_iterator i = m_msg.GetHeaders().begin();
-		i != m_msg.GetHeaders().end(); ++i)
+	for (const auto & i : m_msg.GetHeaders())
 	{
-		std::string headerName = (*i)->GetName();
+		std::string headerName = i->GetName();
 		transform(headerName.begin(), headerName.end(), headerName.begin(), tolower);
 
 		// find from: <...> header(s)...
 		if (headerName == "from")
 		{
-			std::string header = (*i)->GetHeader().substr((*i)->GetValueOffset());
+			std::string header = i->GetHeader().substr(i->GetValueOffset());
 
 			header = DKIM::Conversion::EncodedWord::Decode(header);
 

@@ -164,14 +164,12 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 
 	// add all headers to our cache (they will be pop of the end)
 	std::map<std::string, Message::HeaderList> headerCache;
-	for (Message::HeaderList::const_iterator hIter = m_msg.GetHeaders().begin();
-			hIter != m_msg.GetHeaders().end();
-			++hIter)
+	for (const auto & hIter : m_msg.GetHeaders())
 	{
-		std::string name = (*hIter)->GetName();
+		std::string name = hIter->GetName();
 		transform(name.begin(), name.end(), name.begin(), tolower);
 
-		headerCache[name].push_back(*hIter);
+		headerCache[name].push_back(hIter);
 		if (signAll)
 			headersToSign.push_back(name);
 	}
