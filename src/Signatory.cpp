@@ -40,11 +40,10 @@ using DKIM::Util::StringFormat;
 #include <algorithm>
 #include <map>
 
-Signatory::Signatory(std::istream& file, bool doubleDots)
+Signatory::Signatory(std::istream& file)
 : m_file(file)
 , m_ctx_head(NULL)
 , m_ctx_body(NULL)
-, m_doubleDots(doubleDots)
 {
 	m_ctx_head = EVP_MD_CTX_create();
 	m_ctx_body = EVP_MD_CTX_create();
@@ -64,7 +63,7 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 	EVP_MD_CTX_cleanup(m_ctx_body);
 #endif
 
-	while (m_msg.ParseLine(m_file, m_doubleDots) && !m_msg.IsDone()) { }
+	while (m_msg.ParseLine(m_file) && !m_msg.IsDone()) { }
 
 	// create signature for our body (message data)
 	switch (options.GetAlgorithm())
@@ -92,12 +91,6 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 		std::string s;
 		while (std::getline(m_file, s) || m_file.peek() != EOF)
 		{
-			// double dots (postfix file may have .., instead of .)
-			if (m_doubleDots && s.substr(0, 2) == "..")
-			{
-				s.erase(0, 1);
-			}
-
 			// remove possible \r (if not removed by getline *probably not*)
 			if (s.size() > 0 && s[s.size()-1] == '\r')
 				s.erase(s.size()-1);

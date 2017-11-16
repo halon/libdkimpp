@@ -39,7 +39,7 @@ namespace DKIM
 			typedef std::shared_ptr<DKIM::Header> SignatureItem;
 			typedef std::list<SignatureItem> SignatureList;
 
-			Validatory(std::istream& file, bool doubleDots = false);
+			Validatory(std::istream& file);
 			~Validatory();
 
 			void GetADSP(std::list<ADSP>& adsp)

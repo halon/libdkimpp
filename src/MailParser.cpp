@@ -82,7 +82,7 @@ bool Message::IsDone() const
 	return m_done;
 }
 
-bool Message::ParseLine(std::istream& stream, bool doubleDots)
+bool Message::ParseLine(std::istream& stream)
 {
 	std::string line;
 	if (!std::getline(stream, line))
@@ -93,12 +93,6 @@ bool Message::ParseLine(std::istream& stream, bool doubleDots)
 		m_bodyOffset = -1;
 		m_done = true;
 		return false;
-	}
-
-	// double dots (postfix file may have .., instead of .)
-	if (doubleDots && line.substr(0, 2) == "..")
-	{
-		line.erase(0, 1);
 	}
 
 	// remove possible \r (if not removed by getline *probably not*)

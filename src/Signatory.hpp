@@ -38,7 +38,7 @@ namespace DKIM
 	class Signatory
 	{
 		public:
-			Signatory(std::istream& file, bool doubleDots = false);
+			Signatory(std::istream& file);
 			~Signatory();
 
 			std::string CreateSignature(const SignatoryOptions& options)
@@ -49,8 +49,6 @@ namespace DKIM
 
 			EVP_MD_CTX* m_ctx_head;
 			EVP_MD_CTX* m_ctx_body;
-
-			bool m_doubleDots;
 	};
 }
 

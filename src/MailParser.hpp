@@ -55,7 +55,7 @@ namespace DKIM
 			Message();
 			void Reset();
 			bool IsDone() const;
-			bool ParseLine(std::istream& stream, bool doubleDots = false);
+			bool ParseLine(std::istream& stream);
 			const HeaderList& GetHeaders() const;
 			std::streamoff GetBodyOffset() const;
 		private:

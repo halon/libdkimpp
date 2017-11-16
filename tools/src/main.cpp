@@ -33,7 +33,6 @@ void usage(FILE* fp, int status)
 			"\n"
 			" -h,  --help       Show this help\n"
 			" -v,  --validate   Validate Only\n"
-			" -D,  --doubledots File contains double dots\n"
 			"\n"
 			" Signatory options (default)\n"
 			"\n"
@@ -58,7 +57,6 @@ int main(int argc, char* argv[])
 	__progname = argv[0];
 
 	bool validate = false;
-	bool doubleDots = false;
 	std::string selector;
 	std::string domain;
 	std::string keyfile;
@@ -70,7 +68,6 @@ int main(int argc, char* argv[])
 	// longopts
 	static struct option longopts[] = {
 		{ "help",		no_argument,		NULL,		'h'	},
-		{ "doubledots",	no_argument,		NULL,		'D'	},
 		{ "validate",	no_argument,		NULL,		'v'	},
 		{ "selector",	required_argument,	NULL,		's'	},
 		{ "domain",		required_argument,	NULL,		'd'	},
@@ -82,12 +79,9 @@ int main(int argc, char* argv[])
 	opterr = 0;
 	optind = 0;
 	int ch;
-	while ((ch = getopt_long(argc, argv, "hvs:d:k:D", longopts, NULL)) != -1) {
+	while ((ch = getopt_long(argc, argv, "hvs:d:k:", longopts, NULL)) != -1) {
 		switch (ch)
 		{
-			case 'D':
-				doubleDots = true;
-				break;
 			case 'v':
 				validate = true;
 				break;
@@ -134,7 +128,7 @@ int main(int argc, char* argv[])
 		std::ifstream fp(argv[0]);
 		try {
 			printf("%s\r\n",
-					Signatory(fp, doubleDots).CreateSignature(
+					Signatory(fp).CreateSignature(
 						SignatoryOptions()
 						.SetPrivateKey(key)
 						.SetDomain(domain)
@@ -154,7 +148,7 @@ int main(int argc, char* argv[])
 	for (int x = 0; x < argc; x++)
 	{
 		std::ifstream fp(argv[x]);
-		Validatory mail(fp, doubleDots);
+		Validatory mail(fp);
 
 		mail.CustomDNSResolver = MyResolver;
 

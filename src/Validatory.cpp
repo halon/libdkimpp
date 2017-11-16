@@ -41,18 +41,17 @@ using DKIM::TagListEntry;
 
 //#define DEBUG
 
-Validatory::Validatory(std::istream& stream, bool doubleDots)
+Validatory::Validatory(std::istream& stream)
 : CustomDNSResolver(NULL)
 , CustomDNSData(NULL)
 , m_file(stream)
 , m_ctx_head(NULL)
 , m_ctx_body(NULL)
-, m_doubleDots(doubleDots)
 {
 	m_ctx_head = EVP_MD_CTX_create();
 	m_ctx_body = EVP_MD_CTX_create();
 
-	while (m_msg.ParseLine(m_file, doubleDots) && !m_msg.IsDone()) { }
+	while (m_msg.ParseLine(m_file) && !m_msg.IsDone()) { }
 
 	DKIM::Message::HeaderList::const_iterator i;
 	for (i = m_msg.GetHeaders().begin(); i != m_msg.GetHeaders().end(); ++i)
@@ -114,12 +113,6 @@ void Validatory::GetSignature(const Message::HeaderList::const_iterator& headerI
 		std::string s;
 		while (std::getline(m_file, s) || m_file.peek() != EOF)
 		{
-			// double dots (postfix file may have .., instead of .)
-			if (m_doubleDots && s.substr(0, 2) == "..")
-			{
-				s.erase(0, 1);
-			}
-
 			// remove possible \r (if not removed by getline *probably not*)
 			if (s.size() > 0 && s[s.size()-1] == '\r')
 				s.erase(s.size()-1);
