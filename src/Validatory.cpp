@@ -98,65 +98,15 @@ void Validatory::GetSignature(const Message::HeaderList::const_iterator& headerI
 			break;
 	}
 
-	CanonicalizationBody canonicalbody(sig.GetCanonModeBody());
+	DKIM::Conversion::EVPDigest evpupd;
+	evpupd.ctx = m_ctx_body;
 
-	// if we should limit the size of the body we hash
-	bool limitBody = sig.GetBodySizeLimit();
-	size_t bodySize = sig.GetBodySize();
-
-	// if we have a message: seek to GetBodyOffset()
-	if (m_msg.GetBodyOffset() != -1)
-	{
-		m_file.clear();
-		m_file.seekg(m_msg.GetBodyOffset(), std::istream::beg);
-
-		std::string s;
-		while (std::getline(m_file, s) || m_file.peek() != EOF)
-		{
-			// remove possible \r (if not removed by getline *probably not*)
-			if (s.size() > 0 && s[s.size()-1] == '\r')
-				s.erase(s.size()-1);
-
-			// canonical body
-			std::vector<std::string> output;
-			if (canonicalbody.FilterLine(s, output))
-			{
-				for (std::vector<std::string>::const_iterator i = output.begin();
-						i != output.end(); ++i)
-				{
-					if (limitBody && bodySize == 0) break;
-#ifdef DEBUG
-					if (*i == "\r\n") printf("[CRLF]\n");
-					else printf("[%s]\n", i->c_str());
-#endif
-					EVP_DigestUpdate(m_ctx_body, i->c_str(),
-							limitBody?std::min(i->size(), bodySize):i->size());
-					bodySize -= std::min(i->size(), bodySize);
-				}
-			}
-		}
-	}
-
-	// else call (Done) -- which may insert a last CRLF if the body was empty
-	if (m_msg.GetBodyOffset() != -1 || m_file.peek() == EOF)
-	{
-		std::vector<std::string> output;
-		if (canonicalbody.Done(output))
-		{
-			for (std::vector<std::string>::const_iterator i = output.begin();
-					i != output.end(); ++i)
-			{
-				if (limitBody && bodySize == 0) break;
-#ifdef DEBUG
-				if (*i == "\r\n") printf("[CRLF]\n");
-				else printf("[%s]\n", i->c_str());
-#endif
-				EVP_DigestUpdate(m_ctx_body, i->c_str(),
-						limitBody?std::min(i->size(), bodySize):i->size());
-				bodySize -= std::min(i->size(), bodySize);
-			}
-		}
-	}
+	CanonicalizationBody(m_file,
+			sig.GetCanonModeBody(),
+			m_msg.GetBodyOffset(),
+			sig.GetBodySizeLimit(),
+			sig.GetBodySize(),
+			std::bind(&DKIM::Conversion::EVPDigest::update, &evpupd, std::placeholders::_1, std::placeholders::_2));
 
 	unsigned char md_value[EVP_MAX_MD_SIZE];
 	unsigned int md_len;

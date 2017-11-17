@@ -4,6 +4,23 @@
 using DKIM::Conversion::CanonicalizationHeader;
 using DKIM::Conversion::CanonicalizationBody;
 
+struct StringTest
+{
+	std::string str;
+	void update(const char* ptr, size_t i)
+	{
+		str.append(ptr, i);
+	}
+};
+
+std::string CanonicalizationBodyTest(std::string input, DKIM::CanonMode type)
+{
+	std::stringstream str(input);
+	StringTest foo;
+	CanonicalizationBody(str, type, 0, false, 0, std::bind(&StringTest::update, &foo, std::placeholders::_1, std::placeholders::_2));
+	return foo.str;
+}
+
 class CanonicalizationTest : public CppUnit::TestFixture {
 	CPPUNIT_TEST_SUITE( CanonicalizationTest );
 	CPPUNIT_TEST( TestHeaderSimple );
@@ -67,144 +84,41 @@ class CanonicalizationTest : public CppUnit::TestFixture {
 	}
 	void TestBodySimple()
 	{
-		std::vector<std::string> output;
-		CanonicalizationBody canonicalbody ( DKIM::DKIM_C_SIMPLE );
-
 		/*
 		 * truncation of empty lines at the end of a message
 		 */
 
-		output.clear();
 		CPPUNIT_ASSERT (
-					canonicalbody.FilterLine("Hello ", output) == 1 &&
-					output[0] == "Hello "
+					CanonicalizationBodyTest("Hello \r\n\r\n\r\n\tWorld\r\n\r\n", DKIM::DKIM_C_SIMPLE) ==
+					"Hello \r\n\r\n\r\n\tWorld\r\n"
 				);
-		output.clear();
-		CPPUNIT_ASSERT (
-					canonicalbody.FilterLine("", output) == 0
-				);
-		output.clear();
-		CPPUNIT_ASSERT (
-					canonicalbody.FilterLine("", output) == 0
-				);
-		output.clear();
-		CPPUNIT_ASSERT (
-					canonicalbody.FilterLine("\tWorld", output) == 4 &&
-					output[0] == "\r\n" &&
-					output[1] == "\r\n" &&
-					output[2] == "\r\n" &&
-					output[3] == "\tWorld"
-				);
-		output.clear();
-		CPPUNIT_ASSERT (
-					canonicalbody.FilterLine("", output) == 0
-				);
-		output.clear();
-		CPPUNIT_ASSERT (
-					canonicalbody.FilterLine("", output) == 0
-				);
-		output.clear();
-		CPPUNIT_ASSERT (
-					canonicalbody.Done(output) == 1 &&
-					output[0] == "\r\n"
-				);
-
-		canonicalbody.Reset();
 
 		/*
 		 * empty body should return \r\n
 		 */
 
-		output.clear();
 		CPPUNIT_ASSERT (
-					canonicalbody.Done(output) == 1 &&
-					output[0] == "\r\n"
+					CanonicalizationBodyTest("", DKIM::DKIM_C_SIMPLE) ==
+					"\r\n"
 				);
-
 	}
 	void TestBodyRelaxed()
 	{
-		std::vector<std::string> output;
-		CanonicalizationBody canonicalbody ( DKIM::DKIM_C_RELAXED );
-
 		/*
 		 * truncation of empty lines at the end of a message
 		 */
-
-		output.clear();
-		CPPUNIT_ASSERT (
-					canonicalbody.FilterLine("Hello ", output) == 1 &&
-					output[0] == "Hello"
-				);
-		output.clear();
-		CPPUNIT_ASSERT (
-					canonicalbody.FilterLine("", output) == 0
-				);
-		output.clear();
-		CPPUNIT_ASSERT (
-					canonicalbody.FilterLine("", output) == 0
-				);
-		output.clear();
-		CPPUNIT_ASSERT (
-					canonicalbody.FilterLine("\tWorld\t\t!", output) == 4 &&
-					output[0] == "\r\n" &&
-					output[1] == "\r\n" &&
-					output[2] == "\r\n" &&
-					output[3] == " World !"
-				);
-		output.clear();
-		CPPUNIT_ASSERT (
-					canonicalbody.FilterLine("", output) == 0
-				);
-		output.clear();
-		CPPUNIT_ASSERT (
-					canonicalbody.FilterLine("", output) == 0
-				);
-		output.clear();
-		CPPUNIT_ASSERT (
-					canonicalbody.FilterLine("       ", output) == 0
-				);
-		output.clear();
-		CPPUNIT_ASSERT (
-					canonicalbody.Done(output) == 1 &&
-					output[0] == "\r\n"
-				);
-
-		canonicalbody.Reset();
 
 		/*
 		 * remove all wsp at the end of a line
 		 */
 
-		output.clear();
-		CPPUNIT_ASSERT (
-					canonicalbody.FilterLine("Hello ", output) == 1 &&
-					output[0] == "Hello"
-				);
-
-		output.clear();
-		CPPUNIT_ASSERT (
-					canonicalbody.FilterLine("Hello \t  ", output) == 2 &&
-					output[0] == "\r\n" &&
-					output[1] == "Hello"
-				);
-
 		/*
 		 * merge multiple wsp
 		 */
 
-		output.clear();
 		CPPUNIT_ASSERT (
-					canonicalbody.FilterLine(" \t Hello \t  ", output) == 2 &&
-					output[0] == "\r\n" &&
-					output[1] == " Hello"
-				);
-
-		output.clear();
-		CPPUNIT_ASSERT (
-					canonicalbody.FilterLine(" \t Hello \tWorld \t  ", output) == 2 &&
-					output[0] == "\r\n" &&
-					output[1] == " Hello World"
+					CanonicalizationBodyTest("Hello \r\n\r\n\r\n\tWorld\t\t!\r\n\r\n\r\n       \r\nHello \r\nHello \t  \r\n \t Hello \t  \r\n \t Hello \tWorld \t  \r\n", DKIM::DKIM_C_RELAXED) ==
+					"Hello\r\n\r\n\r\n World !\r\n\r\n\r\n\r\nHello\r\nHello\r\n Hello\r\n Hello World\r\n"
 				);
 	}
 };

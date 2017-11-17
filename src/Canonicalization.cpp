@@ -120,90 +120,98 @@ std::string CanonicalizationHeader::FilterHeader(const std::string& input) const
 	return x;
 }
 
-using DKIM::Conversion::CanonicalizationBody;
-
-CanonicalizationBody::CanonicalizationBody(CanonMode type)
-: m_type(type)
+bool DKIM::Conversion::CanonicalizationBody(std::istream& stream, DKIM::CanonMode type, ssize_t bodyOffset, bool bodyLimit, size_t bodySize, std::function<void(const char *, size_t)> func)
 {
-	Reset();
-}
+	bool emptyBody = true;
 
-void CanonicalizationBody::SetType(CanonMode type)
-{
-	m_type = type;
-}
-
-void CanonicalizationBody::Reset()
-{
-	m_emptyLines = 0;	
-	m_emptyBody = true;
-}
-
-size_t CanonicalizationBody::FilterLine(const std::string& input, std::vector<std::string>& output)
-{
-	std::string s = input;
-
-	switch (m_type)
+	// if we have a message: seek to GetBodyOffset()
+	if (bodyOffset != -1)
 	{
-		case DKIM_C_RELAXED:
-		{
-			/*
-			   Ignores all whitespace at the end of lines.  Implementations MUST
-			   NOT remove the CRLF at the end of the line.
-			 */
-			size_t wspEnd = s.find_last_not_of(" \t");
-			if (wspEnd != std::string::npos)
-				s.erase(wspEnd + 1);
-			else
-				s.clear();
+		stream.clear();
+		stream.seekg(bodyOffset, std::istream::beg);
 
-			/*
-			   Reduces all sequences of WSP within a line to a single SP
-			   character.
-			 */
-			size_t nextWSP = 0;
-			while ((nextWSP = s.find_first_of(" \t", nextWSP)) != std::string::npos)
+		bool pendingwsp = false;
+		size_t lines = 0;
+		while (stream.good())
+		{
+			if (bodyLimit && bodySize == 0) break;
+
+			char buffer[8096];
+			stream.read(buffer, sizeof buffer);
+
+			std::string buf;
+			for (size_t i = 0; i < stream.gcount(); ++i)
 			{
-				size_t lastWSP = s.find_first_not_of(" \t", nextWSP);
-				s.replace(nextWSP, lastWSP - nextWSP, " ");
-				nextWSP++;
+				if (buffer[i] == '\r')
+					continue;
+				if (buffer[i] == '\n')
+				{
+					pendingwsp = false;
+					++lines;
+					continue;
+				}
+
+				/*
+				   Reduces all sequences of WSP within a line to a single SP
+				   character.
+				 */
+				if (type == DKIM::DKIM_C_RELAXED && (buffer[i] == ' ' || buffer[i] == '\t'))
+				{
+					pendingwsp = true;
+					continue;
+				}
+
+				/*
+				   Ignores all empty lines at the end of the message body.  "Empty
+				   line" is defined in Section 3.4.3.
+				 */
+				while (lines > 0)
+				{
+					buf += "\r\n";
+					--lines;
+				}
+
+				/*
+				   Ignores all whitespace at the end of lines.  Implementations MUST
+				   NOT remove the CRLF at the end of the line.
+				 */
+				if (pendingwsp)
+				{
+					buf += ' ';
+					pendingwsp = false;
+				}
+
+				buf += buffer[i];
 			}
+
+			if (bodyLimit)
+			{
+				size_t left = std::min(buf.size(), bodySize);
+				func(buf.c_str(), left);
+				bodySize -= left;
+			} else {
+				func(buf.c_str(), buf.size());
+			}
+
+			if (!buf.empty())
+				emptyBody = false;
 		}
-		break;
-		case DKIM_C_SIMPLE:
-		{
-		}
-		break;
 	}
 
-	/*
-	   Ignores all empty lines at the end of the message body.  "Empty
-	   line" is defined in Section 3.4.3.
-	 */
-	if (s.empty()) {
-		++m_emptyLines;
-		return 0;
-	}
-
-	m_emptyBody = false;
-
-	for (; m_emptyLines; --m_emptyLines)
-	{
-		output.push_back("\r\n");
-	}
-	m_emptyLines = 1;
-
-	output.push_back(s);
-	return output.size();
-}
-
-size_t CanonicalizationBody::Done(std::vector<std::string>& output)
-{
 	// the rfc is unclear about this, but google does not insert an empty \r\n for
 	// relaxed canonicalization...
-	if (m_emptyBody == true && m_type == DKIM_C_RELAXED)
-		return 0;
+	if (emptyBody == false || type != DKIM::DKIM_C_RELAXED)
+	{
+		std::string buf = "\r\n";
+		if (bodyLimit)
+		{
+			size_t left = std::min(buf.size(), bodySize);
+			func(buf.c_str(), left);
+			bodySize -= left;
+		} else {
+			func(buf.c_str(), buf.size());
+		}
+	}
 
-	output.push_back("\r\n");
-	return output.size();
+	return !(bodyLimit && bodySize > 0);
 }

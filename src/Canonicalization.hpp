@@ -25,9 +25,19 @@
 
 #include <string>
 #include <vector>
+#include <functional>
+#include <openssl/evp.h>
 
 namespace DKIM {
 	namespace Conversion {
+		struct EVPDigest
+		{
+			EVP_MD_CTX* ctx;
+			void update(const char* ptr, size_t i)
+			{
+				EVP_DigestUpdate(ctx, ptr, i);
+			}
+		};
 		class CanonicalizationHeader
 		{
 			public:
@@ -38,20 +48,7 @@ namespace DKIM {
 			private:
 				CanonMode m_type;
 		};
-		class CanonicalizationBody
-		{
-			public:
-				CanonicalizationBody(CanonMode type);
-				void SetType(CanonMode type);
-				void Reset();
-
-				size_t FilterLine(const std::string& input, std::vector<std::string>& output);
-				size_t Done(std::vector<std::string>& output);
-			private:
-				CanonMode m_type;
-				size_t m_emptyLines;
-				bool m_emptyBody;
-		};
+		bool CanonicalizationBody(std::istream& stream, CanonMode type, ssize_t bodyOffset, bool bodyLimit, size_t bodySize, std::function<void(const char *, size_t)> func);
 	}
 }
 

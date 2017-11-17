@@ -76,58 +76,15 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 			break;
 	}
 
-	CanonicalizationBody canonicalbody(options.GetCanonModeBody());
+	DKIM::Conversion::EVPDigest evpupd;
+	evpupd.ctx = m_ctx_body;
 
-	// if we should limit the size of the body we hash
-	bool limitBody = options.GetBodySignLength();
-	size_t bodySize = options.GetBodyLength();
-
-	// if we have a message: seek to GetBodyOffset()
-	if (m_msg.GetBodyOffset() != -1)
-	{
-		m_file.clear();
-		m_file.seekg(m_msg.GetBodyOffset());
-
-		std::string s;
-		while (std::getline(m_file, s) || m_file.peek() != EOF)
-		{
-			// remove possible \r (if not removed by getline *probably not*)
-			if (s.size() > 0 && s[s.size()-1] == '\r')
-				s.erase(s.size()-1);
-
-			// canonical body
-			std::vector<std::string> output;
-			if (canonicalbody.FilterLine(s, output))
-			{
-				for (std::vector<std::string>::const_iterator i = output.begin();
-						i != output.end(); ++i)
-				{
-					if (limitBody && bodySize == 0) break;
-					EVP_DigestUpdate(m_ctx_body, i->c_str(),
-							limitBody?std::min(i->size(), bodySize):i->size());
-					bodySize -= std::min(i->size(), bodySize);
-				}
-			}
-		}
-	}
-
-	// else call (Done) -- which may insert a last CRLF if the body was empty
-	if (m_msg.GetBodyOffset() == -1 || m_file.peek() == EOF)
-	{
-		std::vector<std::string> output;
-		if (canonicalbody.Done(output))
-		{
-			for (std::vector<std::string>::const_iterator i = output.begin();
-					i != output.end(); ++i)
-			{
-				if (limitBody && bodySize == 0) break;
-				EVP_DigestUpdate(m_ctx_body, i->c_str(),
-						limitBody?std::min(i->size(), bodySize):i->size());
-				bodySize -= std::min(i->size(), bodySize);
-			}
-		}
-	}
-	if (limitBody && bodySize > 0)
+	if (!CanonicalizationBody(m_file,
+			options.GetCanonModeBody(),
+			m_msg.GetBodyOffset(),
+			options.GetBodySignLength(),
+			options.GetBodyLength(),
+			std::bind(&DKIM::Conversion::EVPDigest::update, &evpupd, std::placeholders::_1, std::placeholders::_2)))
 		throw DKIM::PermanentError("Body sign limit exceed the size of the canonicalized message length");
 
 	unsigned char md_value[EVP_MAX_MD_SIZE];
