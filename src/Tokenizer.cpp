@@ -270,6 +270,9 @@ std::list<std::string> DKIM::Tokenizer::ParseAddressList(const std::string& inpu
 		lasttype = type;
 		type = NextAddressListToken(data, token);
 
+		if (token.find('\0') != std::string::npos)
+			throw DKIM::PermanentError("NUL character in address field");
+
 		switch (type)
 		{
 			case TOK_QUOTED:
