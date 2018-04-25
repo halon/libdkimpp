@@ -45,6 +45,9 @@ namespace DKIM
 			bool GetTag(const std::string& name, TagListEntry& tag) const
 			{ return m_tagList.GetTag(name, tag); }
 
+			const TagList& GetTagList() const
+			{ return m_tagList; }
+
 			// Get Functions
 
 			Algorithm GetAlgorithm() const
