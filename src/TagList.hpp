@@ -55,6 +55,9 @@ namespace DKIM {
 				throw (DKIM::PermanentError);
 
 			bool GetTag(const std::string& name, TagListEntry& tag) const;
+
+			std::map<std::string, TagListEntry>::const_iterator cbegin() const { return m_tags.cbegin(); }
+			std::map<std::string, TagListEntry>::const_iterator cend() const { return m_tags.cend(); }
 		private:
 			std::map<std::string, TagListEntry> m_tags;
 	};
