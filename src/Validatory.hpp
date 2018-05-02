@@ -46,7 +46,10 @@ namespace DKIM
 				throw (DKIM::PermanentError, DKIM::TemporaryError);
 
 			void GetSignature(const Message::HeaderList::const_iterator& headerIter,
-					DKIM::Signature& sig)	
+					DKIM::Signature& sig)
+				throw (DKIM::PermanentError);
+
+			void CheckBodyHash(const DKIM::Signature& sig)
 				throw (DKIM::PermanentError);
 
 			void GetPublicKey(const DKIM::Signature& sig,

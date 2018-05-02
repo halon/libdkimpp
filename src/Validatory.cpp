@@ -81,42 +81,8 @@ void Validatory::GetSignature(const Message::HeaderList::const_iterator& headerI
 		DKIM::Signature& sig)	
 	throw (DKIM::PermanentError)
 {
-#if OPENSSL_VERSION_NUMBER < 0x10100000
-	EVP_MD_CTX_cleanup(m_ctx_body);
-#endif
-
 	sig.Parse((*headerIter)->GetHeader().substr((*headerIter)->GetValueOffset()));
-
-	// create signature for our body (message data)
-	switch (sig.GetAlgorithm())
-	{
-		case DKIM::DKIM_A_SHA1:
-			EVP_DigestInit(m_ctx_body, EVP_sha1());
-			break;
-		case DKIM::DKIM_A_SHA256:
-			EVP_DigestInit(m_ctx_body, EVP_sha256());
-			break;
-	}
-
-	DKIM::Conversion::EVPDigest evpupd;
-	evpupd.ctx = m_ctx_body;
-
-	CanonicalizationBody(m_file,
-			sig.GetCanonModeBody(),
-			m_msg.GetBodyOffset(),
-			sig.GetBodySizeLimit(),
-			sig.GetBodySize(),
-			std::bind(&DKIM::Conversion::EVPDigest::update, &evpupd, std::placeholders::_1, std::placeholders::_2));
-
-	unsigned char md_value[EVP_MAX_MD_SIZE];
-	unsigned int md_len;
-	EVP_DigestFinal(m_ctx_body, md_value, &md_len);
-
-	if (sig.GetBodyHash().size() != md_len ||
-			memcmp(sig.GetBodyHash().c_str(), md_value, md_len) != 0)
-	{
-		throw DKIM::PermanentError("Body hash did not verify");
-	}
+	CheckBodyHash(sig);
 }
 
 /*
@@ -157,6 +123,50 @@ void Validatory::GetPublicKey(const DKIM::Signature& sig,
 				(int)sig.GetQueryType()
 				)
 			);
+}
+
+/*
+ * CheckBodyHash()
+ *
+ * Validate the message according to rfc4871
+ */
+void Validatory::CheckBodyHash(const DKIM::Signature& sig)
+	throw (DKIM::PermanentError)
+{
+#if OPENSSL_VERSION_NUMBER < 0x10100000
+	EVP_MD_CTX_cleanup(m_ctx_body);
+#endif
+
+	// create signature for our body (message data)
+	switch (sig.GetAlgorithm())
+	{
+		case DKIM::DKIM_A_SHA1:
+			EVP_DigestInit(m_ctx_body, EVP_sha1());
+			break;
+		case DKIM::DKIM_A_SHA256:
+			EVP_DigestInit(m_ctx_body, EVP_sha256());
+			break;
+	}
+
+	DKIM::Conversion::EVPDigest evpupd;
+	evpupd.ctx = m_ctx_body;
+
+	CanonicalizationBody(m_file,
+			sig.GetCanonModeBody(),
+			m_msg.GetBodyOffset(),
+			sig.GetBodySizeLimit(),
+			sig.GetBodySize(),
+			std::bind(&DKIM::Conversion::EVPDigest::update, &evpupd, std::placeholders::_1, std::placeholders::_2));
+
+	unsigned char md_value[EVP_MAX_MD_SIZE];
+	unsigned int md_len;
+	EVP_DigestFinal(m_ctx_body, md_value, &md_len);
+
+	if (sig.GetBodyHash().size() != md_len ||
+			memcmp(sig.GetBodyHash().c_str(), md_value, md_len) != 0)
+	{
+		throw DKIM::PermanentError("Body hash did not verify");
+	}
 }
 
 /*
