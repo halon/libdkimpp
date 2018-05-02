@@ -80,10 +80,17 @@ SignatoryOptions& SignatoryOptions::SetPrivateKey(const std::string& privatekey)
 			throw DKIM::PermanentError("BIO could not be created for RSA key");
 		BIO_write(o, privatekey.c_str(), privatekey.size());
 		(void) BIO_flush(o);
-		m_rsa = PEM_read_bio_RSAPrivateKey(o, NULL, NULL, NULL);
+		m_privateKey = PEM_read_bio_PrivateKey(o, NULL, NULL, NULL);
 		BIO_free_all(o);
-		if (!m_rsa)
+		if (!m_privateKey)
 			throw DKIM::PermanentError("RSA key could not be loaded from PEM");
+
+#if OPENSSL_VERSION_NUMBER < 0x10100000
+		if (m_privateKey->type != EVP_PKEY_RSA && m_privateKey->type != EVP_PKEY_RSA2)
+#else
+		if (EVP_PKEY_base_id(m_privateKey) != EVP_PKEY_RSA && EVP_PKEY_base_id(m_privateKey) != EVP_PKEY_RSA2)
+#endif
+			throw DKIM::PermanentError("Private key could not be loaded (key type must be RSA/RSA2)");
 	} else {
 		/*
 		 * Expect the data to be in DER format)
@@ -94,16 +101,16 @@ SignatoryOptions& SignatoryOptions::SetPrivateKey(const std::string& privatekey)
 		m_rsa = d2i_RSAPrivateKey(NULL, &tmp2, tmp.size());
 		if (!m_rsa)
 			throw DKIM::PermanentError("RSA key could not be loaded from DER");
+
+		m_privateKey = EVP_PKEY_new();
+		if (!m_privateKey)
+			throw DKIM::PermanentError("PKEY could not be loaded");
+
+		if (EVP_PKEY_assign_RSA(m_privateKey, m_rsa) != 1)
+			throw DKIM::PermanentError("RSA could not be assigned to PKEY");
+
+		m_rsa = NULL; // freed with pkey
 	}
-
-	m_privateKey = EVP_PKEY_new();
-	if (!m_privateKey)
-		throw DKIM::PermanentError("PKEY could not be loaded");
-
-	if (EVP_PKEY_assign_RSA(m_privateKey, m_rsa) != 1)
-		throw DKIM::PermanentError("RSA could not be assigned to PKEY");
-
-	m_rsa = NULL; // freed with pkey
 	return *this;
 }
 
