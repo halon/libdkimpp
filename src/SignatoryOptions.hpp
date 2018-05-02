@@ -61,8 +61,6 @@ namespace DKIM
 			{ return m_algorithm; }
 			const std::list<std::string>& GetHeaders() const
 			{ return m_headers; }
-			bool GetSignEmptyHeaders() const
-			{ return m_signEmptyHeaders; }
 			unsigned long GetBodyLength() const
 			{ return m_bodyLength; }
 			bool GetBodySignLength() const
@@ -83,7 +81,6 @@ namespace DKIM
 			Algorithm m_algorithm;
 
 			std::list<std::string> m_headers;
-			bool m_signEmptyHeaders;
 
 			unsigned long m_bodyLength;
 			bool m_bodySignLength;

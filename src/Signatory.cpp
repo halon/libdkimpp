@@ -133,11 +133,8 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 			transform(name.begin(), name.end(), name.begin(), tolower);
 
 			std::map<std::string, Message::HeaderList>::iterator head = headerCache.find(name);
-			if (head == headerCache.end() || head->second.empty())
+			if (head != headerCache.end() && !head->second.empty())
 			{
-				if (options.GetSignEmptyHeaders())
-					tmp = canonicalhead.FilterHeader(name + ":\r\n");
-			} else {
 				tmp = canonicalhead.FilterHeader(head->second.back()->GetHeader()) + "\r\n";
 				head->second.pop_back();
 			}

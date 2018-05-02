@@ -59,7 +59,6 @@ SignatoryOptions::SignatoryOptions()
 	m_headers.push_back("list-post");
 	m_headers.push_back("list-owner");
 	m_headers.push_back("list-archive");
-	m_signEmptyHeaders = false;
 
 	m_bodyLength = 0;	
 	m_bodySignLength = false;
