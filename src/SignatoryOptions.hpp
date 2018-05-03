@@ -50,6 +50,7 @@ namespace DKIM
 			SignatoryOptions& SetSignBodyLength(unsigned long bodylength);
 			SignatoryOptions& SetCanonModeHeader(CanonMode mode);
 			SignatoryOptions& SetCanonModeBody(CanonMode mode);
+			SignatoryOptions& SetARCInstance(unsigned long instance);
 
 			EVP_PKEY* GetPrivateKey() const
 			{ return m_privateKey; }
@@ -69,6 +70,8 @@ namespace DKIM
 			{ return m_canonHead; }
 			CanonMode GetCanonModeBody() const
 			{ return m_canonBody; }
+			unsigned long GetARCInstance() const
+			{ return m_arcInstance; }
 		private:
 			SignatoryOptions(const SignatoryOptions&);
 
@@ -84,6 +87,7 @@ namespace DKIM
 
 			unsigned long m_bodyLength;
 			bool m_bodySignLength;
+			unsigned long m_arcInstance;
 
 			CanonMode m_canonHead;
 			CanonMode m_canonBody;

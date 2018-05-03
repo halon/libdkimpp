@@ -62,6 +62,7 @@ SignatoryOptions::SignatoryOptions()
 
 	m_bodyLength = 0;	
 	m_bodySignLength = false;
+	m_arcInstance = 0;
 }
 
 SignatoryOptions::~SignatoryOptions()
@@ -153,6 +154,12 @@ SignatoryOptions& SignatoryOptions::SetSignBodyLength(unsigned long bodylength)
 {
 	m_bodyLength = bodylength;
 	m_bodySignLength = true;
+	return *this;
+}
+
+SignatoryOptions& SignatoryOptions::SetARCInstance(unsigned long instance)
+{
+	m_arcInstance = instance;
 	return *this;
 }
 
