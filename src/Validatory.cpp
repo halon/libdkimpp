@@ -81,7 +81,7 @@ void Validatory::GetSignature(const Message::HeaderList::const_iterator& headerI
 		DKIM::Signature& sig)	
 	throw (DKIM::PermanentError)
 {
-	sig.Parse((*headerIter)->GetHeader().substr((*headerIter)->GetValueOffset()));
+	sig.Parse(*headerIter);
 	CheckBodyHash(sig);
 }
 

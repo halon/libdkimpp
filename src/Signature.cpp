@@ -64,9 +64,9 @@ void Signature::Reset()
 	m_selector = "";
 }
 
-void Signature::Parse(const std::string& signature) throw (DKIM::PermanentError)
+void Signature::Parse(const std::shared_ptr<DKIM::Header> header) throw (DKIM::PermanentError)
 {
-	m_tagList.Parse(signature);
+	m_tagList.Parse(header->GetHeader().substr(header->GetValueOffset()));
 
 	/**
 	 * Validate Signature according to RFC-4871

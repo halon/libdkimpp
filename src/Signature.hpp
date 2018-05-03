@@ -23,10 +23,12 @@
 
 #include "DKIM.hpp"
 #include "TagList.hpp"
+#include "MailParser.hpp"
 
 #include <string>
 #include <list>
 #include <stdexcept>
+#include <memory.h>
 
 namespace DKIM
 {
@@ -40,7 +42,7 @@ namespace DKIM
 			{ Reset(); }
 
 			void Reset();
-			void Parse(const std::string& signature) throw (DKIM::PermanentError);
+			void Parse(const std::shared_ptr<DKIM::Header> header) throw (DKIM::PermanentError);
 
 			bool GetTag(const std::string& name, TagListEntry& tag) const
 			{ return m_tagList.GetTag(name, tag); }
