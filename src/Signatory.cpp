@@ -39,6 +39,7 @@ using DKIM::Util::StringFormat;
 
 #include <algorithm>
 #include <map>
+#include <set>
 
 Signatory::Signatory(std::istream& file)
 : m_file(file)
@@ -106,45 +107,35 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 
 	CanonicalizationHeader canonicalhead(options.GetCanonModeHeader());
 
-	std::list<std::string> headersToSign = options.GetHeaders();
+	std::set<std::string> headersToSign;
+	for (auto name : options.GetHeaders())
+	{
+		transform(name.begin(), name.end(), name.begin(), tolower);
+		headersToSign.insert(name);
+	}
+
 	std::list<std::string> signedHeaders;
 
 	bool signAll = false;
 	if (headersToSign.empty()) signAll = true;
 
 	// add all headers to our cache (they will be pop of the end)
-	std::map<std::string, Message::HeaderList> headerCache;
-	for (const auto & hIter : m_msg.GetHeaders())
+	const auto & headers = m_msg.GetHeaders();
+	for (auto h = headers.rbegin(); h != headers.rend(); ++h)
 	{
-		std::string name = hIter->GetName();
+		std::string name = (*h)->GetName();
 		transform(name.begin(), name.end(), name.begin(), tolower);
-
-		headerCache[name].push_back(hIter);
-		if (signAll)
-			headersToSign.push_back(name);
-	}
-
-	while (!headersToSign.empty())
-	{
-		std::string tmp;
-		std::string name = headersToSign.front();
 		if (!name.empty())
 		{
-			transform(name.begin(), name.end(), name.begin(), tolower);
-
-			std::map<std::string, Message::HeaderList>::iterator head = headerCache.find(name);
-			if (head != headerCache.end() && !head->second.empty())
-			{
-				tmp = canonicalhead.FilterHeader(head->second.back()->GetHeader()) + "\r\n";
-				head->second.pop_back();
-			}
+			if (!signAll && headersToSign.find(name) == headersToSign.end())
+				continue;
+			std::string tmp = canonicalhead.FilterHeader((*h)->GetHeader()) + "\r\n";
 			if (!tmp.empty())
 			{
 				EVP_SignUpdate(m_ctx_head, tmp.c_str(), tmp.size());
 				signedHeaders.push_back(name);
 			}
 		}
-		headersToSign.pop_front();
 	}
 
 	std::string dkimHeader;
@@ -161,7 +152,7 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 	for (std::list<std::string>::const_iterator i = signedHeaders.begin();
 		i != signedHeaders.end(); ++i)
 	{
-		bool insertColon = (i == signedHeaders.begin())?false:true;
+		bool insertColon = (i != signedHeaders.begin());
 		if (headerlist.size() + i->size() + (insertColon?1:0) > 80)
 		{
 			dkimHeader += headerlist + (insertColon?":":"") + "\r\n";
