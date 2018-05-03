@@ -60,6 +60,8 @@ int main(int argc, char* argv[])
 	std::string selector;
 	std::string domain;
 	std::string keyfile;
+	Validatory::ValidatorType type = Validatory::DKIM;
+	unsigned long arcInstance = 0;
 
 	// no arguments
 	if (argc < 2)
@@ -67,6 +69,8 @@ int main(int argc, char* argv[])
 
 	// longopts
 	static struct option longopts[] = {
+		{ "arc",	 	no_argument,		NULL,		'a'	},
+		{ "arcinstance",no_argument,		NULL,		'A'	},
 		{ "help",		no_argument,		NULL,		'h'	},
 		{ "validate",	no_argument,		NULL,		'v'	},
 		{ "selector",	required_argument,	NULL,		's'	},
@@ -79,9 +83,15 @@ int main(int argc, char* argv[])
 	opterr = 0;
 	optind = 0;
 	int ch;
-	while ((ch = getopt_long(argc, argv, "hvs:d:k:", longopts, NULL)) != -1) {
+	while ((ch = getopt_long(argc, argv, "aA:hvs:d:k:", longopts, NULL)) != -1) {
 		switch (ch)
 		{
+			case 'a':
+				type = Validatory::ARC;
+				break;
+			case 'A':
+				arcInstance = strtoul(optarg, nullptr, 10);
+				break;
 			case 'v':
 				validate = true;
 				break;
@@ -133,6 +143,7 @@ int main(int argc, char* argv[])
 						.SetPrivateKey(key)
 						.SetDomain(domain)
 						.SetSelector(selector)
+						.SetARCInstance(arcInstance)
 						.SetCanonModeHeader(DKIM::DKIM_C_RELAXED)
 						.SetCanonModeBody(DKIM::DKIM_C_RELAXED)
 						).c_str() );
@@ -148,7 +159,7 @@ int main(int argc, char* argv[])
 	for (int x = 0; x < argc; x++)
 	{
 		std::ifstream fp(argv[x]);
-		Validatory mail(fp);
+		Validatory mail(fp, type);
 
 		mail.CustomDNSResolver = MyResolver;
 

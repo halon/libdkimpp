@@ -41,7 +41,7 @@ using DKIM::TagListEntry;
 
 //#define DEBUG
 
-Validatory::Validatory(std::istream& stream)
+Validatory::Validatory(std::istream& stream, ValidatorType type)
 : CustomDNSResolver(NULL)
 , CustomDNSData(NULL)
 , m_file(stream)
@@ -60,9 +60,12 @@ Validatory::Validatory(std::istream& stream)
 		std::string headerName = (*i)->GetName();
 		transform(headerName.begin(), headerName.end(), headerName.begin(), tolower);
 
-		// collect all dkim-signatures
-		if (headerName == "dkim-signature")
+		// collect all signatures
+		if ((type == DKIM && headerName == "dkim-signature") ||
+			(type == ARC && headerName == "arc-message-signature"))
+		{
 			m_dkimHeaders.push_back(*i);
+		}
 	}
 }
 

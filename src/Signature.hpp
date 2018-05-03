@@ -91,6 +91,9 @@ namespace DKIM
 			const std::string& GetSelector() const
 			{ return m_selector; }
 
+			unsigned long GetARCInstance() const
+			{ return m_arcInstance; }
+
 		private:
 			TagList m_tagList;
 
@@ -107,6 +110,9 @@ namespace DKIM
 			bool m_bodySizeLimit;
 			QueryType m_queryType;
 			std::string m_selector;
+
+			bool m_arc;
+			unsigned long m_arcInstance;
 	};
 }
 

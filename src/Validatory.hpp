@@ -36,10 +36,11 @@ namespace DKIM
 	class Validatory
 	{
 		public:
+			typedef enum { DKIM, ARC } ValidatorType;
 			typedef std::shared_ptr<DKIM::Header> SignatureItem;
 			typedef std::list<SignatureItem> SignatureList;
 
-			Validatory(std::istream& file);
+			Validatory(std::istream& file, ValidatorType type = DKIM);
 			~Validatory();
 
 			void GetADSP(std::list<ADSP>& adsp)

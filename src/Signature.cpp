@@ -38,6 +38,7 @@ using DKIM::Util::StringFormat;
 void Signature::Reset()
 {
 	m_tagList.Reset();
+	m_arc = false;
 
 	// tag-a
 	m_algorithm = DKIM_A_SHA256;
@@ -62,11 +63,18 @@ void Signature::Reset()
 	m_queryType = DKIM_Q_DNSTXT;
 	// tag-s
 	m_selector = "";
+	// tag-i-arc
+	m_arcInstance = 0;
 }
 
 void Signature::Parse(const std::shared_ptr<DKIM::Header> header) throw (DKIM::PermanentError)
 {
 	m_tagList.Parse(header->GetHeader().substr(header->GetValueOffset()));
+
+	std::string headerName = header->GetName();
+	transform(headerName.begin(), headerName.end(), headerName.begin(), tolower);
+	if (headerName == "arc-message-signature")
+		m_arc = true;
 
 	/**
 	 * Validate Signature according to RFC-4871
@@ -80,15 +88,18 @@ void Signature::Parse(const std::shared_ptr<DKIM::Header> header) throw (DKIM::P
 	transform(m_domain.begin(), m_domain.end(), m_domain.begin(), tolower);
 
 	// Version
-	TagListEntry v;
-	if (!m_tagList.GetTag("v", v))
-		throw DKIM::PermanentError("Missing version (v)");
+	if (!m_arc)
+	{
+		TagListEntry v;
+		if (!m_tagList.GetTag("v", v))
+			throw DKIM::PermanentError("Missing version (v)");
 
-	if (v.GetValue() != "1")
-		throw DKIM::PermanentError(StringFormat("Unsupported version %s (v supports 1)",
-					v.GetValue().c_str()
-					)
-				);
+		if (v.GetValue() != "1")
+			throw DKIM::PermanentError(StringFormat("Unsupported version %s (v supports 1)",
+						v.GetValue().c_str()
+						)
+					);
+	}
 
 	// Algorithm
 	TagListEntry a;
@@ -178,34 +189,46 @@ void Signature::Parse(const std::shared_ptr<DKIM::Header> header) throw (DKIM::P
 		throw DKIM::PermanentError("From: header must be included in signature");
 
 	// Identity of the user or agent
-	TagListEntry i;
-	if (!m_tagList.GetTag("i", i))
+	if (m_arc)
 	{
-		m_mailLocalPart = "";
-		m_mailDomain = m_domain;
-	} else {
-		std::string mail = QuotedPrintable::Decode(i.GetValue());
-
-		size_t mailsep = mail.find("@");
-		if (mailsep == std::string::npos)
-			throw DKIM::PermanentError("Missing a local-part (i)");
-
-		m_mailLocalPart = mail.substr(0, mailsep);
-
-		// m_mailDomain should be matched in lower-case
-		m_mailDomain = mail.substr(mailsep+1);
-		transform(m_mailDomain.begin(), m_mailDomain.end(), m_mailDomain.begin(), tolower);
-
-		if (m_mailDomain == m_domain) {
-			// same domain		
-		} else if (m_mailDomain.size() > m_domain.size() && ("." + m_domain) == m_mailDomain.substr(m_mailDomain.size() - m_domain.size() - 1)) {
-			// same sub-domain (.domain =~ my.sub.domain)
+		TagListEntry i;
+		if (!m_tagList.GetTag("i", i))
+			throw DKIM::PermanentError("Missing ARC instance (i)");
+		m_arcInstance = strtoul(i.GetValue().c_str(), nullptr, 10);
+		if (m_arcInstance < 1 || m_arcInstance > 50)
+			throw DKIM::PermanentError("ARC instance (i) out of range 1-50");
+	}
+	else
+	{
+		TagListEntry i;
+		if (!m_tagList.GetTag("i", i))
+		{
+			m_mailLocalPart = "";
+			m_mailDomain = m_domain;
 		} else {
-			throw DKIM::PermanentError(StringFormat("Domain %s is not a (sub)domain of %s (i does not match d)",
-					m_mailDomain.c_str(),
-					m_domain.c_str()
-					)
-				);
+			std::string mail = QuotedPrintable::Decode(i.GetValue());
+
+			size_t mailsep = mail.find("@");
+			if (mailsep == std::string::npos)
+				throw DKIM::PermanentError("Missing a local-part (i)");
+
+			m_mailLocalPart = mail.substr(0, mailsep);
+
+			// m_mailDomain should be matched in lower-case
+			m_mailDomain = mail.substr(mailsep+1);
+			transform(m_mailDomain.begin(), m_mailDomain.end(), m_mailDomain.begin(), tolower);
+
+			if (m_mailDomain == m_domain) {
+				// same domain
+			} else if (m_mailDomain.size() > m_domain.size() && ("." + m_domain) == m_mailDomain.substr(m_mailDomain.size() - m_domain.size() - 1)) {
+				// same sub-domain (.domain =~ my.sub.domain)
+			} else {
+				throw DKIM::PermanentError(StringFormat("Domain %s is not a (sub)domain of %s (i does not match d)",
+						m_mailDomain.c_str(),
+						m_domain.c_str()
+						)
+					);
+			}
 		}
 	}
 
