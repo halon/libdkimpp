@@ -53,6 +53,9 @@ Validatory::Validatory(std::istream& stream, ValidatorType type)
 
 	while (m_msg.ParseLine(m_file) && !m_msg.IsDone()) { }
 
+	if (type == NONE)
+		return;
+
 	DKIM::Message::HeaderList::const_iterator i;
 	for (i = m_msg.GetHeaders().begin(); i != m_msg.GetHeaders().end(); ++i)
 	{

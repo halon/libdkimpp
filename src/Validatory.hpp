@@ -36,7 +36,7 @@ namespace DKIM
 	class Validatory
 	{
 		public:
-			typedef enum { DKIM, ARC } ValidatorType;
+			typedef enum { DKIM, ARC, NONE } ValidatorType;
 			typedef std::shared_ptr<DKIM::Header> SignatureItem;
 			typedef std::list<SignatureItem> SignatureList;
 
