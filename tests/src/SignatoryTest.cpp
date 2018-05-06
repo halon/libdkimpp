@@ -61,6 +61,7 @@ class SignatoryTest : public CppUnit::TestFixture {
 		DKIM::PublicKey pub;
 		CPPUNIT_ASSERT_NO_THROW ( pub.Parse(DKIMPublicKey) );
 		CPPUNIT_ASSERT_NO_THROW ( myValidatory.CheckSignature(siglist.begin(), sig, pub) );
+		CPPUNIT_ASSERT_NO_THROW ( myValidatory.CheckSignature(*(siglist.begin()), sig, pub) );
 	}
 };
 

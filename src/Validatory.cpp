@@ -177,7 +177,7 @@ void Validatory::CheckBodyHash(const DKIM::Signature& sig)
  *
  * Validate the message according to rfc4871
  */
-void Validatory::CheckSignature(const Message::HeaderList::const_iterator& headerIter,
+void Validatory::CheckSignature(const std::shared_ptr<DKIM::Header> header,
 		const DKIM::Signature& sig,
 		const DKIM::PublicKey& pub)
 	throw (DKIM::PermanentError)
@@ -266,8 +266,8 @@ void Validatory::CheckSignature(const Message::HeaderList::const_iterator& heade
 	}
 
 	// add our dkim-signature to the calculation (remove the "b"-tag)
-	std::string h = (*headerIter)->GetHeader().substr(0, (*headerIter)->GetValueOffset());
-	std::string v = (*headerIter)->GetHeader().substr((*headerIter)->GetValueOffset());
+	std::string h = header->GetHeader().substr(0, header->GetValueOffset());
+	std::string v = header->GetHeader().substr(header->GetValueOffset());
 
 	DKIM::TagListEntry bTag;
 	sig.GetTag("b", bTag);
@@ -348,7 +348,7 @@ void Validatory::GetADSP(std::list<DKIM::ADSP>& adsp)
 		try {
 			GetSignature(i, sig);
 			GetPublicKey(sig, pub);
-			CheckSignature(i, sig, pub);
+			CheckSignature(*i, sig, pub);
 
 			dkimResult[sig.GetDomain()] = std::make_pair(1, "pass");
 		} catch (DKIM::TemporaryError& e) {

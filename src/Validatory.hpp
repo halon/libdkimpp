@@ -60,6 +60,14 @@ namespace DKIM
 			void CheckSignature(const Message::HeaderList::const_iterator& headerIter,
 					const DKIM::Signature& sig,
 					const DKIM::PublicKey& pub)
+				throw (DKIM::PermanentError)
+			{
+				CheckSignature(*headerIter, sig, pub);
+			}
+
+			void CheckSignature(const std::shared_ptr<DKIM::Header> header,
+					const DKIM::Signature& sig,
+					const DKIM::PublicKey& pub)
 				throw (DKIM::PermanentError);
 
 			const SignatureList& GetSignatures() const
