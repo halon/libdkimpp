@@ -94,6 +94,9 @@ namespace DKIM
 			unsigned long GetARCInstance() const
 			{ return m_arcInstance; }
 
+			bool IsARC() const
+			{ return m_arc; }
+
 		private:
 			TagList m_tagList;
 

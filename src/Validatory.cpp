@@ -194,9 +194,12 @@ void Validatory::CheckSignature(const std::shared_ptr<DKIM::Header> header,
 		if (find(pub.GetAlgorithms().begin(), pub.GetAlgorithms().end(), sig.GetAlgorithm()) == pub.GetAlgorithms().end())
 			throw DKIM::PermanentError("Algorithm is not allowed");
 
-	if (find(pub.GetFlags().begin(), pub.GetFlags().end(), "s") != pub.GetFlags().end())
-		if (sig.GetDomain() != sig.GetMailDomain())
-			throw DKIM::PermanentError("Domain must match sub-domain (flag s)");
+	if (!sig.IsARC())
+	{
+		if (find(pub.GetFlags().begin(), pub.GetFlags().end(), "s") != pub.GetFlags().end())
+			if (sig.GetDomain() != sig.GetMailDomain())
+				throw DKIM::PermanentError("Domain must match sub-domain (flag s)");
+	}
 
 	/*
 	 If a DKIM verifier finds a selector record that has an empty "g" field ("g=;")
