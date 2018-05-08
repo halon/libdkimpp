@@ -41,12 +41,18 @@ std::string DKIM::Tokenizer::ReadWhiteSpace(std::istream& stream, WhiteSpaceType
 				{
 					_s += (char)stream.get(); // read '\r'
 
-					if (stream.peek() != '\n')
-						throw DKIM::PermanentError(StringFormat("CR without matching LF, 0x%x at position %zu",
-									stream.peek(),
-									(size_t)stream.tellg()
-									)
-								);
+					int peek = stream.peek();
+					if (peek != '\n')
+					{
+						if (peek != EOF)
+							throw DKIM::PermanentError(StringFormat("CR without matching LF, 0x%x at position %zu",
+										stream.peek(),
+										(size_t)stream.tellg()
+										)
+									);
+						else
+							throw DKIM::PermanentError("CR without matching LF, at the END");
+					}
 
 					_s += (char)stream.get(); // read '\n'
 					return _s;
