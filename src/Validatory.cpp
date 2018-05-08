@@ -134,7 +134,7 @@ void Validatory::GetPublicKey(const DKIM::Signature& sig,
 /*
  * CheckBodyHash()
  *
- * Validate the message according to rfc4871
+ * Validate the message according to rfc6376
  */
 void Validatory::CheckBodyHash(const DKIM::Signature& sig)
 	throw (DKIM::PermanentError)
@@ -178,7 +178,7 @@ void Validatory::CheckBodyHash(const DKIM::Signature& sig)
 /*
  * CheckSignature()
  *
- * Validate the message according to rfc4871
+ * Validate the message according to rfc6376
  */
 void Validatory::CheckSignature(const std::shared_ptr<DKIM::Header> header,
 		const DKIM::Signature& sig,
@@ -199,31 +199,6 @@ void Validatory::CheckSignature(const std::shared_ptr<DKIM::Header> header,
 		if (find(pub.GetFlags().begin(), pub.GetFlags().end(), "s") != pub.GetFlags().end())
 			if (sig.GetDomain() != sig.GetMailDomain())
 				throw DKIM::PermanentError("Domain must match sub-domain (flag s)");
-	}
-
-	/*
-	 If a DKIM verifier finds a selector record that has an empty "g" field ("g=;")
-	 and it does not have a "v" field ("v=DKIM1;") at its beginning, it is faced with deciding if this record was
-
-	 1. from a DK signer that transitioned to supporting DKIM but forgot to remove the "g"
-	 	field (so that it could be used by both DK and DKIM verifiers), or
-	 2. from a DKIM signer that truly meant to use the empty "g" field but forgot to put in
-	 	the "v" field. It is RECOMMENDED that you treat such records using the first
-		interpretation, and treat such records as if the signer did not have a "g" field in the record.
-	*/
-
-	// if we have a "g"-tag
-	if (find(pub.GetFlags().begin(), pub.GetFlags().end(), "g") != pub.GetFlags().end())
-	{
-		// if it's empty... and we don't have a version...
-		if (pub.GetMailLocalPart().empty() && find(pub.GetFlags().begin(), pub.GetFlags().end(), "v") == pub.GetFlags().end())
-		{
-			// do the RECOMMENDED interpretation and treat such records as if the signer did not have a "g" field in the record.
-		} else
-		{
-			if (DKIM::Util::MatchWithWildCard(pub.GetMailLocalPart(), sig.GetMailLocalPart()) != true)
-				throw DKIM::PermanentError("Unmatched local-part");
-		}
 	}
 
 	// create signature for our header

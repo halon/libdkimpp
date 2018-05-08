@@ -77,7 +77,7 @@ void Signature::Parse(const std::shared_ptr<DKIM::Header> header) throw (DKIM::P
 		m_arc = true;
 
 	/**
-	 * Validate Signature according to RFC-4871
+	 * Validate Signature according to RFC-6376
 	 */
 
 	// Domain of the signing entity

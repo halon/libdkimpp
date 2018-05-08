@@ -34,8 +34,6 @@ void PublicKey::Reset()
 {
 	m_tagList.Reset();
 
-	// tag-g
-	m_localPart = "*";
 	// tag-h
 	m_algorithms.clear();
 	// tag-p
@@ -52,7 +50,7 @@ void PublicKey::Parse(const std::string& signature) throw (DKIM::PermanentError)
 	m_tagList.Parse(signature);
 
 	/**
-	 * Validate Signature according to RFC-4871
+	 * Validate Signature according to RFC-6376
 	 */
 
 	// Version
@@ -65,11 +63,6 @@ void PublicKey::Parse(const std::string& signature) throw (DKIM::PermanentError)
 						)
 					);
 	}
-
-	// Granularity of the key (localpart)
-	TagListEntry g;
-	if (m_tagList.GetTag("g", g))
-		m_localPart	= g.GetValue();
 
 	// Acceptable hash algorithms
 	TagListEntry h;

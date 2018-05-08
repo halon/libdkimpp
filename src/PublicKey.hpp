@@ -54,9 +54,6 @@ namespace DKIM {
 			const std::list<Algorithm>& GetAlgorithms() const
 			{ return m_algorithms; }
 
-			const std::string& GetMailLocalPart() const
-			{ return m_localPart; }
-
 			EVP_PKEY* GetPublicKey() const
 			{ return m_publicKey; }
 
@@ -78,7 +75,6 @@ namespace DKIM {
 			TagList m_tagList;
 
 			std::list<Algorithm> m_algorithms;
-			std::string m_localPart;
 			EVP_PKEY* m_publicKey;
 			std::list<ServiceType> m_serviceType;
 			std::list<std::string> m_flags;

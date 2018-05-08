@@ -1,4 +1,4 @@
-libdkim++ is a lightweight and portable DKIM (RFC4871) library for *NIX,
+libdkim++ is a lightweight and portable DKIM (RFC6376) library for *NIX,
 supporting both signing and DMARC/SDID/ADSP verification sponsored and
 used by Halon Security's (http://halon.io) SMTP platform.
 libdkim++ has extensive unit test coverage and aims to fully comply with
