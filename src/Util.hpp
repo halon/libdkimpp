@@ -27,7 +27,6 @@
 
 namespace DKIM {
 	namespace Util {
-		bool MatchWithWildCard(const std::string& pattern, const std::string& find);
 		std::string CanonMode2String(CanonMode mode);
 		std::string Algorithm2String(Algorithm algorithm);
 		std::string StringFormat(const char* fmt, ...)

@@ -44,23 +44,21 @@ which should result in this output:
 Running tests...
 Test project /home/erik/Desktop/libdkimpp/build
    Start 1: QuotedPrintableTest
-1/9 Test #1: QuotedPrintableTest ..............   Passed    0.00 sec
+1/8 Test #1: QuotedPrintableTest ..............   Passed    0.00 sec
    Start 2: Base64Test
-2/9 Test #2: Base64Test .......................   Passed    0.00 sec
+2/8 Test #2: Base64Test .......................   Passed    0.00 sec
    Start 3: CanonicalizationTest
-3/9 Test #3: CanonicalizationTest .............   Passed    0.00 sec
+3/8 Test #3: CanonicalizationTest .............   Passed    0.00 sec
    Start 4: MailParserTest
-4/9 Test #4: MailParserTest ...................   Passed    0.00 sec
+4/8 Test #4: MailParserTest ...................   Passed    0.00 sec
    Start 5: TokenizerTest
-5/9 Test #5: TokenizerTest ....................   Passed    0.00 sec
-   Start 6: UtilTest
-6/9 Test #6: UtilTest .........................   Passed    0.00 sec
-   Start 7: EncodedWordTest
-7/9 Test #7: EncodedWordTest ..................   Passed    0.00 sec
-   Start 8: SignatoryTest
-8/9 Test #8: SignatoryTest ....................   Passed    0.04 sec
-   Start 9: TagListTest
-9/9 Test #9: TagListTest ......................   Passed    0.00 sec
-100% tests passed, 0 tests failed out of 9
+5/8 Test #5: TokenizerTest ....................   Passed    0.00 sec
+   Start 6: EncodedWordTest
+6/8 Test #6: EncodedWordTest ..................   Passed    0.00 sec
+   Start 7: SignatoryTest
+7/8 Test #7: SignatoryTest ....................   Passed    0.04 sec
+   Start 8: TagListTest
+8/8 Test #8: TagListTest ......................   Passed    0.00 sec
+100% tests passed, 0 tests failed out of 8
 Total Test time (real) =   0.08 sec
 ```

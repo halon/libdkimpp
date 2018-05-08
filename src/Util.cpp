@@ -24,27 +24,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-bool DKIM::Util::MatchWithWildCard(const std::string& pattern, const std::string& find)
-{
-	/**
-	 * g= tag is allowed to include one single "*" character to match zero or more
-	 * arbitrary characters. an empty g= does never match.
-	 *
-	 * This is behaviour is overridden in Validator.cpp if version is not included,
-	 * to be compatible with DomainKeys (for now...)
-	 */
-	if (pattern == "") return false;
-	if (pattern == "*") return true;
-	if (pattern == find) return true;
-	if (pattern.find("*") == std::string::npos) return false;
-	if (pattern.size() > find.size()+1) return false;
-
-	size_t wcc = pattern.find("*");
-	if (pattern.substr(0, wcc) != find.substr(0, wcc)) return false;
-	if (pattern.substr(wcc+1) != find.substr(find.size() - pattern.substr(wcc+1).size())) return false;
-	return true;
-}
-
 std::string DKIM::Util::CanonMode2String(CanonMode mode)
 {
 	switch (mode)
