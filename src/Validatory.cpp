@@ -42,8 +42,7 @@ using DKIM::TagListEntry;
 //#define DEBUG
 
 Validatory::Validatory(std::istream& stream, ValidatorType type)
-: CustomDNSResolver(NULL)
-, CustomDNSData(NULL)
+: CustomDNSData(NULL)
 , m_file(stream)
 , m_ctx_head(NULL)
 , m_ctx_body(NULL)

@@ -30,6 +30,7 @@
 #include <openssl/evp.h>
 #include <openssl/pem.h>
 #include <openssl/err.h>
+#include <functional>
 
 namespace DKIM
 {
@@ -75,7 +76,7 @@ namespace DKIM
 				return m_dkimHeaders;
 			}
 
-			bool (*CustomDNSResolver)(const std::string&, std::string&, void*);
+			std::function<bool(const std::string&, std::string&, void*)> CustomDNSResolver;
 			void *CustomDNSData;
 		private:
 			std::istream& m_file;
