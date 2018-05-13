@@ -25,7 +25,6 @@
 #include "PublicKey.hpp"
 #include "Signature.hpp"
 #include "MailParser.hpp"
-#include "ADSP.hpp"
 
 #include <openssl/evp.h>
 #include <openssl/pem.h>
@@ -43,9 +42,6 @@ namespace DKIM
 
 			Validatory(std::istream& file, ValidatorType type = DKIM);
 			~Validatory();
-
-			void GetADSP(std::list<ADSP>& adsp)
-				throw (DKIM::PermanentError, DKIM::TemporaryError);
 
 			void GetSignature(const Message::HeaderList::const_iterator& headerIter,
 					DKIM::Signature& sig)

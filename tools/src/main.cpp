@@ -1,7 +1,6 @@
 #include "Validatory.hpp"
 
 using DKIM::Validatory;
-using DKIM::ADSP;
 
 #include "Signatory.hpp"
 
@@ -163,21 +162,7 @@ int main(int argc, char* argv[])
 
 		mail.CustomDNSResolver = MyResolver;
 
-		// first check ADSP status
-		try {
-			std::list<ADSP> adsp;
-			mail.GetADSP(adsp);
-			for (std::list<ADSP>::const_iterator i = adsp.begin(); i != adsp.end(); ++i)
-			{
-				printf("[%s][ADSP][%s] %s/%s\n", argv[x], i->GetDomain().c_str(), i->GetResultAsString().c_str(), i->GetReason().c_str());
-			}
-		} catch (DKIM::TemporaryError& e) {
-			printf("[%s][ADSP] TEMPERR:%s\n", argv[x], e.what());
-		} catch (DKIM::PermanentError& e) {
-			printf("[%s][ADSP] PERMERR:%s\n", argv[x], e.what());
-		}
-
-		// then list all valid SDID's
+		// list all valid SDID's
 		for (Validatory::SignatureList::const_iterator i = mail.GetSignatures().begin();
 				i != mail.GetSignatures().end(); ++i)
 		{
