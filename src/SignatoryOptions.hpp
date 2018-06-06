@@ -60,6 +60,8 @@ namespace DKIM
 			{ return m_selector; }
 			Algorithm GetAlgorithm() const
 			{ return m_algorithm; }
+			SignatureAlgorithm GetSignatureAlgorithm() const
+			{ return DKIM_SA_RSA; }
 			const std::list<std::string>& GetHeaders() const
 			{ return m_headers; }
 			unsigned long GetBodyLength() const

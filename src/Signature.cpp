@@ -42,6 +42,7 @@ void Signature::Reset()
 
 	// tag-a
 	m_algorithm = DKIM_A_SHA256;
+	m_signatureAlgorithm = DKIM_SA_RSA;
 	// tag-b
 	m_b = "";
 	// tag-bh
@@ -107,9 +108,15 @@ void Signature::Parse(const std::shared_ptr<DKIM::Header> header) throw (DKIM::P
 		throw DKIM::PermanentError("Missing algorithm (a)");
 
 	if (a.GetValue() == "rsa-sha256")
+	{
 		m_algorithm = DKIM_A_SHA256;
+		m_signatureAlgorithm = DKIM_SA_RSA;
+	}
 	else if (a.GetValue() == "rsa-sha1")
+	{
 		m_algorithm = DKIM_A_SHA1;
+		m_signatureAlgorithm = DKIM_SA_RSA;
+	}
 	else
 		throw DKIM::PermanentError(StringFormat("Unsupported signature algorithm %s (a supports rsa-sha1, rsa-sha256)",
 					a.GetValue().c_str()

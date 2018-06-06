@@ -141,10 +141,10 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 	std::string dkimHeader;
 	unsigned long arcInstance = options.GetARCInstance();
 	if (arcInstance)
-		dkimHeader += "ARC-Message-Signature: i=" + StringFormat("%lu", arcInstance) + "; a=" + Algorithm2String(options.GetAlgorithm()) + "; c="
+		dkimHeader += "ARC-Message-Signature: i=" + StringFormat("%lu", arcInstance) + "; a=" + Algorithm2String(options.GetSignatureAlgorithm(), options.GetAlgorithm()) + "; c="
 					+ CanonMode2String(options.GetCanonModeHeader()) + "/" + CanonMode2String(options.GetCanonModeBody()) + ";\r\n";
 	else
-		dkimHeader += "DKIM-Signature: v=1; a=" + Algorithm2String(options.GetAlgorithm()) + "; c="
+		dkimHeader += "DKIM-Signature: v=1; a=" + Algorithm2String(options.GetSignatureAlgorithm(), options.GetAlgorithm()) + "; c="
 					+ CanonMode2String(options.GetCanonModeHeader()) + "/" + CanonMode2String(options.GetCanonModeBody()) + ";\r\n";
 
 	std::string limit;

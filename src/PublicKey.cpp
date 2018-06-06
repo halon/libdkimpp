@@ -39,6 +39,7 @@ void PublicKey::Reset()
 	// tag-p
 	EVP_PKEY_free(m_publicKey);
 	m_publicKey = NULL;
+	m_signatureAlgorithm = DKIM_SA_RSA;
 	// tag-s
 	m_serviceType.clear();
 	// tag-t
@@ -86,8 +87,10 @@ void PublicKey::Parse(const std::string& signature) throw (DKIM::PermanentError)
 	TagListEntry k;
 	if (m_tagList.GetTag("k", k))
 	{
-		if (k.GetValue() != "rsa")
-			throw DKIM::PermanentError(StringFormat("Unsupported key type %s (k supports rsa)",
+		if (k.GetValue() == "rsa")
+			m_signatureAlgorithm = DKIM_SA_RSA;
+		else
+			throw DKIM::PermanentError(StringFormat("Unsupported key type %s (k supports rsa and ed25519)",
 						k.GetValue().c_str()
 						)
 					);
@@ -104,19 +107,26 @@ void PublicKey::Parse(const std::string& signature) throw (DKIM::PermanentError)
 	std::string ptmp = p.GetValue();
 	ptmp.erase(remove_if(ptmp.begin(), ptmp.end(), isspace), ptmp.end());
 
-	std::string tmp = Base64_Decode(ptmp);
-	const unsigned char *tmp2 = (const unsigned char*)tmp.c_str();
-	m_publicKey = d2i_PUBKEY(NULL, &tmp2, tmp.size());
+	switch (m_signatureAlgorithm)
+	{
+		case DKIM_SA_RSA:
+		{
+			std::string tmp = Base64_Decode(ptmp);
+			const unsigned char *tmp2 = (const unsigned char*)tmp.c_str();
+			m_publicKey = d2i_PUBKEY(NULL, &tmp2, tmp.size());
 
-	if (m_publicKey == NULL)
-		throw DKIM::PermanentError("Public key could not be loaded (invalid DER data)");
+			if (m_publicKey == NULL)
+				throw DKIM::PermanentError("Public key could not be loaded (invalid DER data)");
 
 #if OPENSSL_VERSION_NUMBER < 0x10100000
-	if (m_publicKey->type != EVP_PKEY_RSA && m_publicKey->type != EVP_PKEY_RSA2)
+			if (m_publicKey->type != EVP_PKEY_RSA && m_publicKey->type != EVP_PKEY_RSA2)
 #else
-	if (EVP_PKEY_base_id(m_publicKey) != EVP_PKEY_RSA && EVP_PKEY_base_id(m_publicKey) != EVP_PKEY_RSA2)
+				if (EVP_PKEY_base_id(m_publicKey) != EVP_PKEY_RSA && EVP_PKEY_base_id(m_publicKey) != EVP_PKEY_RSA2)
 #endif
-		throw DKIM::PermanentError("Public key could not be loaded (key type must be RSA/RSA2)");
+					throw DKIM::PermanentError("Public key could not be loaded (key type must be RSA/RSA2)");
+		}
+		break;
+	}
 
 	// Service Type
 	TagListEntry s;

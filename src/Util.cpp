@@ -36,16 +36,26 @@ std::string DKIM::Util::CanonMode2String(CanonMode mode)
 	return "unknown";
 }
 
-std::string DKIM::Util::Algorithm2String(Algorithm algorithm)
+std::string DKIM::Util::Algorithm2String(SignatureAlgorithm signatureAlgorithm, Algorithm algorithm)
 {
+	std::string alg;
+	switch (signatureAlgorithm)
+	{
+		case DKIM::DKIM_SA_RSA:
+			alg += "rsa";
+		break;
+	}
+	alg += "-";
 	switch (algorithm)
 	{
 		case DKIM::DKIM_A_SHA1:
-			return "rsa-sha1";
+			alg += "sha1";
+		break;
 		case DKIM::DKIM_A_SHA256:
-			return "rsa-sha256";
+			alg += "sha256";
+		break;
 	}
-	return "unknown";
+	return alg;
 }
 
 std::string DKIM::Util::StringFormat(const char* fmt, ...)

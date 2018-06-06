@@ -193,6 +193,9 @@ void Validatory::CheckSignature(const std::shared_ptr<DKIM::Header> header,
 		if (find(pub.GetAlgorithms().begin(), pub.GetAlgorithms().end(), sig.GetAlgorithm()) == pub.GetAlgorithms().end())
 			throw DKIM::PermanentError("Algorithm is not allowed");
 
+	if (sig.GetSignatureAlgorithm() != pub.GetSignatureAlgorithm())
+		throw DKIM::PermanentError("Signature algorithm type mismatch");
+
 	if (!sig.IsARC())
 	{
 		if (find(pub.GetFlags().begin(), pub.GetFlags().end(), "s") != pub.GetFlags().end())

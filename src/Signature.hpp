@@ -55,6 +55,9 @@ namespace DKIM
 			Algorithm GetAlgorithm() const
 			{ return m_algorithm; }
 
+			SignatureAlgorithm GetSignatureAlgorithm() const
+			{ return m_signatureAlgorithm; }
+
 			const std::string& GetSignatureData() const
 			{ return m_b; }
 
@@ -101,6 +104,7 @@ namespace DKIM
 			TagList m_tagList;
 
 			Algorithm m_algorithm;
+			SignatureAlgorithm m_signatureAlgorithm;
 			std::string m_b;
 			std::string m_bh;
 			CanonMode m_header;
