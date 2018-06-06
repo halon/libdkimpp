@@ -204,13 +204,16 @@ void Validatory::CheckSignature(const std::shared_ptr<DKIM::Header> header,
 	}
 
 	// create signature for our header
+	int md_nid = 0;
 	switch (sig.GetAlgorithm())
 	{
 		case DKIM::DKIM_A_SHA1:
-			EVP_VerifyInit(m_ctx_head, EVP_sha1());
+			EVP_DigestInit(m_ctx_head, EVP_sha1());
+			md_nid = NID_sha1;
 			break;
 		case DKIM::DKIM_A_SHA256:
-			EVP_VerifyInit(m_ctx_head, EVP_sha256());
+			EVP_DigestInit(m_ctx_head, EVP_sha256());
+			md_nid = NID_sha256;
 			break;
 	}
 
@@ -245,7 +248,7 @@ void Validatory::CheckSignature(const std::shared_ptr<DKIM::Header> header,
 #endif
 		tmp = canonicalhead.FilterHeader(head->second.back()->GetHeader()) + "\r\n";
 		head->second.pop_back();
-		EVP_VerifyUpdate(m_ctx_head, tmp.c_str(), tmp.size());
+		EVP_DigestUpdate(m_ctx_head, tmp.c_str(), tmp.size());
 	}
 
 	// add our dkim-signature to the calculation (remove the "b"-tag)
@@ -260,20 +263,36 @@ void Validatory::CheckSignature(const std::shared_ptr<DKIM::Header> header,
 #ifdef DEBUG
 	printf("[%s]\n", tmp.c_str());
 #endif
-	EVP_VerifyUpdate(m_ctx_head, tmp.c_str(), tmp.size());
+	EVP_DigestUpdate(m_ctx_head, tmp.c_str(), tmp.size());
 
-	// verify the header signature
-	if (EVP_VerifyFinal(m_ctx_head,
-				(const unsigned char*)sig.GetSignatureData().c_str(),
-				sig.GetSignatureData().size(),
-				pub.GetPublicKey()
-				) != 1)
-		throw DKIM::PermanentError("Signature did not verify");
+	unsigned char md[EVP_MAX_MD_SIZE];
+	unsigned int md_len;
+	EVP_DigestFinal_ex(m_ctx_head, md, &md_len);
+
 #if OPENSSL_VERSION_NUMBER < 0x10100000
 	EVP_MD_CTX_cleanup(m_ctx_head);
 #else
 	EVP_MD_CTX_reset(m_ctx_head);
 #endif
+
+	// verify the header signature
+	switch (sig.GetSignatureAlgorithm())
+	{
+		case DKIM::DKIM_SA_RSA:
+		{
+			RSA* rsa = EVP_PKEY_get1_RSA(pub.GetPublicKey());
+			int r = RSA_verify(md_nid,
+						md,
+						md_len,
+						(const unsigned char *)sig.GetSignatureData().c_str(),
+						(unsigned int)sig.GetSignatureData().size(),
+						rsa);
+			RSA_free(rsa);
+			if (r != 1)
+				throw DKIM::PermanentError("Signature did not verify");
+		}
+		break;
+	}
 
 	// success!
 }
