@@ -268,7 +268,7 @@ void Validatory::CheckSignature(const std::shared_ptr<DKIM::Header> header,
 
 	unsigned char md[EVP_MAX_MD_SIZE];
 	unsigned int md_len;
-	EVP_DigestFinal_ex(m_ctx_head, md, &md_len);
+	EVP_DigestFinal(m_ctx_head, md, &md_len);
 
 #if OPENSSL_VERSION_NUMBER < 0x10100000
 	EVP_MD_CTX_cleanup(m_ctx_head);
