@@ -287,7 +287,6 @@ void Validatory::CheckSignature(const std::shared_ptr<DKIM::Header> header,
 						(const unsigned char *)sig.GetSignatureData().c_str(),
 						(unsigned int)sig.GetSignatureData().size(),
 						rsa);
-			RSA_free(rsa);
 			if (r != 1)
 				throw DKIM::PermanentError("Signature did not verify");
 		}
