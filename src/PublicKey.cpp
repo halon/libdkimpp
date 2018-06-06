@@ -39,6 +39,7 @@ void PublicKey::Reset()
 	// tag-p
 	EVP_PKEY_free(m_publicKey);
 	m_publicKey = NULL;
+	m_publicKeyED25519.clear();
 	m_signatureAlgorithm = DKIM_SA_RSA;
 	// tag-s
 	m_serviceType.clear();
@@ -89,6 +90,8 @@ void PublicKey::Parse(const std::string& signature) throw (DKIM::PermanentError)
 	{
 		if (k.GetValue() == "rsa")
 			m_signatureAlgorithm = DKIM_SA_RSA;
+		else if (k.GetValue() == "ed25519")
+			m_signatureAlgorithm = DKIM_SA_ED25519;
 		else
 			throw DKIM::PermanentError(StringFormat("Unsupported key type %s (k supports rsa and ed25519)",
 						k.GetValue().c_str()
@@ -124,6 +127,14 @@ void PublicKey::Parse(const std::string& signature) throw (DKIM::PermanentError)
 				if (EVP_PKEY_base_id(m_publicKey) != EVP_PKEY_RSA && EVP_PKEY_base_id(m_publicKey) != EVP_PKEY_RSA2)
 #endif
 					throw DKIM::PermanentError("Public key could not be loaded (key type must be RSA/RSA2)");
+		}
+		break;
+		case DKIM_SA_ED25519:
+		{
+			std::string tmp = Base64_Decode(ptmp);
+			if (tmp.size() != 32)
+				throw DKIM::PermanentError("Public ed25519 key could not be loaded");
+			m_publicKeyED25519 = tmp;
 		}
 		break;
 	}

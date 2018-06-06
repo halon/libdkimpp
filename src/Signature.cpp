@@ -117,8 +117,13 @@ void Signature::Parse(const std::shared_ptr<DKIM::Header> header) throw (DKIM::P
 		m_algorithm = DKIM_A_SHA1;
 		m_signatureAlgorithm = DKIM_SA_RSA;
 	}
+	else if (a.GetValue() == "ed25519-sha256")
+	{
+		m_algorithm = DKIM_A_SHA256;
+		m_signatureAlgorithm = DKIM_SA_ED25519;
+	}
 	else
-		throw DKIM::PermanentError(StringFormat("Unsupported signature algorithm %s (a supports rsa-sha1, rsa-sha256)",
+		throw DKIM::PermanentError(StringFormat("Unsupported signature algorithm %s (a supports rsa-sha1, rsa-sha256 and ed25519-sha256)",
 					a.GetValue().c_str()
 					)
 				);

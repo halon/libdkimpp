@@ -29,6 +29,7 @@ namespace DKIM
 	} Algorithm;
 	typedef enum {
 		DKIM_SA_RSA,
+		DKIM_SA_ED25519,
 	} SignatureAlgorithm;
 	typedef enum {
 		DKIM_C_SIMPLE,

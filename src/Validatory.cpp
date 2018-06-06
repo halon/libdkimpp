@@ -19,6 +19,7 @@
  *
  */
 #include "Validatory.hpp"
+#include <sodium.h>
 
 using DKIM::Validatory;
 
@@ -290,6 +291,13 @@ void Validatory::CheckSignature(const std::shared_ptr<DKIM::Header> header,
 			if (r != 1)
 				throw DKIM::PermanentError("Signature did not verify");
 		}
+		break;
+		case DKIM::DKIM_SA_ED25519:
+			if (crypto_sign_verify_detached((const unsigned char*)sig.GetSignatureData().c_str(),
+						md,
+						md_len,
+						(const unsigned char *)pub.GetED25519PublicKey().c_str()) != 0)
+					throw DKIM::PermanentError("Signature did not verify");
 		break;
 	}
 

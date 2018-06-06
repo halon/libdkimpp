@@ -44,6 +44,9 @@ std::string DKIM::Util::Algorithm2String(SignatureAlgorithm signatureAlgorithm, 
 		case DKIM::DKIM_SA_RSA:
 			alg += "rsa";
 		break;
+		case DKIM::DKIM_SA_ED25519:
+			alg += "ed25519";
+		break;
 	}
 	alg += "-";
 	switch (algorithm)

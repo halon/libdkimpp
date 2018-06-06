@@ -57,6 +57,9 @@ namespace DKIM {
 			EVP_PKEY* GetPublicKey() const
 			{ return m_publicKey; }
 
+			std::string GetED25519PublicKey() const
+			{ return m_publicKeyED25519; }
+
 			SignatureAlgorithm GetSignatureAlgorithm() const
 			{ return m_signatureAlgorithm; }
 
@@ -79,6 +82,7 @@ namespace DKIM {
 
 			std::list<Algorithm> m_algorithms;
 			EVP_PKEY* m_publicKey;
+			std::string m_publicKeyED25519;
 			SignatureAlgorithm m_signatureAlgorithm;
 			std::list<ServiceType> m_serviceType;
 			std::list<std::string> m_flags;
