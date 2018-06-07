@@ -25,6 +25,7 @@ on operating system.
 * pkg-config
 * cppunit
 * libssl-dev
+* libsodium
 
 Because some systems (like OpenBSD) lacks a reentrant resolver, this
 library might not be thread-safe on all platforms.
