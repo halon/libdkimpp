@@ -43,42 +43,32 @@ using DKIM::Util::StringFormat;
 
 Signatory::Signatory(std::istream& file)
 : m_file(file)
-, m_ctx_head(NULL)
-, m_ctx_body(NULL)
 {
-	m_ctx_head = EVP_MD_CTX_create();
-	m_ctx_body = EVP_MD_CTX_create();
 }
 
 Signatory::~Signatory()
 {
-	EVP_MD_CTX_destroy(m_ctx_head);
-	EVP_MD_CTX_destroy(m_ctx_body);
 }
 
 std::string Signatory::CreateSignature(const SignatoryOptions& options)
 	throw (DKIM::PermanentError)
 {
-#if OPENSSL_VERSION_NUMBER < 0x10100000
-	EVP_MD_CTX_cleanup(m_ctx_head);
-	EVP_MD_CTX_cleanup(m_ctx_body);
-#endif
-
 	while (m_msg.ParseLine(m_file) && !m_msg.IsDone()) { }
 
 	// create signature for our body (message data)
+	EVP_MD_CTX evpmdbody;
 	switch (options.GetAlgorithm())
 	{
 		case DKIM::DKIM_A_SHA1:
-			EVP_DigestInit(m_ctx_body, EVP_sha1());
+			EVP_DigestInit(&evpmdbody, EVP_sha1());
 			break;
 		case DKIM::DKIM_A_SHA256:
-			EVP_DigestInit(m_ctx_body, EVP_sha256());
+			EVP_DigestInit(&evpmdbody, EVP_sha256());
 			break;
 	}
 
 	DKIM::Conversion::EVPDigest evpupd;
-	evpupd.ctx = m_ctx_body;
+	evpupd.ctx = &evpmdbody;
 
 	if (!CanonicalizationBody(m_file,
 			options.GetCanonModeBody(),
@@ -88,20 +78,24 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 			std::bind(&DKIM::Conversion::EVPDigest::update, &evpupd, std::placeholders::_1, std::placeholders::_2)))
 		throw DKIM::PermanentError("Body sign limit exceed the size of the canonicalized message length");
 
-	unsigned char md_value[EVP_MAX_MD_SIZE];
+	unsigned char md[EVP_MAX_MD_SIZE];
 	unsigned int md_len;
-	EVP_DigestFinal(m_ctx_body, md_value, &md_len);
+	EVP_DigestFinal(&evpmdbody, md, &md_len);
 
-	std::string bh((char*)md_value, md_len);
+	std::string bh((char*)md, md_len);
 
 	// create signature for our header
+	EVP_MD_CTX evpmdhead;
+	int md_nid;
 	switch (options.GetAlgorithm())
 	{
 		case DKIM::DKIM_A_SHA1:
-			EVP_SignInit(m_ctx_head, EVP_sha1());
+			EVP_DigestInit(&evpmdhead, EVP_sha1());
+			md_nid = NID_sha1;
 			break;
 		case DKIM::DKIM_A_SHA256:
-			EVP_SignInit(m_ctx_head, EVP_sha256());
+			EVP_DigestInit(&evpmdhead, EVP_sha256());
+			md_nid = NID_sha256;
 			break;
 	}
 
@@ -132,7 +126,7 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 			std::string tmp = canonicalhead.FilterHeader((*h)->GetHeader()) + "\r\n";
 			if (!tmp.empty())
 			{
-				EVP_SignUpdate(m_ctx_head, tmp.c_str(), tmp.size());
+				EVP_DigestUpdate(&evpmdhead, tmp.c_str(), tmp.size());
 				signedHeaders.push_back(name);
 			}
 		}
@@ -171,26 +165,31 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 	dkimHeader += "\tb=";
 
 	std::string tmp2 = canonicalhead.FilterHeader(dkimHeader);
-	EVP_SignUpdate(m_ctx_head, tmp2.c_str(), tmp2.size());
+	EVP_DigestUpdate(&evpmdhead, tmp2.c_str(), tmp2.size());
+	EVP_DigestFinal(&evpmdhead, md, &md_len);
 
-	unsigned int len;
-	unsigned char* data = new unsigned char[EVP_PKEY_size(options.GetPrivateKey())];
-	if (EVP_SignFinal(m_ctx_head,
-				data,
-				&len,
-				options.GetPrivateKey()
-				) != 1) {
-		delete [] data;
+    RSA* rsa = EVP_PKEY_get1_RSA(options.GetPrivateKey());
+
+    unsigned int sig_len;
+    unsigned char* sig = new unsigned char[RSA_size(rsa)];
+
+    int r = RSA_sign(md_nid,
+            md,
+            md_len,
+            sig,
+            &sig_len,
+            rsa);
+
+    RSA_free(rsa);
+
+	if (r != 1)
+	{
+		delete [] sig;
 		throw DKIM::PermanentError("Message could not be signed");
 	}
-#if OPENSSL_VERSION_NUMBER < 0x10100000
-	EVP_MD_CTX_cleanup(m_ctx_head);
-#else
-	EVP_MD_CTX_reset(m_ctx_head);
-#endif
 
-	std::string tmp3((const char*)data, len);
-	delete [] data;
+	std::string tmp3((const char*)sig, sig_len);
+	delete [] sig;
 
 	size_t offset = 3; // "\tb=";
 	std::string split = Base64_Encode(tmp3);

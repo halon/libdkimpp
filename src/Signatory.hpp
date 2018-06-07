@@ -46,9 +46,6 @@ namespace DKIM
 		private:
 			std::istream& m_file;
 			DKIM::Message m_msg;
-
-			EVP_MD_CTX* m_ctx_head;
-			EVP_MD_CTX* m_ctx_body;
 	};
 }
 
