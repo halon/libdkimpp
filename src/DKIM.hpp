@@ -26,7 +26,7 @@ namespace DKIM
 	typedef enum {
 		DKIM_A_SHA1,
 		DKIM_A_SHA256,
-	} Algorithm;
+	} DigestAlgorithm;
 	typedef enum {
 		DKIM_SA_RSA,
 		DKIM_SA_ED25519,

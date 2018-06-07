@@ -57,7 +57,7 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 
 	// create signature for our body (message data)
 	EVP_MD_CTX evpmdbody;
-	switch (options.GetAlgorithm())
+	switch (options.GetDigestAlgorithm())
 	{
 		case DKIM::DKIM_A_SHA1:
 			EVP_DigestInit(&evpmdbody, EVP_sha1());
@@ -87,7 +87,7 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 	// create signature for our header
 	EVP_MD_CTX evpmdhead;
 	int md_nid;
-	switch (options.GetAlgorithm())
+	switch (options.GetDigestAlgorithm())
 	{
 		case DKIM::DKIM_A_SHA1:
 			EVP_DigestInit(&evpmdhead, EVP_sha1());
@@ -135,10 +135,10 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 	std::string dkimHeader;
 	unsigned long arcInstance = options.GetARCInstance();
 	if (arcInstance)
-		dkimHeader += "ARC-Message-Signature: i=" + StringFormat("%lu", arcInstance) + "; a=" + Algorithm2String(options.GetSignatureAlgorithm(), options.GetAlgorithm()) + "; c="
+		dkimHeader += "ARC-Message-Signature: i=" + StringFormat("%lu", arcInstance) + "; a=" + Algorithm2String(options.GetSignatureAlgorithm(), options.GetDigestAlgorithm()) + "; c="
 					+ CanonMode2String(options.GetCanonModeHeader()) + "/" + CanonMode2String(options.GetCanonModeBody()) + ";\r\n";
 	else
-		dkimHeader += "DKIM-Signature: v=1; a=" + Algorithm2String(options.GetSignatureAlgorithm(), options.GetAlgorithm()) + "; c="
+		dkimHeader += "DKIM-Signature: v=1; a=" + Algorithm2String(options.GetSignatureAlgorithm(), options.GetDigestAlgorithm()) + "; c="
 					+ CanonMode2String(options.GetCanonModeHeader()) + "/" + CanonMode2String(options.GetCanonModeBody()) + ";\r\n";
 
 	std::string limit;

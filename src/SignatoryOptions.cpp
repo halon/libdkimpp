@@ -26,7 +26,7 @@ using DKIM::SignatoryOptions;
 SignatoryOptions::SignatoryOptions()
 : m_privateKey(NULL), m_rsa(NULL)
 {
-	m_algorithm = DKIM_A_SHA256;
+	m_digestAlgorithm = DKIM_A_SHA256;
 	m_canonHead = DKIM_C_SIMPLE;
 	m_canonBody = DKIM_C_SIMPLE;
 
@@ -132,9 +132,9 @@ SignatoryOptions& SignatoryOptions::SetDomain(const std::string& domain)
 	return *this;
 }
 
-SignatoryOptions& SignatoryOptions::SetAlgorithm(Algorithm algorithm)
+SignatoryOptions& SignatoryOptions::SetDigestAlgorithm(DigestAlgorithm algorithm)
 {
-	m_algorithm = algorithm;
+	m_digestAlgorithm = algorithm;
 	return *this;
 }
 

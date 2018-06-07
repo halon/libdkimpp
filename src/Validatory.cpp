@@ -135,7 +135,7 @@ void Validatory::CheckBodyHash(const DKIM::Signature& sig)
 	EVP_MD_CTX evpmdbody;
 
 	// create signature for our body (message data)
-	switch (sig.GetAlgorithm())
+	switch (sig.GetDigestAlgorithm())
 	{
 		case DKIM::DKIM_A_SHA1:
 			EVP_DigestInit(&evpmdbody, EVP_sha1());
@@ -179,8 +179,8 @@ void Validatory::CheckSignature(const std::shared_ptr<DKIM::Header> header,
 	EVP_MD_CTX evpmdhead;
 
 	// sanity checking (between sig and pub)
-	if (pub.GetAlgorithms().size() > 0)
-		if (find(pub.GetAlgorithms().begin(), pub.GetAlgorithms().end(), sig.GetAlgorithm()) == pub.GetAlgorithms().end())
+	if (pub.GetDigestAlgorithms().size() > 0)
+		if (find(pub.GetDigestAlgorithms().begin(), pub.GetDigestAlgorithms().end(), sig.GetDigestAlgorithm()) == pub.GetDigestAlgorithms().end())
 			throw DKIM::PermanentError("Algorithm is not allowed");
 
 	if (sig.GetSignatureAlgorithm() != pub.GetSignatureAlgorithm())
@@ -195,7 +195,7 @@ void Validatory::CheckSignature(const std::shared_ptr<DKIM::Header> header,
 
 	// create signature for our header
 	int md_nid;
-	switch (sig.GetAlgorithm())
+	switch (sig.GetDigestAlgorithm())
 	{
 		case DKIM::DKIM_A_SHA1:
 			EVP_DigestInit(&evpmdhead, EVP_sha1());

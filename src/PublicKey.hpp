@@ -49,8 +49,8 @@ namespace DKIM {
 
 			// Get Functions
 
-			const std::list<Algorithm>& GetAlgorithms() const
-			{ return m_algorithms; }
+			const std::list<DigestAlgorithm>& GetDigestAlgorithms() const
+			{ return m_digestAlgorithms; }
 
 			RSA* GetRSAPublicKey() const
 			{ return m_publicKeyRSA; }
@@ -78,7 +78,7 @@ namespace DKIM {
 
 			TagList m_tagList;
 
-			std::list<Algorithm> m_algorithms;
+			std::list<DigestAlgorithm> m_digestAlgorithms;
 			RSA* m_publicKeyRSA;
 			std::string m_publicKeyED25519;
 			SignatureAlgorithm m_signatureAlgorithm;

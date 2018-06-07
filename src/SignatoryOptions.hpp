@@ -44,7 +44,7 @@ namespace DKIM
 			SignatoryOptions& SetPrivateKey(const std::string& privatekey);
 			SignatoryOptions& SetDomain(const std::string& domain);
 			SignatoryOptions& SetSelector(const std::string& selector);
-			SignatoryOptions& SetAlgorithm(Algorithm algorithm);
+			SignatoryOptions& SetDigestAlgorithm(DigestAlgorithm algorithm);
 			SignatoryOptions& SetHeaders(const std::list<std::string>& headers);
 			SignatoryOptions& AddHeaders(const std::list<std::string>& headers);
 			SignatoryOptions& SetSignBodyLength(unsigned long bodylength);
@@ -58,8 +58,8 @@ namespace DKIM
 			{ return m_domain; }
 			const std::string& GetSelector() const
 			{ return m_selector; }
-			Algorithm GetAlgorithm() const
-			{ return m_algorithm; }
+			DigestAlgorithm GetDigestAlgorithm() const
+			{ return m_digestAlgorithm; }
 			SignatureAlgorithm GetSignatureAlgorithm() const
 			{ return DKIM_SA_RSA; }
 			const std::list<std::string>& GetHeaders() const
@@ -83,7 +83,7 @@ namespace DKIM
 			std::string m_domain;
 			std::string m_selector;
 
-			Algorithm m_algorithm;
+			DigestAlgorithm m_digestAlgorithm;
 
 			std::list<std::string> m_headers;
 

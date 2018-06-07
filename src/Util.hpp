@@ -28,7 +28,7 @@
 namespace DKIM {
 	namespace Util {
 		std::string CanonMode2String(CanonMode mode);
-		std::string Algorithm2String(SignatureAlgorithm signatureAlgorithm, Algorithm algorithm);
+		std::string Algorithm2String(SignatureAlgorithm signatureAlgorithm, DigestAlgorithm digestAlgorithm);
 		std::string StringFormat(const char* fmt, ...)
 			__attribute__((format(printf, 1, 2)));
 		bool ValidateDomain(const std::string& domain);

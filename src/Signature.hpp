@@ -52,8 +52,8 @@ namespace DKIM
 
 			// Get Functions
 
-			Algorithm GetAlgorithm() const
-			{ return m_algorithm; }
+			DigestAlgorithm GetDigestAlgorithm() const
+			{ return m_digestAlgorithm; }
 
 			SignatureAlgorithm GetSignatureAlgorithm() const
 			{ return m_signatureAlgorithm; }
@@ -103,7 +103,7 @@ namespace DKIM
 		private:
 			TagList m_tagList;
 
-			Algorithm m_algorithm;
+			DigestAlgorithm m_digestAlgorithm;
 			SignatureAlgorithm m_signatureAlgorithm;
 			std::string m_b;
 			std::string m_bh;

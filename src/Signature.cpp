@@ -41,7 +41,7 @@ void Signature::Reset()
 	m_arc = false;
 
 	// tag-a
-	m_algorithm = DKIM_A_SHA256;
+	m_digestAlgorithm = DKIM_A_SHA256;
 	m_signatureAlgorithm = DKIM_SA_RSA;
 	// tag-b
 	m_b = "";
@@ -109,17 +109,17 @@ void Signature::Parse(const std::shared_ptr<DKIM::Header> header) throw (DKIM::P
 
 	if (a.GetValue() == "rsa-sha256")
 	{
-		m_algorithm = DKIM_A_SHA256;
+		m_digestAlgorithm = DKIM_A_SHA256;
 		m_signatureAlgorithm = DKIM_SA_RSA;
 	}
 	else if (a.GetValue() == "rsa-sha1")
 	{
-		m_algorithm = DKIM_A_SHA1;
+		m_digestAlgorithm = DKIM_A_SHA1;
 		m_signatureAlgorithm = DKIM_SA_RSA;
 	}
 	else if (a.GetValue() == "ed25519-sha256")
 	{
-		m_algorithm = DKIM_A_SHA256;
+		m_digestAlgorithm = DKIM_A_SHA256;
 		m_signatureAlgorithm = DKIM_SA_ED25519;
 	}
 	else

@@ -36,7 +36,7 @@ std::string DKIM::Util::CanonMode2String(CanonMode mode)
 	return "unknown";
 }
 
-std::string DKIM::Util::Algorithm2String(SignatureAlgorithm signatureAlgorithm, Algorithm algorithm)
+std::string DKIM::Util::Algorithm2String(SignatureAlgorithm signatureAlgorithm, DigestAlgorithm digestAlgorithm)
 {
 	std::string alg;
 	switch (signatureAlgorithm)
@@ -49,7 +49,7 @@ std::string DKIM::Util::Algorithm2String(SignatureAlgorithm signatureAlgorithm, 
 		break;
 	}
 	alg += "-";
-	switch (algorithm)
+	switch (digestAlgorithm)
 	{
 		case DKIM::DKIM_A_SHA1:
 			alg += "sha1";

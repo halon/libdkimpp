@@ -37,7 +37,7 @@ void PublicKey::Reset()
 	m_tagList.Reset();
 
 	// tag-h
-	m_algorithms.clear();
+	m_digestAlgorithms.clear();
 	// tag-p
 	RSA_free(m_publicKeyRSA);
 	m_publicKeyRSA = NULL;
@@ -80,9 +80,9 @@ void PublicKey::Parse(const std::string& signature) throw (DKIM::PermanentError)
 				a != algo.end(); ++a)
 		{
 			if (*a == "sha256")
-				m_algorithms.push_back(DKIM_A_SHA256);
+				m_digestAlgorithms.push_back(DKIM_A_SHA256);
 			else if (*a == "sha1")
-				m_algorithms.push_back(DKIM_A_SHA1);
+				m_digestAlgorithms.push_back(DKIM_A_SHA1);
 		}
 	}
 
