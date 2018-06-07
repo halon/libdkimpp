@@ -45,12 +45,7 @@ using DKIM::TagListEntry;
 Validatory::Validatory(std::istream& stream, ValidatorType type)
 : CustomDNSData(NULL)
 , m_file(stream)
-, m_ctx_head(NULL)
-, m_ctx_body(NULL)
 {
-	m_ctx_head = EVP_MD_CTX_create();
-	m_ctx_body = EVP_MD_CTX_create();
-
 	while (m_msg.ParseLine(m_file) && !m_msg.IsDone()) { }
 
 	if (type == NONE)
@@ -74,8 +69,6 @@ Validatory::Validatory(std::istream& stream, ValidatorType type)
 
 Validatory::~Validatory()
 {
-	EVP_MD_CTX_destroy(m_ctx_head);
-	EVP_MD_CTX_destroy(m_ctx_body);
 }
 
 /*
@@ -84,7 +77,7 @@ Validatory::~Validatory()
  * Get the signature from supported header iterator
  */
 void Validatory::GetSignature(const Message::HeaderList::const_iterator& headerIter,
-		DKIM::Signature& sig)	
+		DKIM::Signature& sig)
 	throw (DKIM::PermanentError)
 {
 	sig.Parse(*headerIter);
@@ -139,23 +132,21 @@ void Validatory::GetPublicKey(const DKIM::Signature& sig,
 void Validatory::CheckBodyHash(const DKIM::Signature& sig)
 	throw (DKIM::PermanentError)
 {
-#if OPENSSL_VERSION_NUMBER < 0x10100000
-	EVP_MD_CTX_cleanup(m_ctx_body);
-#endif
+	EVP_MD_CTX evpmdbody;
 
 	// create signature for our body (message data)
 	switch (sig.GetAlgorithm())
 	{
 		case DKIM::DKIM_A_SHA1:
-			EVP_DigestInit(m_ctx_body, EVP_sha1());
+			EVP_DigestInit(&evpmdbody, EVP_sha1());
 			break;
 		case DKIM::DKIM_A_SHA256:
-			EVP_DigestInit(m_ctx_body, EVP_sha256());
+			EVP_DigestInit(&evpmdbody, EVP_sha256());
 			break;
 	}
 
 	DKIM::Conversion::EVPDigest evpupd;
-	evpupd.ctx = m_ctx_body;
+	evpupd.ctx = &evpmdbody;
 
 	CanonicalizationBody(m_file,
 			sig.GetCanonModeBody(),
@@ -166,7 +157,7 @@ void Validatory::CheckBodyHash(const DKIM::Signature& sig)
 
 	unsigned char md_value[EVP_MAX_MD_SIZE];
 	unsigned int md_len;
-	EVP_DigestFinal(m_ctx_body, md_value, &md_len);
+	EVP_DigestFinal(&evpmdbody, md_value, &md_len);
 
 	if (sig.GetBodyHash().size() != md_len ||
 			memcmp(sig.GetBodyHash().c_str(), md_value, md_len) != 0)
@@ -185,9 +176,7 @@ void Validatory::CheckSignature(const std::shared_ptr<DKIM::Header> header,
 		const DKIM::PublicKey& pub)
 	throw (DKIM::PermanentError)
 {
-#if OPENSSL_VERSION_NUMBER < 0x10100000
-	EVP_MD_CTX_cleanup(m_ctx_head);
-#endif
+	EVP_MD_CTX evpmdhead;
 
 	// sanity checking (between sig and pub)
 	if (pub.GetAlgorithms().size() > 0)
@@ -205,15 +194,15 @@ void Validatory::CheckSignature(const std::shared_ptr<DKIM::Header> header,
 	}
 
 	// create signature for our header
-	int md_nid = 0;
+	int md_nid;
 	switch (sig.GetAlgorithm())
 	{
 		case DKIM::DKIM_A_SHA1:
-			EVP_DigestInit(m_ctx_head, EVP_sha1());
+			EVP_DigestInit(&evpmdhead, EVP_sha1());
 			md_nid = NID_sha1;
 			break;
 		case DKIM::DKIM_A_SHA256:
-			EVP_DigestInit(m_ctx_head, EVP_sha256());
+			EVP_DigestInit(&evpmdhead, EVP_sha256());
 			md_nid = NID_sha256;
 			break;
 	}
@@ -241,7 +230,7 @@ void Validatory::CheckSignature(const std::shared_ptr<DKIM::Header> header,
 		// 1. we do not have a header of that name at all
 		// 2. all headers with that name has been included...
 		if (head == headerCache.end() || head->second.size() == 0)
-			continue;	
+			continue;
 
 #ifdef DEBUG
 		printf("[%s]\n", canonicalhead.FilterHeader(head->second.back()->GetHeader()).c_str());
@@ -249,7 +238,7 @@ void Validatory::CheckSignature(const std::shared_ptr<DKIM::Header> header,
 #endif
 		tmp = canonicalhead.FilterHeader(head->second.back()->GetHeader()) + "\r\n";
 		head->second.pop_back();
-		EVP_DigestUpdate(m_ctx_head, tmp.c_str(), tmp.size());
+		EVP_DigestUpdate(&evpmdhead, tmp.c_str(), tmp.size());
 	}
 
 	// add our dkim-signature to the calculation (remove the "b"-tag)
@@ -264,17 +253,11 @@ void Validatory::CheckSignature(const std::shared_ptr<DKIM::Header> header,
 #ifdef DEBUG
 	printf("[%s]\n", tmp.c_str());
 #endif
-	EVP_DigestUpdate(m_ctx_head, tmp.c_str(), tmp.size());
+	EVP_DigestUpdate(&evpmdhead, tmp.c_str(), tmp.size());
 
 	unsigned char md[EVP_MAX_MD_SIZE];
 	unsigned int md_len;
-	EVP_DigestFinal(m_ctx_head, md, &md_len);
-
-#if OPENSSL_VERSION_NUMBER < 0x10100000
-	EVP_MD_CTX_cleanup(m_ctx_head);
-#else
-	EVP_MD_CTX_reset(m_ctx_head);
-#endif
+	EVP_DigestFinal(&evpmdhead, md, &md_len);
 
 	// verify the header signature
 	switch (sig.GetSignatureAlgorithm())
@@ -288,6 +271,7 @@ void Validatory::CheckSignature(const std::shared_ptr<DKIM::Header> header,
 						(const unsigned char *)sig.GetSignatureData().c_str(),
 						(unsigned int)sig.GetSignatureData().size(),
 						rsa);
+			RSA_free(rsa);
 			if (r != 1)
 				throw DKIM::PermanentError("Signature did not verify");
 		}
