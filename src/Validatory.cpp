@@ -264,14 +264,12 @@ void Validatory::CheckSignature(const std::shared_ptr<DKIM::Header> header,
 	{
 		case DKIM::DKIM_SA_RSA:
 		{
-			RSA* rsa = EVP_PKEY_get1_RSA(pub.GetPublicKey());
 			int r = RSA_verify(md_nid,
 						md,
 						md_len,
 						(const unsigned char *)sig.GetSignatureData().c_str(),
 						(unsigned int)sig.GetSignatureData().size(),
-						rsa);
-			RSA_free(rsa);
+						pub.GetRSAPublicKey());
 			if (r != 1)
 				throw DKIM::PermanentError("Signature did not verify");
 		}

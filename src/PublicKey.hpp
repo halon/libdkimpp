@@ -29,9 +29,7 @@
 #include <stdexcept>
 #include <algorithm>
 
-#include <openssl/evp.h>
-#include <openssl/pem.h>
-#include <openssl/err.h>
+#include <openssl/rsa.h>
 
 namespace DKIM {
 	class PublicKey
@@ -40,7 +38,7 @@ namespace DKIM {
 			typedef enum { DKIM_S_EMAIL } ServiceType;
 
 			PublicKey()
-			: m_publicKey(NULL)
+			: m_publicKeyRSA(NULL)
 			{ Reset(); }
 
 			~PublicKey()
@@ -54,8 +52,8 @@ namespace DKIM {
 			const std::list<Algorithm>& GetAlgorithms() const
 			{ return m_algorithms; }
 
-			EVP_PKEY* GetPublicKey() const
-			{ return m_publicKey; }
+			RSA* GetRSAPublicKey() const
+			{ return m_publicKeyRSA; }
 
 			std::string GetED25519PublicKey() const
 			{ return m_publicKeyED25519; }
@@ -81,7 +79,7 @@ namespace DKIM {
 			TagList m_tagList;
 
 			std::list<Algorithm> m_algorithms;
-			EVP_PKEY* m_publicKey;
+			RSA* m_publicKeyRSA;
 			std::string m_publicKeyED25519;
 			SignatureAlgorithm m_signatureAlgorithm;
 			std::list<ServiceType> m_serviceType;

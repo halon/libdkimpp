@@ -25,6 +25,8 @@
 #include "Util.hpp"
 
 #include <algorithm>
+#include <openssl/evp.h>
+#include <openssl/pem.h>
 
 using DKIM::PublicKey;
 using DKIM::Conversion::Base64_Decode;
@@ -37,8 +39,8 @@ void PublicKey::Reset()
 	// tag-h
 	m_algorithms.clear();
 	// tag-p
-	EVP_PKEY_free(m_publicKey);
-	m_publicKey = NULL;
+	RSA_free(m_publicKeyRSA);
+	m_publicKeyRSA = NULL;
 	m_publicKeyED25519.clear();
 	m_signatureAlgorithm = DKIM_SA_RSA;
 	// tag-s
@@ -116,17 +118,24 @@ void PublicKey::Parse(const std::string& signature) throw (DKIM::PermanentError)
 		{
 			std::string tmp = Base64_Decode(ptmp);
 			const unsigned char *tmp2 = (const unsigned char*)tmp.c_str();
-			m_publicKey = d2i_PUBKEY(NULL, &tmp2, tmp.size());
+			EVP_PKEY* publicKey = d2i_PUBKEY(NULL, &tmp2, tmp.size());
 
-			if (m_publicKey == NULL)
+			if (publicKey == NULL)
 				throw DKIM::PermanentError("Public key could not be loaded (invalid DER data)");
 
 #if OPENSSL_VERSION_NUMBER < 0x10100000
-			if (m_publicKey->type != EVP_PKEY_RSA && m_publicKey->type != EVP_PKEY_RSA2)
+			if (publicKey->type != EVP_PKEY_RSA && publicKey->type != EVP_PKEY_RSA2)
+			{
 #else
-				if (EVP_PKEY_base_id(m_publicKey) != EVP_PKEY_RSA && EVP_PKEY_base_id(m_publicKey) != EVP_PKEY_RSA2)
+			if (EVP_PKEY_base_id(publicKey) != EVP_PKEY_RSA && EVP_PKEY_base_id(publicKey) != EVP_PKEY_RSA2)
+			{
+				EVP_PKEY_free(publicKey);
 #endif
-					throw DKIM::PermanentError("Public key could not be loaded (key type must be RSA/RSA2)");
+				throw DKIM::PermanentError("Public key could not be loaded (key type must be RSA/RSA2)");
+			}
+
+			m_publicKeyRSA = EVP_PKEY_get1_RSA(publicKey);
+			EVP_PKEY_free(publicKey);
 		}
 		break;
 		case DKIM_SA_ED25519:
