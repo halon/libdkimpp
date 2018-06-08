@@ -47,6 +47,7 @@ namespace DKIM
 			SignatoryOptions& SetDigestAlgorithm(DigestAlgorithm algorithm);
 			SignatoryOptions& SetHeaders(const std::list<std::string>& headers);
 			SignatoryOptions& AddHeaders(const std::list<std::string>& headers);
+			SignatoryOptions& SetOversignHeaders(const std::list<std::string>& headers);
 			SignatoryOptions& SetSignBodyLength(unsigned long bodylength);
 			SignatoryOptions& SetCanonModeHeader(CanonMode mode);
 			SignatoryOptions& SetCanonModeBody(CanonMode mode);
@@ -64,6 +65,8 @@ namespace DKIM
 			{ return DKIM_SA_RSA; }
 			const std::list<std::string>& GetHeaders() const
 			{ return m_headers; }
+			const std::list<std::string>& GetOversignHeaders() const
+			{ return m_oversignheaders; }
 			unsigned long GetBodyLength() const
 			{ return m_bodyLength; }
 			bool GetBodySignLength() const
@@ -85,6 +88,7 @@ namespace DKIM
 
 			DigestAlgorithm m_digestAlgorithm;
 
+			std::list<std::string> m_oversignheaders;
 			std::list<std::string> m_headers;
 
 			unsigned long m_bodyLength;

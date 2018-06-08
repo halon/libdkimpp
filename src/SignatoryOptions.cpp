@@ -150,6 +150,12 @@ SignatoryOptions& SignatoryOptions::AddHeaders(const std::list<std::string>& hea
 	return *this;
 }
 
+SignatoryOptions& SignatoryOptions::SetOversignHeaders(const std::list<std::string>& headers)
+{
+	m_oversignheaders = headers;
+	return *this;
+}
+
 SignatoryOptions& SignatoryOptions::SetSignBodyLength(unsigned long bodylength)
 {
 	m_bodyLength = bodylength;

@@ -131,6 +131,10 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 			}
 		}
 	}
+	auto oversign = options.GetOversignHeaders();
+	for (auto & i : oversign)
+		transform(i.begin(), i.end(), i.begin(), tolower);
+	signedHeaders.insert(signedHeaders.end(), oversign.begin(), oversign.end());
 
 	std::string dkimHeader;
 	unsigned long arcInstance = options.GetARCInstance();
