@@ -38,6 +38,7 @@ void usage(FILE* fp, int status)
 			" -s,  --selector   <selector>\n"
 			" -d,  --domain     <fqdn>\n"
 			" -k,  --keyfile    <file>\n"
+			" -K,  --keytype    <algorithm> (default: rsa)\n"
 			"\n"
 			" Examples\n"
 			"\n"
@@ -59,6 +60,7 @@ int main(int argc, char* argv[])
 	std::string selector;
 	std::string domain;
 	std::string keyfile;
+	std::string keytype = "rsa";
 	Validatory::ValidatorType type = Validatory::DKIM;
 	unsigned long arcInstance = 0;
 
@@ -75,6 +77,7 @@ int main(int argc, char* argv[])
 		{ "selector",	required_argument,	NULL,		's'	},
 		{ "domain",		required_argument,	NULL,		'd'	},
 		{ "keyfile",	required_argument,	NULL,		'k'	},
+		{ "keyformat",	required_argument,	NULL,		'K'	},
 		{ NULL,			0,					NULL,		0	}
 	};
 
@@ -82,7 +85,7 @@ int main(int argc, char* argv[])
 	opterr = 0;
 	optind = 0;
 	int ch;
-	while ((ch = getopt_long(argc, argv, "aA:hvs:d:k:", longopts, NULL)) != -1) {
+	while ((ch = getopt_long(argc, argv, "aA:hvs:d:k:K:", longopts, NULL)) != -1) {
 		switch (ch)
 		{
 			case 'a':
@@ -105,6 +108,9 @@ int main(int argc, char* argv[])
 				break;
 			case 'k':
 				keyfile = optarg;
+				break;
+			case 'K':
+				keytype = optarg;
 				break;
 			case 0:
 				break;
@@ -139,6 +145,7 @@ int main(int argc, char* argv[])
 			printf("%s\r\n",
 					Signatory(fp).CreateSignature(
 						SignatoryOptions()
+						.SetSignatureAlgorithm(keytype == "ed25519" ? DKIM::DKIM_SA_ED25519 : DKIM::DKIM_SA_RSA)
 						.SetPrivateKey(key)
 						.SetDomain(domain)
 						.SetSelector(selector)

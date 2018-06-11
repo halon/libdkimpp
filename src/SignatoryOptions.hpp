@@ -45,6 +45,7 @@ namespace DKIM
 			SignatoryOptions& SetDomain(const std::string& domain);
 			SignatoryOptions& SetSelector(const std::string& selector);
 			SignatoryOptions& SetDigestAlgorithm(DigestAlgorithm algorithm);
+			SignatoryOptions& SetSignatureAlgorithm(SignatureAlgorithm signatureAlgorithm);
 			SignatoryOptions& SetHeaders(const std::list<std::string>& headers);
 			SignatoryOptions& AddHeaders(const std::list<std::string>& headers);
 			SignatoryOptions& SetOversignHeaders(const std::list<std::string>& headers);
@@ -55,6 +56,8 @@ namespace DKIM
 
 			RSA* GetRSAPrivateKey() const
 			{ return m_privateKeyRSA; }
+			std::string GetED25519PrivateKey() const
+			{ return m_privateKeyED25519; }
 			const std::string& GetDomain() const
 			{ return m_domain; }
 			const std::string& GetSelector() const
@@ -62,7 +65,7 @@ namespace DKIM
 			DigestAlgorithm GetDigestAlgorithm() const
 			{ return m_digestAlgorithm; }
 			SignatureAlgorithm GetSignatureAlgorithm() const
-			{ return DKIM_SA_RSA; }
+			{ return m_signatureAlgorithm; }
 			const std::list<std::string>& GetHeaders() const
 			{ return m_headers; }
 			const std::list<std::string>& GetOversignHeaders() const
@@ -81,6 +84,8 @@ namespace DKIM
 			SignatoryOptions(const SignatoryOptions&);
 
 			RSA* m_privateKeyRSA;
+			std::string m_privateKeyED25519;
+			SignatureAlgorithm m_signatureAlgorithm;
 
 			std::string m_domain;
 			std::string m_selector;

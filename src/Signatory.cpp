@@ -19,6 +19,7 @@
  *
  */
 #include "Signatory.hpp"
+#include <sodium.h>
 
 using DKIM::Signatory;
 
@@ -172,26 +173,46 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 	EVP_DigestUpdate(&evpmdhead, tmp2.c_str(), tmp2.size());
 	EVP_DigestFinal(&evpmdhead, md, &md_len);
 
-	RSA* rsa = options.GetRSAPrivateKey();
-
-	unsigned int sig_len;
-	unsigned char* sig = new unsigned char[RSA_size(rsa)];
-
-	int r = RSA_sign(md_nid,
-			md,
-			md_len,
-			sig,
-			&sig_len,
-			rsa);
-
-	if (r != 1)
+	std::string tmp3;
+	switch (options.GetSignatureAlgorithm())
 	{
-		delete [] sig;
-		throw DKIM::PermanentError("Message could not be signed");
-	}
+		case DKIM::DKIM_SA_RSA:
+		{
+			RSA* rsa = options.GetRSAPrivateKey();
 
-	std::string tmp3((const char*)sig, sig_len);
-	delete [] sig;
+			unsigned int sig_len;
+			unsigned char* sig = new unsigned char[RSA_size(rsa)];
+
+			int r = RSA_sign(md_nid,
+					md,
+					md_len,
+					sig,
+					&sig_len,
+					rsa);
+
+			if (r != 1)
+			{
+				delete [] sig;
+				throw DKIM::PermanentError("Message could not be signed");
+			}
+
+			tmp3 = std::string((const char*)sig, sig_len);
+			delete [] sig;
+		}
+		break;
+		case DKIM::DKIM_SA_ED25519:
+		{
+			unsigned char sig[crypto_sign_BYTES];
+			if (crypto_sign_detached(sig,
+						NULL,
+						md,
+						md_len,
+						(const unsigned char *)options.GetED25519PrivateKey().c_str()) != 0)
+				throw DKIM::PermanentError("Message could not be signed");
+			tmp3 = std::string((const char*)sig, crypto_sign_BYTES);
+		}
+		break;
+	}
 
 	size_t offset = 3; // "\tb=";
 	std::string split = Base64_Encode(tmp3);

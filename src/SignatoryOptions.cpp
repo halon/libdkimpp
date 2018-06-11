@@ -27,6 +27,7 @@ SignatoryOptions::SignatoryOptions()
 : m_privateKeyRSA(NULL)
 {
 	m_digestAlgorithm = DKIM_A_SHA256;
+	m_signatureAlgorithm = DKIM_SA_RSA;
 	m_canonHead = DKIM_C_SIMPLE;
 	m_canonBody = DKIM_C_SIMPLE;
 
@@ -72,40 +73,62 @@ SignatoryOptions::~SignatoryOptions()
 
 SignatoryOptions& SignatoryOptions::SetPrivateKey(const std::string& privatekey)
 {
-	if (privatekey.substr(0, 5) == "-----")
+	switch (m_signatureAlgorithm)
 	{
-		BIO *o = BIO_new(BIO_s_mem());
-		if (!o)
-			throw DKIM::PermanentError("BIO could not be created for RSA key");
-		BIO_write(o, privatekey.c_str(), privatekey.size());
-		(void) BIO_flush(o);
-		EVP_PKEY* privateKey = PEM_read_bio_PrivateKey(o, NULL, NULL, NULL);
-		BIO_free_all(o);
-		if (!privateKey)
-			throw DKIM::PermanentError("RSA key could not be loaded from PEM");
+		case DKIM_SA_RSA:
+		{
+			if (privatekey.substr(0, 5) == "-----")
+			{
+				BIO *o = BIO_new(BIO_s_mem());
+				if (!o)
+					throw DKIM::PermanentError("BIO could not be created for RSA key");
+				BIO_write(o, privatekey.c_str(), privatekey.size());
+				(void) BIO_flush(o);
+				EVP_PKEY* privateKey = PEM_read_bio_PrivateKey(o, NULL, NULL, NULL);
+				BIO_free_all(o);
+				if (!privateKey)
+					throw DKIM::PermanentError("RSA key could not be loaded from PEM");
 
 #if OPENSSL_VERSION_NUMBER < 0x10100000
-		if (privateKey->type != EVP_PKEY_RSA && privateKey->type != EVP_PKEY_RSA2)
+				if (privateKey->type != EVP_PKEY_RSA && privateKey->type != EVP_PKEY_RSA2)
 #else
-		if (EVP_PKEY_base_id(privateKey) != EVP_PKEY_RSA && EVP_PKEY_base_id(privateKey) != EVP_PKEY_RSA2)
+				if (EVP_PKEY_base_id(privateKey) != EVP_PKEY_RSA && EVP_PKEY_base_id(privateKey) != EVP_PKEY_RSA2)
 #endif
-		{
-			EVP_PKEY_free(privateKey);
-			throw DKIM::PermanentError("Private key could not be loaded (key type must be RSA/RSA2)");
+				{
+					EVP_PKEY_free(privateKey);
+					throw DKIM::PermanentError("Private key could not be loaded (key type must be RSA/RSA2)");
+				}
+
+				m_privateKeyRSA = EVP_PKEY_get1_RSA(privateKey);
+				EVP_PKEY_free(privateKey);
+			} else {
+				/*
+				 * Expect the data to be in DER format)
+				 */
+
+				std::string tmp = DKIM::Conversion::Base64_Decode(privatekey);
+				const unsigned char *tmp2 = (const unsigned char*)tmp.c_str();
+				m_privateKeyRSA = d2i_RSAPrivateKey(NULL, &tmp2, tmp.size());
+				if (!m_privateKeyRSA)
+					throw DKIM::PermanentError("RSA key could not be loaded from DER");
+			}
 		}
-
-		m_privateKeyRSA = EVP_PKEY_get1_RSA(privateKey);
-		EVP_PKEY_free(privateKey);
-	} else {
-		/*
-		 * Expect the data to be in DER format)
-		 */
-
-		std::string tmp = DKIM::Conversion::Base64_Decode(privatekey);
-		const unsigned char *tmp2 = (const unsigned char*)tmp.c_str();
-		m_privateKeyRSA = d2i_RSAPrivateKey(NULL, &tmp2, tmp.size());
-		if (!m_privateKeyRSA)
-			throw DKIM::PermanentError("RSA key could not be loaded from DER");
+		break;
+		case DKIM_SA_ED25519:
+		{
+			if (privatekey.size() == 32)
+			{
+				m_privateKeyED25519 = privatekey;
+			}
+			else
+			{
+				std::string tmp = DKIM::Conversion::Base64_Decode(privatekey);
+				if (tmp.size() != 32)
+					throw DKIM::PermanentError("ED25519 key could not be loaded as Base64");
+				m_privateKeyED25519 = tmp;
+			}
+		}
+		break;
 	}
 	return *this;
 }
@@ -131,6 +154,12 @@ SignatoryOptions& SignatoryOptions::SetDomain(const std::string& domain)
 SignatoryOptions& SignatoryOptions::SetDigestAlgorithm(DigestAlgorithm algorithm)
 {
 	m_digestAlgorithm = algorithm;
+	return *this;
+}
+
+SignatoryOptions& SignatoryOptions::SetSignatureAlgorithm(SignatureAlgorithm signatureAlgorithm)
+{
+	m_signatureAlgorithm = signatureAlgorithm;
 	return *this;
 }
 
