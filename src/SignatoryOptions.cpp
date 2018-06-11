@@ -20,6 +20,7 @@
  */
 #include "SignatoryOptions.hpp"
 #include "Util.hpp"
+#include <sodium.h>
 
 using DKIM::SignatoryOptions;
 
@@ -116,17 +117,22 @@ SignatoryOptions& SignatoryOptions::SetPrivateKey(const std::string& privatekey)
 		break;
 		case DKIM_SA_ED25519:
 		{
+			std::string seed;
 			if (privatekey.size() == 32)
 			{
-				m_privateKeyED25519 = privatekey;
+				seed = privatekey;
 			}
 			else
 			{
 				std::string tmp = DKIM::Conversion::Base64_Decode(privatekey);
 				if (tmp.size() != 32)
 					throw DKIM::PermanentError("ED25519 key could not be loaded as Base64");
-				m_privateKeyED25519 = tmp;
+				seed = tmp;
 			}
+			unsigned char pk[crypto_sign_PUBLICKEYBYTES] = { 0 };
+			unsigned char sk[crypto_sign_SECRETKEYBYTES] = { 0 };
+			crypto_sign_seed_keypair(pk, sk, (const unsigned char *)seed.c_str());
+			m_privateKeyED25519 = std::string((char*)sk, crypto_sign_SECRETKEYBYTES);
 		}
 		break;
 	}
