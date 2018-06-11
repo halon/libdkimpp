@@ -125,12 +125,11 @@ void PublicKey::Parse(const std::string& signature) throw (DKIM::PermanentError)
 
 #if OPENSSL_VERSION_NUMBER < 0x10100000
 			if (publicKey->type != EVP_PKEY_RSA && publicKey->type != EVP_PKEY_RSA2)
-			{
 #else
 			if (EVP_PKEY_base_id(publicKey) != EVP_PKEY_RSA && EVP_PKEY_base_id(publicKey) != EVP_PKEY_RSA2)
+#endif
 			{
 				EVP_PKEY_free(publicKey);
-#endif
 				throw DKIM::PermanentError("Public key could not be loaded (key type must be RSA/RSA2)");
 			}
 

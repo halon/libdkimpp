@@ -53,8 +53,8 @@ namespace DKIM
 			SignatoryOptions& SetCanonModeBody(CanonMode mode);
 			SignatoryOptions& SetARCInstance(unsigned long instance);
 
-			EVP_PKEY* GetPrivateKey() const
-			{ return m_privateKey; }
+			RSA* GetRSAPrivateKey() const
+			{ return m_privateKeyRSA; }
 			const std::string& GetDomain() const
 			{ return m_domain; }
 			const std::string& GetSelector() const
@@ -80,8 +80,7 @@ namespace DKIM
 		private:
 			SignatoryOptions(const SignatoryOptions&);
 
-			EVP_PKEY* m_privateKey;
-			RSA* m_rsa;
+			RSA* m_privateKeyRSA;
 
 			std::string m_domain;
 			std::string m_selector;

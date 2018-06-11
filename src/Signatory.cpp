@@ -172,19 +172,17 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 	EVP_DigestUpdate(&evpmdhead, tmp2.c_str(), tmp2.size());
 	EVP_DigestFinal(&evpmdhead, md, &md_len);
 
-    RSA* rsa = EVP_PKEY_get1_RSA(options.GetPrivateKey());
+	RSA* rsa = options.GetRSAPrivateKey();
 
-    unsigned int sig_len;
-    unsigned char* sig = new unsigned char[RSA_size(rsa)];
+	unsigned int sig_len;
+	unsigned char* sig = new unsigned char[RSA_size(rsa)];
 
-    int r = RSA_sign(md_nid,
-            md,
-            md_len,
-            sig,
-            &sig_len,
-            rsa);
-
-    RSA_free(rsa);
+	int r = RSA_sign(md_nid,
+			md,
+			md_len,
+			sig,
+			&sig_len,
+			rsa);
 
 	if (r != 1)
 	{
