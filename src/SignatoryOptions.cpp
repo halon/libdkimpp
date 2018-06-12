@@ -132,7 +132,7 @@ SignatoryOptions& SignatoryOptions::SetPrivateKey(const std::string& privatekey)
 			{
 				std::string tmp = DKIM::Conversion::Base64_Decode(privatekey);
 				if (tmp.size() == crypto_sign_SECRETKEYBYTES)
-					m_privateKeyED25519 = privatekey;
+					m_privateKeyED25519 = tmp;
 				else if (tmp.size() == crypto_sign_SEEDBYTES)
 					m_privateKeyED25519 = seed_keypair(tmp);
 				else
