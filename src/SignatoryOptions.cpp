@@ -117,22 +117,27 @@ SignatoryOptions& SignatoryOptions::SetPrivateKey(const std::string& privatekey)
 		break;
 		case DKIM_SA_ED25519:
 		{
-			std::string seed;
-			if (privatekey.size() == 32)
+			auto seed_keypair = [](const std::string& seed) -> std::string
 			{
-				seed = privatekey;
-			}
+				unsigned char pk[crypto_sign_PUBLICKEYBYTES] = { 0 };
+				unsigned char sk[crypto_sign_SECRETKEYBYTES] = { 0 };
+				crypto_sign_seed_keypair(pk, sk, (const unsigned char *)seed.c_str());
+				return std::string((char*)sk, crypto_sign_SECRETKEYBYTES);
+			};
+			if (privatekey.size() == crypto_sign_SECRETKEYBYTES)
+				m_privateKeyED25519 = privatekey;
+			else if (privatekey.size() == crypto_sign_SEEDBYTES)
+				m_privateKeyED25519 = seed_keypair(privatekey);
 			else
 			{
 				std::string tmp = DKIM::Conversion::Base64_Decode(privatekey);
-				if (tmp.size() != 32)
+				if (tmp.size() == crypto_sign_SECRETKEYBYTES)
+					m_privateKeyED25519 = privatekey;
+				else if (tmp.size() == crypto_sign_SEEDBYTES)
+					m_privateKeyED25519 = seed_keypair(tmp);
+				else
 					throw DKIM::PermanentError("ED25519 key could not be loaded as Base64");
-				seed = tmp;
 			}
-			unsigned char pk[crypto_sign_PUBLICKEYBYTES] = { 0 };
-			unsigned char sk[crypto_sign_SECRETKEYBYTES] = { 0 };
-			crypto_sign_seed_keypair(pk, sk, (const unsigned char *)seed.c_str());
-			m_privateKeyED25519 = std::string((char*)sk, crypto_sign_SECRETKEYBYTES);
 		}
 		break;
 	}
