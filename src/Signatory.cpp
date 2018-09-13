@@ -57,19 +57,19 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 	while (m_msg.ParseLine(m_file) && !m_msg.IsDone()) { }
 
 	// create signature for our body (message data)
-	EVP_MD_CTX evpmdbody;
+	std::unique_ptr<EVP_MD_CTX, std::function<void(EVP_MD_CTX*)>> evpmdbody(EVP_MD_CTX_create(), [] (EVP_MD_CTX* p) { EVP_MD_CTX_destroy(p); });
 	switch (options.GetDigestAlgorithm())
 	{
 		case DKIM::DKIM_A_SHA1:
-			EVP_DigestInit(&evpmdbody, EVP_sha1());
+			EVP_DigestInit_ex(evpmdbody.get(), EVP_sha1(), nullptr);
 			break;
 		case DKIM::DKIM_A_SHA256:
-			EVP_DigestInit(&evpmdbody, EVP_sha256());
+			EVP_DigestInit_ex(evpmdbody.get(), EVP_sha256(), nullptr);
 			break;
 	}
 
 	DKIM::Conversion::EVPDigest evpupd;
-	evpupd.ctx = &evpmdbody;
+	evpupd.ctx = evpmdbody.get();
 
 	if (!CanonicalizationBody(m_file,
 			options.GetCanonModeBody(),
@@ -81,21 +81,21 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 
 	unsigned char md[EVP_MAX_MD_SIZE];
 	unsigned int md_len;
-	EVP_DigestFinal(&evpmdbody, md, &md_len);
+	EVP_DigestFinal_ex(evpmdbody.get(), md, &md_len);
 
 	std::string bh((char*)md, md_len);
 
 	// create signature for our header
-	EVP_MD_CTX evpmdhead;
+	std::unique_ptr<EVP_MD_CTX, std::function<void(EVP_MD_CTX*)>> evpmdhead(EVP_MD_CTX_create(), [] (EVP_MD_CTX* p) { EVP_MD_CTX_destroy(p); });
 	int md_nid;
 	switch (options.GetDigestAlgorithm())
 	{
 		case DKIM::DKIM_A_SHA1:
-			EVP_DigestInit(&evpmdhead, EVP_sha1());
+			EVP_DigestInit_ex(evpmdhead.get(), EVP_sha1(), nullptr);
 			md_nid = NID_sha1;
 			break;
 		case DKIM::DKIM_A_SHA256:
-			EVP_DigestInit(&evpmdhead, EVP_sha256());
+			EVP_DigestInit_ex(evpmdhead.get(), EVP_sha256(), nullptr);
 			md_nid = NID_sha256;
 			break;
 	}
@@ -127,7 +127,7 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 			std::string tmp = canonicalhead.FilterHeader((*h)->GetHeader()) + "\r\n";
 			if (!tmp.empty())
 			{
-				EVP_DigestUpdate(&evpmdhead, tmp.c_str(), tmp.size());
+				EVP_DigestUpdate(evpmdhead.get(), tmp.c_str(), tmp.size());
 				signedHeaders.push_back(name);
 			}
 		}
@@ -170,8 +170,8 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 	dkimHeader += "\tb=";
 
 	std::string tmp2 = canonicalhead.FilterHeader(dkimHeader);
-	EVP_DigestUpdate(&evpmdhead, tmp2.c_str(), tmp2.size());
-	EVP_DigestFinal(&evpmdhead, md, &md_len);
+	EVP_DigestUpdate(evpmdhead.get(), tmp2.c_str(), tmp2.size());
+	EVP_DigestFinal_ex(evpmdhead.get(), md, &md_len);
 
 	std::string tmp3;
 	switch (options.GetSignatureAlgorithm())
