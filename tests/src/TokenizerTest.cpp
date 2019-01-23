@@ -158,6 +158,10 @@ class TokenizerTest : public CppUnit::TestFixture {
 		CPPUNIT_ASSERT ( (*list.begin()) == "joe@example.org" );
 		list.pop_front();
 		CPPUNIT_ASSERT ( (*list.begin()) == "jdoe@one.test" );
+
+		mail = "Pete(A \\\\wonderful \\) chap) <pete(his account)@silly.test(his host)>  ";
+		CPPUNIT_ASSERT ( (list = ParseAddressList(mail)).size() == 1 );
+		CPPUNIT_ASSERT ( (*list.begin()) == "pete@silly.test" );
 	}
 };
 

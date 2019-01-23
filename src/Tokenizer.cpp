@@ -178,6 +178,8 @@ DKIM::Tokenizer::AddressListTokens DKIM::Tokenizer::NextAddressListToken(std::st
 			if (!token.empty())
 				break;
 		}
+		if (data.peek() == EOF)
+			break;
 		if (data.peek() == '"')
 		{
 			if (!token.empty()) return TOK_ATOM;
