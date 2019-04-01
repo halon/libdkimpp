@@ -40,7 +40,7 @@ void PublicKey::Reset()
 	m_digestAlgorithms.clear();
 	// tag-p
 	RSA_free(m_publicKeyRSA);
-	m_publicKeyRSA = NULL;
+	m_publicKeyRSA = nullptr;
 	m_publicKeyED25519.clear();
 	m_signatureAlgorithm = DKIM_SA_RSA;
 	// tag-s
@@ -118,9 +118,9 @@ void PublicKey::Parse(const std::string& signature) throw (DKIM::PermanentError)
 		{
 			std::string tmp = Base64_Decode(ptmp);
 			const unsigned char *tmp2 = (const unsigned char*)tmp.c_str();
-			EVP_PKEY* publicKey = d2i_PUBKEY(NULL, &tmp2, tmp.size());
+			EVP_PKEY* publicKey = d2i_PUBKEY(nullptr, &tmp2, tmp.size());
 
-			if (publicKey == NULL)
+			if (publicKey == nullptr)
 				throw DKIM::PermanentError("Public key could not be loaded (invalid DER data)");
 
 #if OPENSSL_VERSION_NUMBER < 0x10100000

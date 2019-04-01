@@ -204,7 +204,7 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 		{
 			unsigned char sig[crypto_sign_BYTES];
 			if (crypto_sign_detached(sig,
-						NULL,
+						nullptr,
 						md,
 						md_len,
 						(const unsigned char *)options.GetED25519PrivateKey().c_str()) != 0)

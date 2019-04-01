@@ -7,7 +7,7 @@ using DKIM::Validatory;
 using DKIM::Signatory;
 using DKIM::SignatoryOptions;
 
-#include <string.h>
+#include <cstring>
 
 #include <getopt.h>
 
@@ -70,22 +70,22 @@ int main(int argc, char* argv[])
 
 	// longopts
 	static struct option longopts[] = {
-		{ "arc",	 	no_argument,		NULL,		'a'	},
-		{ "arcinstance",no_argument,		NULL,		'A'	},
-		{ "help",		no_argument,		NULL,		'h'	},
-		{ "validate",	no_argument,		NULL,		'v'	},
-		{ "selector",	required_argument,	NULL,		's'	},
-		{ "domain",		required_argument,	NULL,		'd'	},
-		{ "keyfile",	required_argument,	NULL,		'k'	},
-		{ "keyformat",	required_argument,	NULL,		'K'	},
-		{ NULL,			0,					NULL,		0	}
+		{ "arc",	 	no_argument,		nullptr,		'a'	},
+		{ "arcinstance",no_argument,		nullptr,		'A'	},
+		{ "help",		no_argument,		nullptr,		'h'	},
+		{ "validate",	no_argument,		nullptr,		'v'	},
+		{ "selector",	required_argument,	nullptr,		's'	},
+		{ "domain",		required_argument,	nullptr,		'd'	},
+		{ "keyfile",	required_argument,	nullptr,		'k'	},
+		{ "keyformat",	required_argument,	nullptr,		'K'	},
+		{ nullptr,			0,					nullptr,		0	}
 	};
 
 	// fetching arguments..
 	opterr = 0;
 	optind = 0;
 	int ch;
-	while ((ch = getopt_long(argc, argv, "aA:hvs:d:k:K:", longopts, NULL)) != -1) {
+	while ((ch = getopt_long(argc, argv, "aA:hvs:d:k:K:", longopts, nullptr)) != -1) {
 		switch (ch)
 		{
 			case 'a':

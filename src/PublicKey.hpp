@@ -38,7 +38,7 @@ namespace DKIM {
 			typedef enum { DKIM_S_EMAIL } ServiceType;
 
 			PublicKey()
-			: m_publicKeyRSA(NULL)
+			: m_publicKeyRSA(nullptr)
 			{ Reset(); }
 
 			~PublicKey()

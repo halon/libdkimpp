@@ -86,7 +86,7 @@ using DKIM::Util::StringFormat;
 */
 
 #include <sstream>
-#include <stdio.h>
+#include <cstdio>
 
 void TagList::Reset()
 {

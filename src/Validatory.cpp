@@ -43,7 +43,7 @@ using DKIM::TagListEntry;
 //#define DEBUG
 
 Validatory::Validatory(std::istream& stream, ValidatorType type)
-: CustomDNSData(NULL)
+: CustomDNSData(nullptr)
 , m_file(stream)
 {
 	while (m_msg.ParseLine(m_file) && !m_msg.IsDone()) { }
@@ -138,10 +138,10 @@ void Validatory::CheckBodyHash(const DKIM::Signature& sig)
 	switch (sig.GetDigestAlgorithm())
 	{
 		case DKIM::DKIM_A_SHA1:
-			EVP_DigestInit_ex(evpmdbody.get(), EVP_sha1(), NULL);
+			EVP_DigestInit_ex(evpmdbody.get(), EVP_sha1(), nullptr);
 			break;
 		case DKIM::DKIM_A_SHA256:
-			EVP_DigestInit_ex(evpmdbody.get(), EVP_sha256(), NULL);
+			EVP_DigestInit_ex(evpmdbody.get(), EVP_sha256(), nullptr);
 			break;
 	}
 
@@ -197,11 +197,11 @@ void Validatory::CheckSignature(const std::shared_ptr<DKIM::Header> header,
 	switch (sig.GetDigestAlgorithm())
 	{
 		case DKIM::DKIM_A_SHA1:
-			EVP_DigestInit_ex(evpmdhead.get(), EVP_sha1(), NULL);
+			EVP_DigestInit_ex(evpmdhead.get(), EVP_sha1(), nullptr);
 			md_nid = NID_sha1;
 			break;
 		case DKIM::DKIM_A_SHA256:
-			EVP_DigestInit_ex(evpmdhead.get(), EVP_sha256(), NULL);
+			EVP_DigestInit_ex(evpmdhead.get(), EVP_sha256(), nullptr);
 			md_nid = NID_sha256;
 			break;
 	}

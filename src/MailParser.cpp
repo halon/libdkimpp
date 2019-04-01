@@ -41,7 +41,7 @@ bool Header::ParseLine(const std::string& data)
 
 	if (m_valueOffset == 0)
 	{
-		size_t sep = m_header.find(":");
+		size_t sep = m_header.find(':');
 		if (sep == std::string::npos)
 			return false;
 

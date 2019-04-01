@@ -24,11 +24,11 @@
 #include "Base64.hpp"
 #include "Util.hpp"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <errno.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cerrno>
 #include <algorithm>
-#include <string.h>
+#include <cstring>
 
 using DKIM::Signature;
 using DKIM::Conversion::Base64_Decode;
@@ -151,7 +151,7 @@ void Signature::Parse(const std::shared_ptr<DKIM::Header> header) throw (DKIM::P
 	{
 		std::string body, header;
 
-		size_t split = c.GetValue().find("/");
+		size_t split = c.GetValue().find('/');
 		if (split == std::string::npos)
 		{
 			header = c.GetValue();
@@ -220,7 +220,7 @@ void Signature::Parse(const std::shared_ptr<DKIM::Header> header) throw (DKIM::P
 		} else {
 			std::string mail = QuotedPrintable::Decode(i.GetValue());
 
-			size_t mailsep = mail.find("@");
+			size_t mailsep = mail.find('@');
 			if (mailsep == std::string::npos)
 				throw DKIM::PermanentError("Missing a local-part (i)");
 
@@ -291,7 +291,7 @@ void Signature::Parse(const std::shared_ptr<DKIM::Header> header) throw (DKIM::P
 	TagListEntry x;
 	if (m_tagList.GetTag("x", x))
 	{
-		if (strtol(x.GetValue().c_str(), NULL, 10) < time(NULL))
+		if (strtol(x.GetValue().c_str(), nullptr, 10) < time(nullptr))
 			throw DKIM::PermanentError("Signature has expired (x)");
 	}
 

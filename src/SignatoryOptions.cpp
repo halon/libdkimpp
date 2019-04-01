@@ -25,7 +25,7 @@
 using DKIM::SignatoryOptions;
 
 SignatoryOptions::SignatoryOptions()
-: m_privateKeyRSA(NULL)
+: m_privateKeyRSA(nullptr)
 {
 	m_digestAlgorithm = DKIM_A_SHA256;
 	m_signatureAlgorithm = DKIM_SA_RSA;
@@ -85,7 +85,7 @@ SignatoryOptions& SignatoryOptions::SetPrivateKey(const std::string& privatekey)
 					throw DKIM::PermanentError("BIO could not be created for RSA key");
 				BIO_write(o, privatekey.c_str(), privatekey.size());
 				(void) BIO_flush(o);
-				EVP_PKEY* privateKey = PEM_read_bio_PrivateKey(o, NULL, NULL, NULL);
+				EVP_PKEY* privateKey = PEM_read_bio_PrivateKey(o, nullptr, nullptr, nullptr);
 				BIO_free_all(o);
 				if (!privateKey)
 					throw DKIM::PermanentError("RSA key could not be loaded from PEM");
@@ -109,7 +109,7 @@ SignatoryOptions& SignatoryOptions::SetPrivateKey(const std::string& privatekey)
 
 				std::string tmp = DKIM::Conversion::Base64_Decode(privatekey);
 				const unsigned char *tmp2 = (const unsigned char*)tmp.c_str();
-				m_privateKeyRSA = d2i_RSAPrivateKey(NULL, &tmp2, tmp.size());
+				m_privateKeyRSA = d2i_RSAPrivateKey(nullptr, &tmp2, tmp.size());
 				if (!m_privateKeyRSA)
 					throw DKIM::PermanentError("RSA key could not be loaded from DER");
 			}

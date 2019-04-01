@@ -23,8 +23,8 @@
 #include "Util.hpp"
 
 #include <sstream>
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 
 using DKIM::Conversion::QuotedPrintable;
 using DKIM::Tokenizer::ReadWhiteSpace;
@@ -70,7 +70,7 @@ std::string QuotedPrintable::Decode(const std::string& input, bool convert_to_sp
 							)
 						);
 
-			output += (char)strtol(hex.c_str(), NULL, 16);
+			output += (char)strtol(hex.c_str(), nullptr, 16);
 		} else if (
 					(data.peek() >= '\x21' && data.peek() <= '\x3A') ||
 					(data.peek() == '\x3C') ||

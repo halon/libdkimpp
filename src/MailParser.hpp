@@ -21,8 +21,8 @@
 #ifndef _DKIM_MAILPARSER_HPP_
 #define _DKIM_MAILPARSER_HPP_
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <sstream>

@@ -23,7 +23,7 @@
 #include "Util.hpp"
 
 #include <sstream>
-#include <stdio.h>
+#include <cstdio>
 #include <algorithm>
 
 using DKIM::Conversion::CanonicalizationHeader;
@@ -102,16 +102,16 @@ std::string CanonicalizationHeader::FilterHeader(const std::string& input) const
 	 * colon separator MUST be retained.
 	 */
 
-	size_t colonSplit = x.find(":");
+	size_t colonSplit = x.find(':');
 	if (colonSplit == std::string::npos)
 		throw DKIM::PermanentError(StringFormat("Header field %s is missing the colon separator",
 					input.c_str()
 					)
 				);
-	size_t colonAfter = x.find_first_not_of(" ", colonSplit + 1);
+	size_t colonAfter = x.find_first_not_of(' ', colonSplit + 1);
 	if (colonAfter != std::string::npos)
 		x.erase(colonSplit + 1, (colonAfter - 1) - (colonSplit));
-	size_t colonBefore = x.substr(0, colonSplit).find_last_not_of(" ");
+	size_t colonBefore = x.substr(0, colonSplit).find_last_not_of(' ');
 	if (colonBefore != std::string::npos && colonBefore + 1 != colonSplit)
 	{
 		x.erase(colonBefore + 1, colonSplit - (colonBefore + 1));

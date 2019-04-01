@@ -24,7 +24,7 @@
 #include "QuotedPrintable.hpp"
 #include "Base64.hpp"
 
-#include <stdio.h>
+#include <cstdio>
 
 using DKIM::Conversion::EncodedWord;
 using namespace DKIM::Tokenizer;
