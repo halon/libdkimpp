@@ -1,4 +1,6 @@
-INCLUDE(FindCppUnit.cmake)
+INCLUDE(FindPkgConfig)
+
+PKG_CHECK_MODULES(CPPUNIT cppunit)
 
 FILE(GLOB_RECURSE UnitTestSrc "src/*Test.cpp" )
 
