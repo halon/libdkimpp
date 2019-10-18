@@ -19,13 +19,13 @@
  *
  */
 #include "Base64.hpp"
+#include "Exception.hpp"
 
 #include <openssl/bio.h>
 #include <openssl/evp.h>
 #include <openssl/buffer.h>
 
 std::string DKIM::Conversion::Base64_Decode(const std::string& data)
-	throw (DKIM::PermanentError)
 {
 	BIO *i, *o, *l;
 	i = BIO_new(BIO_f_base64());
@@ -46,7 +46,6 @@ std::string DKIM::Conversion::Base64_Decode(const std::string& data)
 }
 
 std::string DKIM::Conversion::Base64_Encode(const std::string& data)
-	throw (DKIM::PermanentError)
 {
 	BIO *i, *o, *l;
 	i = BIO_new(BIO_f_base64());

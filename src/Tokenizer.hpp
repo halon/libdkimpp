@@ -21,8 +21,6 @@
 #ifndef _DKIM_TOKENIZER_HPP_
 #define _DKIM_TOKENIZER_HPP_
 
-#include "Exception.hpp"
-
 #include <string>
 #include <list>
 #include <iostream>
@@ -36,11 +34,9 @@ namespace DKIM {
 			READ_FWS
 		} WhiteSpaceType;
 
-		std::string ReadWhiteSpace(std::istream& stream, WhiteSpaceType type)
-			throw (DKIM::PermanentError);
+		std::string ReadWhiteSpace(std::istream& stream, WhiteSpaceType type);
 
-		std::list<std::string> ValueList(const std::string& input)
-			throw (DKIM::PermanentError);
+		std::list<std::string> ValueList(const std::string& input);
 
 		typedef enum {
 			TOK_QUOTED,
@@ -52,11 +48,9 @@ namespace DKIM {
 			TOK_EOF
 		} AddressListTokens;
 
-		AddressListTokens NextAddressListToken(std::stringstream& data, std::string& token)
-			throw (DKIM::PermanentError);
+		AddressListTokens NextAddressListToken(std::stringstream& data, std::string& token);
 
-		std::list<std::string> ParseAddressList(const std::string& input)
-			throw (DKIM::PermanentError);
+		std::list<std::string> ParseAddressList(const std::string& input);
 	}
 }
 

@@ -29,6 +29,7 @@ using DKIM::Validatory;
 #include "TagList.hpp"
 #include "EncodedWord.hpp"
 #include "Tokenizer.hpp"
+#include "Exception.hpp"
 
 using DKIM::Conversion::CanonicalizationHeader;
 using DKIM::Conversion::CanonicalizationBody;
@@ -78,7 +79,6 @@ Validatory::~Validatory()
  */
 void Validatory::GetSignature(const Message::HeaderList::const_iterator& headerIter,
 		DKIM::Signature& sig)
-	throw (DKIM::PermanentError)
 {
 	sig.Parse(*headerIter);
 	CheckBodyHash(sig);
@@ -91,7 +91,6 @@ void Validatory::GetSignature(const Message::HeaderList::const_iterator& headerI
  */
 void Validatory::GetPublicKey(const DKIM::Signature& sig,
 		DKIM::PublicKey& pubkey)
-	throw (DKIM::PermanentError, DKIM::TemporaryError)
 {
 	if (sig.GetQueryType() == DKIM::Signature::DKIM_Q_DNSTXT)
 	{
@@ -130,7 +129,6 @@ void Validatory::GetPublicKey(const DKIM::Signature& sig,
  * Validate the message according to rfc6376
  */
 void Validatory::CheckBodyHash(const DKIM::Signature& sig)
-	throw (DKIM::PermanentError)
 {
 	std::unique_ptr<EVP_MD_CTX, std::function<void(EVP_MD_CTX*)>> evpmdbody(EVP_MD_CTX_create(), [] (EVP_MD_CTX* p) { EVP_MD_CTX_destroy(p); });
 
@@ -174,7 +172,6 @@ void Validatory::CheckBodyHash(const DKIM::Signature& sig)
 void Validatory::CheckSignature(const std::shared_ptr<DKIM::Header> header,
 		const DKIM::Signature& sig,
 		const DKIM::PublicKey& pub)
-	throw (DKIM::PermanentError)
 {
 	// sanity checking (between sig and pub)
 	if (pub.GetDigestAlgorithms().size() > 0)

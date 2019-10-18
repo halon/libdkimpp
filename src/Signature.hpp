@@ -42,7 +42,7 @@ namespace DKIM
 			{ Reset(); }
 
 			void Reset();
-			void Parse(const std::shared_ptr<DKIM::Header> header) throw (DKIM::PermanentError);
+			void Parse(const std::shared_ptr<DKIM::Header> header);
 
 			bool GetTag(const std::string& name, TagListEntry& tag) const
 			{ return m_tagList.GetTag(name, tag); }

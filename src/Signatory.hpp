@@ -41,8 +41,7 @@ namespace DKIM
 			Signatory(std::istream& file);
 			~Signatory();
 
-			std::string CreateSignature(const SignatoryOptions& options)
-				throw (DKIM::PermanentError);
+			std::string CreateSignature(const SignatoryOptions& options);
 		private:
 			std::istream& m_file;
 			DKIM::Message m_msg;

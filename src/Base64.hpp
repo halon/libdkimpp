@@ -21,16 +21,12 @@
 #ifndef _DKIM_BASE64_HPP_
 #define _DKIM_BASE64_HPP_
 
-#include "Exception.hpp"
-
 #include <string>
 
 namespace DKIM {
 	namespace Conversion {
-		std::string Base64_Decode(const std::string& data)
-			throw (DKIM::PermanentError);
-		std::string Base64_Encode(const std::string& data)
-			throw (DKIM::PermanentError);
+		std::string Base64_Decode(const std::string& data);
+		std::string Base64_Encode(const std::string& data);
 	}
 }
 

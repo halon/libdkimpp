@@ -20,6 +20,7 @@
  */
 #include "EncodedWord.hpp"
 #include "Tokenizer.hpp"
+#include "Exception.hpp"
 
 #include "QuotedPrintable.hpp"
 #include "Base64.hpp"
@@ -30,7 +31,6 @@ using DKIM::Conversion::EncodedWord;
 using namespace DKIM::Tokenizer;
 
 std::string EncodedWord::Decode(const std::string& input)
-	throw (DKIM::PermanentError)
 {
 	std::string output;
 	std::stringstream data(input);

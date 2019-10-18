@@ -23,6 +23,7 @@
 #include "Base64.hpp"
 #include "Tokenizer.hpp"
 #include "Util.hpp"
+#include "Exception.hpp"
 
 #include <algorithm>
 #include <openssl/evp.h>
@@ -49,7 +50,7 @@ void PublicKey::Reset()
 	m_flags.clear();
 }
 
-void PublicKey::Parse(const std::string& signature) throw (DKIM::PermanentError)
+void PublicKey::Parse(const std::string& signature)
 {
 	m_tagList.Parse(signature);
 

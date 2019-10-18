@@ -21,16 +21,13 @@
 #ifndef _DKIM_ENCODEDWORD_HPP_
 #define _DKIM_ENCODEDWORD_HPP_
 
-#include "Exception.hpp"
-
 #include <string>
 
 namespace DKIM {
 	namespace Conversion {
 		class EncodedWord {
 			public:
-				static std::string Decode(const std::string& input)
-					throw (DKIM::PermanentError);
+				static std::string Decode(const std::string& input);
 		};
 	}
 }

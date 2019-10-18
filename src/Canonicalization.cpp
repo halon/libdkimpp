@@ -21,6 +21,7 @@
 #include "Canonicalization.hpp"
 #include "Tokenizer.hpp"
 #include "Util.hpp"
+#include "Exception.hpp"
 
 #include <sstream>
 #include <cstdio>

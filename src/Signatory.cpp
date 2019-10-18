@@ -52,7 +52,6 @@ Signatory::~Signatory()
 }
 
 std::string Signatory::CreateSignature(const SignatoryOptions& options)
-	throw (DKIM::PermanentError)
 {
 	while (m_msg.ParseLine(m_file) && !m_msg.IsDone()) { }
 

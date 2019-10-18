@@ -45,7 +45,7 @@ namespace DKIM {
 			{ Reset(); }
 
 			void Reset();
-			void Parse(const std::string& signature) throw (DKIM::PermanentError);
+			void Parse(const std::string& signature);
 
 			// Get Functions
 

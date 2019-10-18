@@ -43,32 +43,25 @@ namespace DKIM
 			Validatory(std::istream& file, ValidatorType type = DKIM);
 			~Validatory();
 
-			void GetSignature(const Message::HeaderList::const_iterator& headerIter,
-					DKIM::Signature& sig)
-				throw (DKIM::PermanentError);
+			void GetSignature(const Message::HeaderList::const_iterator& headerIter, DKIM::Signature& sig);
 
-			void CheckBodyHash(const DKIM::Signature& sig)
-				throw (DKIM::PermanentError);
+			void CheckBodyHash(const DKIM::Signature& sig);
 
-			void GetPublicKey(const DKIM::Signature& sig,
-					DKIM::PublicKey& pub)
-				throw (DKIM::PermanentError, DKIM::TemporaryError);
+			void GetPublicKey(const DKIM::Signature& sig, DKIM::PublicKey& pub);
 
 			void CheckSignature(const Message::HeaderList::const_iterator& headerIter,
 					const DKIM::Signature& sig,
 					const DKIM::PublicKey& pub)
-				throw (DKIM::PermanentError)
 			{
 				CheckSignature(*headerIter, sig, pub);
 			}
 
 			void CheckSignature(const std::shared_ptr<DKIM::Header> header,
 					const DKIM::Signature& sig,
-					const DKIM::PublicKey& pub)
-				throw (DKIM::PermanentError);
+					const DKIM::PublicKey& pub);
 
 			const SignatureList& GetSignatures() const
-				throw() {
+			{
 				return m_dkimHeaders;
 			}
 

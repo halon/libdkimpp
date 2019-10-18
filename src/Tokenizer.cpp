@@ -20,6 +20,7 @@
  */
 #include "Tokenizer.hpp"
 #include "Util.hpp"
+#include "Exception.hpp"
 
 #include "QuotedPrintable.hpp"
 #include "Base64.hpp"
@@ -30,7 +31,6 @@ using namespace DKIM::Tokenizer;
 using DKIM::Util::StringFormat;
 
 std::string DKIM::Tokenizer::ReadWhiteSpace(std::istream& stream, WhiteSpaceType type)
-	throw (DKIM::PermanentError)
 {
 	switch (type)
 	{
@@ -113,7 +113,6 @@ unwind:
 }
 
 std::list<std::string> DKIM::Tokenizer::ValueList(const std::string& input)
-	throw (DKIM::PermanentError)
 {
 	std::list<std::string> values;
 
@@ -167,7 +166,6 @@ std::list<std::string> DKIM::Tokenizer::ValueList(const std::string& input)
 }
 
 DKIM::Tokenizer::AddressListTokens DKIM::Tokenizer::NextAddressListToken(std::stringstream& data, std::string& token)
-	throw (DKIM::PermanentError)
 {
 	token.clear();
 
@@ -262,7 +260,6 @@ DKIM::Tokenizer::AddressListTokens DKIM::Tokenizer::NextAddressListToken(std::st
 }
 
 std::list<std::string> DKIM::Tokenizer::ParseAddressList(const std::string& input)
-	throw (DKIM::PermanentError)
 {
 	std::list<std::string> list;
 

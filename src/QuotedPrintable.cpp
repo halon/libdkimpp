@@ -21,6 +21,7 @@
 #include "QuotedPrintable.hpp"
 #include "Tokenizer.hpp"
 #include "Util.hpp"
+#include "Exception.hpp"
 
 #include <sstream>
 #include <cstdio>
@@ -31,7 +32,6 @@ using DKIM::Tokenizer::ReadWhiteSpace;
 using DKIM::Util::StringFormat;
 
 std::string QuotedPrintable::Decode(const std::string& input, bool convert_to_space)
-	throw (DKIM::PermanentError)
 {
 	std::stringstream data(input);
 	std::string output;

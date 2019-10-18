@@ -21,6 +21,7 @@
 #include "TagList.hpp"
 #include "Tokenizer.hpp"
 #include "Util.hpp"
+#include "Exception.hpp"
 
 using DKIM::TagList;
 using DKIM::Tokenizer::ReadWhiteSpace;
@@ -94,7 +95,6 @@ void TagList::Reset()
 }
 
 void TagList::Parse(const std::string& input)
-	throw (DKIM::PermanentError)
 {
 	std::stringstream data(input);
 

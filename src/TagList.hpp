@@ -21,8 +21,6 @@
 #ifndef _DKIM_TAGLIST_HPP_
 #define _DKIM_TAGLIST_HPP_
 
-#include "Exception.hpp"
-
 #include <string>
 #include <map>
 #include <iostream>
@@ -51,8 +49,7 @@ namespace DKIM {
 		public:
 			void Reset();
 
-			void Parse(const std::string& input)
-				throw (DKIM::PermanentError);
+			void Parse(const std::string& input);
 
 			bool GetTag(const std::string& name, TagListEntry& tag) const;
 

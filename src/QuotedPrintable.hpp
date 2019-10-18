@@ -21,16 +21,13 @@
 #ifndef _DKIM_QUOTEDPRINTABLE_HPP_
 #define _DKIM_QUOTEDPRINTABLE_HPP_
 
-#include "Exception.hpp"
-
 #include <string>
 
 namespace DKIM {
 	namespace Conversion {
 		class QuotedPrintable {
 			public:
-				static std::string Decode(const std::string& input, bool convert_to_space = false)
-					throw (DKIM::PermanentError);
+				static std::string Decode(const std::string& input, bool convert_to_space = false);
 		};
 	}
 }

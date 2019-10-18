@@ -23,6 +23,7 @@
 #include "QuotedPrintable.hpp"
 #include "Base64.hpp"
 #include "Util.hpp"
+#include "Exception.hpp"
 
 #include <cstdio>
 #include <cstdlib>
@@ -68,7 +69,7 @@ void Signature::Reset()
 	m_arcInstance = 0;
 }
 
-void Signature::Parse(const std::shared_ptr<DKIM::Header> header) throw (DKIM::PermanentError)
+void Signature::Parse(const std::shared_ptr<DKIM::Header> header)
 {
 	m_tagList.Parse(header->GetHeader().substr(header->GetValueOffset()));
 
