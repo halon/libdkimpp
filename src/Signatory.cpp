@@ -178,6 +178,8 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 		case DKIM::DKIM_SA_RSA:
 		{
 			RSA* rsa = options.GetRSAPrivateKey();
+			if (!rsa)
+				throw DKIM::PermanentError("No RSA key provided");
 
 			unsigned int sig_len;
 			unsigned char* sig = new unsigned char[RSA_size(rsa)];
