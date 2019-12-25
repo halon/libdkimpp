@@ -140,10 +140,16 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 	unsigned long arcInstance = options.GetARCInstance();
 	if (arcInstance)
 		dkimHeader += "ARC-Message-Signature: i=" + StringFormat("%lu", arcInstance) + "; a=" + Algorithm2String(options.GetSignatureAlgorithm(), options.GetDigestAlgorithm()) + "; c="
-					+ CanonMode2String(options.GetCanonModeHeader()) + "/" + CanonMode2String(options.GetCanonModeBody()) + ";\r\n";
+					+ CanonMode2String(options.GetCanonModeHeader()) + "/" + CanonMode2String(options.GetCanonModeBody()) + ";";
 	else
 		dkimHeader += "DKIM-Signature: v=1; a=" + Algorithm2String(options.GetSignatureAlgorithm(), options.GetDigestAlgorithm()) + "; c="
-					+ CanonMode2String(options.GetCanonModeHeader()) + "/" + CanonMode2String(options.GetCanonModeBody()) + ";\r\n";
+					+ CanonMode2String(options.GetCanonModeHeader()) + "/" + CanonMode2String(options.GetCanonModeBody()) + ";";
+
+	if (options.GetTimestamp() >= 0)
+		dkimHeader += " t=" + StringFormat("%lu", options.GetTimestamp()) + ";";
+	if (options.GetExpiration() >= 0)
+		dkimHeader += " x=" + StringFormat("%lu", options.GetExpiration()) + ";";
+	dkimHeader += "\r\n";
 
 	std::string limit;
 	if (options.GetBodySignLength())

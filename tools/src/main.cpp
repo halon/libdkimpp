@@ -152,6 +152,8 @@ int main(int argc, char* argv[])
 						.SetARCInstance(arcInstance)
 						.SetCanonModeHeader(DKIM::DKIM_C_RELAXED)
 						.SetCanonModeBody(DKIM::DKIM_C_RELAXED)
+						.SetTimestamp(time(nullptr))
+						.SetExpiration(time(nullptr) + 3600)
 						).c_str() );
 		} catch (std::runtime_error& e) {
 			fprintf(stderr, "%s\n", e.what());

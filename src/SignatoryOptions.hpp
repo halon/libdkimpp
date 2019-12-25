@@ -28,6 +28,7 @@
 
 #include <list>
 #include <string>
+#include <time.h>
 
 #include <openssl/evp.h>
 #include <openssl/pem.h>
@@ -53,6 +54,8 @@ namespace DKIM
 			SignatoryOptions& SetCanonModeHeader(CanonMode mode);
 			SignatoryOptions& SetCanonModeBody(CanonMode mode);
 			SignatoryOptions& SetARCInstance(unsigned long instance);
+			SignatoryOptions& SetTimestamp(time_t timestamp);
+			SignatoryOptions& SetExpiration(time_t expiration);
 
 			RSA* GetRSAPrivateKey() const
 			{ return m_privateKeyRSA; }
@@ -80,6 +83,10 @@ namespace DKIM
 			{ return m_canonBody; }
 			unsigned long GetARCInstance() const
 			{ return m_arcInstance; }
+			time_t GetTimestamp() const
+			{ return m_timestamp; }
+			time_t GetExpiration() const
+			{ return m_expiration; }
 		private:
 			SignatoryOptions(const SignatoryOptions&);
 
@@ -101,6 +108,9 @@ namespace DKIM
 
 			CanonMode m_canonHead;
 			CanonMode m_canonBody;
+
+			time_t m_timestamp;
+			time_t m_expiration;
 	};
 }
 
