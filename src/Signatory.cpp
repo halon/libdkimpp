@@ -145,10 +145,20 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 		dkimHeader += "DKIM-Signature: v=1; a=" + Algorithm2String(options.GetSignatureAlgorithm(), options.GetDigestAlgorithm()) + "; c="
 					+ CanonMode2String(options.GetCanonModeHeader()) + "/" + CanonMode2String(options.GetCanonModeBody()) + ";";
 
-	if (options.GetTimestamp() >= 0)
-		dkimHeader += " t=" + StringFormat("%lu", options.GetTimestamp()) + ";";
-	if (options.GetExpiration() >= 0)
-		dkimHeader += " x=" + StringFormat("%lu", options.GetExpiration()) + ";";
+	time_t timestamp = -1;
+	if (options.GetTimestampSign())
+	{
+		timestamp = options.GetTimestamp();
+		if (timestamp == -1)
+			timestamp = time(nullptr);
+		dkimHeader += " t=" + StringFormat("%lu", timestamp) + ";";
+	}
+	if (options.GetExpirationSign())
+	{
+		time_t expiration = (options.GetExpirationAbsolute() ? 0 : (timestamp == -1 ? time(nullptr) : timestamp)) + options.GetExpiration();
+		dkimHeader += " x=" + StringFormat("%lu", expiration) + ";";
+	}
+
 	dkimHeader += "\r\n";
 
 	std::string limit;

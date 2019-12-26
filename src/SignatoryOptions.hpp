@@ -55,7 +55,7 @@ namespace DKIM
 			SignatoryOptions& SetCanonModeBody(CanonMode mode);
 			SignatoryOptions& SetARCInstance(unsigned long instance);
 			SignatoryOptions& SetTimestamp(time_t timestamp);
-			SignatoryOptions& SetExpiration(time_t expiration);
+			SignatoryOptions& SetExpiration(time_t expiration, bool absolute = true);
 
 			RSA* GetRSAPrivateKey() const
 			{ return m_privateKeyRSA; }
@@ -83,10 +83,16 @@ namespace DKIM
 			{ return m_canonBody; }
 			unsigned long GetARCInstance() const
 			{ return m_arcInstance; }
+			bool GetTimestampSign() const
+			{ return m_timestampSign; }
 			time_t GetTimestamp() const
 			{ return m_timestamp; }
+			bool GetExpirationSign() const
+			{ return m_expirationSign; }
 			time_t GetExpiration() const
 			{ return m_expiration; }
+			bool GetExpirationAbsolute() const
+			{ return m_expirationAbsolute; }
 		private:
 			SignatoryOptions(const SignatoryOptions&);
 
@@ -109,7 +115,10 @@ namespace DKIM
 			CanonMode m_canonHead;
 			CanonMode m_canonBody;
 
+			bool m_timestampSign;
 			time_t m_timestamp;
+			bool m_expirationSign;
+			bool m_expirationAbsolute;
 			time_t m_expiration;
 	};
 }

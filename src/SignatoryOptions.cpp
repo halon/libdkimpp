@@ -66,8 +66,11 @@ SignatoryOptions::SignatoryOptions()
 	m_bodySignLength = false;
 	m_arcInstance = 0;
 
+	m_timestampSign = false;
 	m_timestamp = -1;
+	m_expirationSign = false;
 	m_expiration = -1;
+	m_expirationAbsolute = true;
 }
 
 SignatoryOptions::~SignatoryOptions()
@@ -223,11 +226,14 @@ SignatoryOptions& SignatoryOptions::SetCanonModeBody(CanonMode mode)
 SignatoryOptions& SignatoryOptions::SetTimestamp(time_t timestamp)
 {
 	m_timestamp = timestamp;
+	m_timestampSign = true;
 	return *this;
 }
 
-SignatoryOptions& SignatoryOptions::SetExpiration(time_t expiration)
+SignatoryOptions& SignatoryOptions::SetExpiration(time_t expiration, bool absolute)
 {
 	m_expiration = expiration;
+	m_expirationAbsolute = absolute;
+	m_expirationSign = true;
 	return *this;
 }
