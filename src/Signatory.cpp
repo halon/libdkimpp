@@ -28,6 +28,7 @@ using DKIM::Signatory;
 using DKIM::Conversion::CanonicalizationHeader;
 using DKIM::Conversion::CanonicalizationBody;
 
+#include "QuotedPrintable.hpp"
 #include "Base64.hpp"
 
 using DKIM::Conversion::Base64_Encode;
@@ -165,7 +166,11 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 	if (options.GetBodySignLength())
 		limit = StringFormat("; l=%lu", options.GetBodyLength());
 
-	dkimHeader += "\td=" + options.GetDomain() + "; s=" + options.GetSelector() + limit + ";\r\n";
+	std::string identity;
+	if (!options.GetIdentity().empty())
+		identity = StringFormat("; i=%s", DKIM::Conversion::QuotedPrintable::Encode(options.GetIdentity()).c_str());
+
+	dkimHeader += "\td=" + options.GetDomain() + "; s=" + options.GetSelector() + identity + limit + ";\r\n";
 
 	std::string headerlist = "\th=";
 	for (std::list<std::string>::const_iterator i = signedHeaders.begin();

@@ -237,3 +237,9 @@ SignatoryOptions& SignatoryOptions::SetExpiration(time_t expiration, bool absolu
 	m_expirationSign = true;
 	return *this;
 }
+
+SignatoryOptions& SignatoryOptions::SetIdentity(const std::string& identity)
+{
+	m_identity = identity;
+	return *this;
+}

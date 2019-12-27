@@ -28,6 +28,7 @@ namespace DKIM {
 		class QuotedPrintable {
 			public:
 				static std::string Decode(const std::string& input, bool convert_to_space = false);
+				static std::string Encode(const std::string& input);
 		};
 	}
 }

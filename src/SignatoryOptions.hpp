@@ -56,6 +56,7 @@ namespace DKIM
 			SignatoryOptions& SetARCInstance(unsigned long instance);
 			SignatoryOptions& SetTimestamp(time_t timestamp);
 			SignatoryOptions& SetExpiration(time_t expiration, bool absolute = true);
+			SignatoryOptions& SetIdentity(const std::string& identity);
 
 			RSA* GetRSAPrivateKey() const
 			{ return m_privateKeyRSA; }
@@ -93,6 +94,8 @@ namespace DKIM
 			{ return m_expiration; }
 			bool GetExpirationAbsolute() const
 			{ return m_expirationAbsolute; }
+			const std::string& GetIdentity() const
+			{ return m_identity; }
 		private:
 			SignatoryOptions(const SignatoryOptions&);
 
@@ -120,6 +123,8 @@ namespace DKIM
 			bool m_expirationSign;
 			bool m_expirationAbsolute;
 			time_t m_expiration;
+
+			std::string m_identity;
 	};
 }
 
