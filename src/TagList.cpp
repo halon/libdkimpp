@@ -127,8 +127,8 @@ void TagList::Parse(const std::string& input)
 		}
 
 		if (name.empty())
-			throw DKIM::PermanentError(StringFormat("Invalid tag name (empty), expecting name at position %zu",
-						(size_t)data.tellg()
+			throw DKIM::PermanentError(StringFormat("Invalid tag name (empty), expecting name at position %ld",
+						(ssize_t)data.tellg()
 						)
 					);
 		if (m_tags.find(name) != m_tags.end())
@@ -176,9 +176,9 @@ void TagList::Parse(const std::string& input)
 
 			std::string ws = ReadWhiteSpace(data, DKIM::Tokenizer::READ_FWS);
 			if (ws.empty())
-				throw DKIM::PermanentError(StringFormat("Invalid tag value (invalid data), unexpected 0x%x at position %zu",
-							data.peek(),
-							(size_t)data.tellg()
+				throw DKIM::PermanentError(StringFormat("Invalid tag value (invalid data), unexpected 0x%x at position %ld",
+							data.peek() & 0xff,
+							(ssize_t)data.tellg()
 							)
 						);
 
