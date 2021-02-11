@@ -142,9 +142,9 @@ void TagList::Parse(const std::string& input)
 
 		// =
 		if (data.peek() != '=')
-			throw DKIM::PermanentError(StringFormat("Invalid tag list; unexpected 0x%x, expecting = at position %zu",
-							data.peek(),
-							(size_t)data.tellg()	
+			throw DKIM::PermanentError(StringFormat("Invalid tag list; unexpected 0x%x, expecting = at position %ld",
+							data.peek() & 0xff,
+							(ssize_t)data.tellg()
 						)
 					);
 		else
