@@ -31,7 +31,8 @@ namespace DKIM {
 		typedef enum {
 			READ_CRLF,
 			READ_WSP,
-			READ_FWS
+			READ_FWS,
+			READ_WSP_LOOSE
 		} WhiteSpaceType;
 
 		std::string ReadWhiteSpace(std::istream& stream, WhiteSpaceType type);

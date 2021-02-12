@@ -104,7 +104,7 @@ void TagList::Parse(const std::string& input)
 		std::string value;
 
 		// [ FWS ]
-		while (!ReadWhiteSpace(data, DKIM::Tokenizer::READ_FWS).empty());
+		while (!ReadWhiteSpace(data, DKIM::Tokenizer::READ_WSP_LOOSE).empty());
 
 		// ...
 		if (data.peek() == EOF) break;
@@ -138,7 +138,7 @@ void TagList::Parse(const std::string& input)
 					);
 
 		// [ FWS ]
-		while (!ReadWhiteSpace(data, DKIM::Tokenizer::READ_FWS).empty());
+		while (!ReadWhiteSpace(data, DKIM::Tokenizer::READ_WSP_LOOSE).empty());
 
 		// =
 		if (data.peek() != '=')
@@ -151,7 +151,7 @@ void TagList::Parse(const std::string& input)
 			data.get(); // discard '='
 
 		// [ FWS ]
-		while (!ReadWhiteSpace(data, DKIM::Tokenizer::READ_FWS).empty());
+		while (!ReadWhiteSpace(data, DKIM::Tokenizer::READ_WSP_LOOSE).empty());
 
 		TagListEntry tagEntry;
 		tagEntry.SetValueOffset(data.tellg());
@@ -174,7 +174,7 @@ void TagList::Parse(const std::string& input)
 				continue;
 			}
 
-			std::string ws = ReadWhiteSpace(data, DKIM::Tokenizer::READ_FWS);
+			std::string ws = ReadWhiteSpace(data, DKIM::Tokenizer::READ_WSP_LOOSE);
 			if (ws.empty())
 				throw DKIM::PermanentError(StringFormat("Invalid tag value (invalid data), unexpected 0x%x at position %ld",
 							data.peek() & 0xff,

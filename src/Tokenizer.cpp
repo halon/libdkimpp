@@ -61,12 +61,26 @@ std::string DKIM::Tokenizer::ReadWhiteSpace(std::istream& stream, WhiteSpaceType
 			}
 			break;
 			/**
-			 * Skip any number of ' ' and '\t' followed by each other
+			 * Skip ' ' and '\t'
 			 */
 		case READ_WSP:
 			{
 				std::string _s;
 				if (stream.peek() == ' ' || stream.peek() == '\t')
+				{
+					_s += (char)stream.get(); // discard wsp
+					return _s;
+				}
+				return "";
+			}
+			break;
+			/**
+			 * Skip ' ', '\t', '\r' and '\n'
+			 */
+		case READ_WSP_LOOSE:
+			{
+				std::string _s;
+				if (stream.peek() == ' ' || stream.peek() == '\t' || stream.peek() == '\r' || stream.peek() == '\n')
 				{
 					_s += (char)stream.get(); // discard wsp
 					return _s;

@@ -25,13 +25,16 @@ class TagListTest : public CppUnit::TestFixture {
 		CPPUNIT_ASSERT_THROW ( myTag.Parse("v=1;x"), std::runtime_error );
 
 		myTag.Reset();
-		CPPUNIT_ASSERT_THROW ( myTag.Parse("v=1;\r\nk=1;"), std::runtime_error );
+		CPPUNIT_ASSERT_NO_THROW ( myTag.Parse("v=1;\r\nk=1;") );
 
 		myTag.Reset();
-		CPPUNIT_ASSERT_THROW ( myTag.Parse("v=1; \r\nk=1;"), std::runtime_error );
+		CPPUNIT_ASSERT_NO_THROW ( myTag.Parse("v=1; \r\nk=1;") );
 
 		myTag.Reset();
-		CPPUNIT_ASSERT_THROW ( myTag.Parse("\r\n"), std::runtime_error );
+		CPPUNIT_ASSERT_NO_THROW ( myTag.Parse("v=1;\t\nk=1;") );
+
+		myTag.Reset();
+		CPPUNIT_ASSERT_NO_THROW ( myTag.Parse("\r\n") );
 
 		myTag.Reset();
 		CPPUNIT_ASSERT_NO_THROW ( myTag.Parse("v=1;x=2") );
