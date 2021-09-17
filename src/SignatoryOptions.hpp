@@ -43,6 +43,7 @@ namespace DKIM
 			~SignatoryOptions();
 
 			SignatoryOptions& SetPrivateKey(const std::string& privatekey);
+			SignatoryOptions& SetRSAPrivateKey(RSA* privatekey, bool privatekeyfree);
 			SignatoryOptions& SetDomain(const std::string& domain);
 			SignatoryOptions& SetSelector(const std::string& selector);
 			SignatoryOptions& SetDigestAlgorithm(DigestAlgorithm algorithm);
@@ -100,6 +101,7 @@ namespace DKIM
 			SignatoryOptions(const SignatoryOptions&);
 
 			RSA* m_privateKeyRSA;
+			bool m_privateKeyRSAFree;
 			std::string m_privateKeyED25519;
 			SignatureAlgorithm m_signatureAlgorithm;
 

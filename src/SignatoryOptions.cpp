@@ -26,6 +26,7 @@ using DKIM::SignatoryOptions;
 
 SignatoryOptions::SignatoryOptions()
 : m_privateKeyRSA(nullptr)
+, m_privateKeyRSAFree(true)
 {
 	m_digestAlgorithm = DKIM_A_SHA256;
 	m_signatureAlgorithm = DKIM_SA_RSA;
@@ -75,7 +76,8 @@ SignatoryOptions::SignatoryOptions()
 
 SignatoryOptions::~SignatoryOptions()
 {
-	RSA_free(m_privateKeyRSA);
+	if (m_privateKeyRSAFree)
+		RSA_free(m_privateKeyRSA);
 }
 
 SignatoryOptions& SignatoryOptions::SetPrivateKey(const std::string& privatekey)
@@ -147,6 +149,13 @@ SignatoryOptions& SignatoryOptions::SetPrivateKey(const std::string& privatekey)
 		}
 		break;
 	}
+	return *this;
+}
+
+SignatoryOptions& SignatoryOptions::SetRSAPrivateKey(RSA* privatekey, bool privatekeyfree)
+{
+	m_privateKeyRSA = privatekey;
+	m_privateKeyRSAFree = privatekeyfree;
 	return *this;
 }
 
