@@ -137,115 +137,131 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 		transform(i.begin(), i.end(), i.begin(), tolower);
 	signedHeaders.insert(signedHeaders.end(), oversign.begin(), oversign.end());
 
-	std::string dkimHeader;
-	unsigned long arcInstance = options.GetARCInstance();
-	if (arcInstance)
-		dkimHeader += "ARC-Message-Signature: i=" + StringFormat("%lu", arcInstance) + "; a=" + Algorithm2String(options.GetSignatureAlgorithm(), options.GetDigestAlgorithm()) + "; c="
-					+ CanonMode2String(options.GetCanonModeHeader()) + "/" + CanonMode2String(options.GetCanonModeBody()) + ";";
-	else
-		dkimHeader += "DKIM-Signature: v=1; a=" + Algorithm2String(options.GetSignatureAlgorithm(), options.GetDigestAlgorithm()) + "; c="
-					+ CanonMode2String(options.GetCanonModeHeader()) + "/" + CanonMode2String(options.GetCanonModeBody()) + ";";
-
-	time_t timestamp = -1;
-	if (options.GetTimestampSign())
+	std::string dkimHeaders;
+	for (auto s = options.GetAdditionalSignatures().rbegin(); s != options.GetAdditionalSignatures().rend(); ++s)
 	{
-		timestamp = options.GetTimestamp();
-		if (timestamp == -1)
-			timestamp = time(nullptr);
-		dkimHeader += " t=" + StringFormat("%lu", timestamp) + ";";
-	}
-	if (options.GetExpirationSign())
-	{
-		time_t expiration = (options.GetExpirationAbsolute() ? 0 : (timestamp == -1 ? time(nullptr) : timestamp)) + options.GetExpiration();
-		dkimHeader += " x=" + StringFormat("%lu", expiration) + ";";
-	}
+		const auto & signature = *s;
+		std::string dkimHeader;
+		unsigned long arcInstance = options.GetARCInstance();
+		if (arcInstance)
+			dkimHeader += "ARC-Message-Signature: i=" + StringFormat("%lu", arcInstance) + "; a=" + Algorithm2String(options.GetSignatureAlgorithm(), options.GetDigestAlgorithm()) + "; c="
+						+ CanonMode2String(options.GetCanonModeHeader()) + "/" + CanonMode2String(options.GetCanonModeBody()) + ";";
+		else
+			dkimHeader += "DKIM-Signature: v=1; a=" + Algorithm2String(options.GetSignatureAlgorithm(), options.GetDigestAlgorithm()) + "; c="
+						+ CanonMode2String(options.GetCanonModeHeader()) + "/" + CanonMode2String(options.GetCanonModeBody()) + ";";
 
-	dkimHeader += "\r\n";
-
-	std::string limit;
-	if (options.GetBodySignLength())
-		limit = StringFormat("; l=%lu", options.GetBodyLength());
-
-	std::string identity;
-	if (!options.GetIdentity().empty())
-		identity = StringFormat("; i=%s", DKIM::Conversion::QuotedPrintable::Encode(options.GetIdentity()).c_str());
-
-	dkimHeader += "\td=" + options.GetDomain() + "; s=" + options.GetSelector() + identity + limit + ";\r\n";
-
-	std::string headerlist = "\th=";
-	for (std::list<std::string>::const_iterator i = signedHeaders.begin();
-		i != signedHeaders.end(); ++i)
-	{
-		bool insertColon = (i != signedHeaders.begin());
-		if (headerlist.size() + i->size() + (insertColon?1:0) > 80)
+		time_t timestamp = -1;
+		if (options.GetTimestampSign())
 		{
-			dkimHeader += headerlist + (insertColon?":":"") + "\r\n";
-			headerlist = "\t " + *i;
-		} else {
-			headerlist += (insertColon?":":"") + *i;
+			timestamp = options.GetTimestamp();
+			if (timestamp == -1)
+				timestamp = time(nullptr);
+			dkimHeader += " t=" + StringFormat("%lu", timestamp) + ";";
 		}
-	}
-	dkimHeader += headerlist + ";\r\n";
-	dkimHeader += "\tbh=" + Base64_Encode(bh) + ";\r\n";
-	dkimHeader += "\tb=";
-
-	std::string tmp2 = canonicalhead.FilterHeader(dkimHeader);
-	EVP_DigestUpdate(evpmdhead.get(), tmp2.c_str(), tmp2.size());
-	EVP_DigestFinal_ex(evpmdhead.get(), md, &md_len);
-
-	std::string tmp3;
-	switch (options.GetSignatureAlgorithm())
-	{
-		case DKIM::DKIM_SA_RSA:
+		if (options.GetExpirationSign())
 		{
-			RSA* rsa = options.GetRSAPrivateKey();
-			if (!rsa)
-				throw DKIM::PermanentError("No RSA key provided");
+			time_t expiration = (options.GetExpirationAbsolute() ? 0 : (timestamp == -1 ? time(nullptr) : timestamp)) + options.GetExpiration();
+			dkimHeader += " x=" + StringFormat("%lu", expiration) + ";";
+		}
 
-			unsigned int sig_len;
-			unsigned char* sig = new unsigned char[RSA_size(rsa)];
+		dkimHeader += "\r\n";
 
-			int r = RSA_sign(md_nid,
-					md,
-					md_len,
-					sig,
-					&sig_len,
-					rsa);
+		std::string limit;
+		if (options.GetBodySignLength())
+			limit = StringFormat("; l=%lu", options.GetBodyLength());
 
-			if (r != 1)
+		std::string identity;
+		if (!options.GetIdentity().empty())
+			identity = StringFormat("; i=%s", DKIM::Conversion::QuotedPrintable::Encode(options.GetIdentity()).c_str());
+
+		dkimHeader += "\td=" + signature.GetDomain() + "; s=" + signature.GetSelector() + identity + limit + ";\r\n";
+
+		std::string headerlist = "\th=";
+		for (std::list<std::string>::const_iterator i = signedHeaders.begin();
+			i != signedHeaders.end(); ++i)
+		{
+			bool insertColon = (i != signedHeaders.begin());
+			if (headerlist.size() + i->size() + (insertColon?1:0) > 80)
 			{
-				delete [] sig;
-				throw DKIM::PermanentError("Message could not be signed");
+				dkimHeader += headerlist + (insertColon?":":"") + "\r\n";
+				headerlist = "\t " + *i;
+			} else {
+				headerlist += (insertColon?":":"") + *i;
 			}
-
-			tmp3 = std::string((const char*)sig, sig_len);
-			delete [] sig;
 		}
-		break;
-		case DKIM::DKIM_SA_ED25519:
+		dkimHeader += headerlist + ";\r\n";
+		dkimHeader += "\tbh=" + Base64_Encode(bh) + ";\r\n";
+		dkimHeader += "\tb=";
+
+		EVP_MD_CTX* evpmdhead2 = EVP_MD_CTX_new();
+		EVP_MD_CTX_copy(evpmdhead2, evpmdhead.get());
+		std::string tmp2 = canonicalhead.FilterHeader(dkimHeader);
+		EVP_DigestUpdate(evpmdhead2, tmp2.c_str(), tmp2.size());
+		EVP_DigestFinal_ex(evpmdhead2, md, &md_len);
+		EVP_MD_CTX_free(evpmdhead2);
+		/*
+		std::string tmp2 = canonicalhead.FilterHeader(dkimHeader);
+		EVP_DigestUpdate(evpmdhead.get(), tmp2.c_str(), tmp2.size());
+		EVP_DigestFinal_ex(evpmdhead.get(), md, &md_len);
+		*/
+
+		std::string tmp3;
+		switch (signature.GetSignatureAlgorithm())
 		{
-			unsigned char sig[crypto_sign_BYTES];
-			if (crypto_sign_detached(sig,
-						nullptr,
+			case DKIM::DKIM_SA_RSA:
+			{
+				RSA* rsa = signature.GetRSAPrivateKey();
+				if (!rsa)
+					throw DKIM::PermanentError("No RSA key provided");
+
+				unsigned int sig_len;
+				unsigned char* sig = new unsigned char[RSA_size(rsa)];
+
+				int r = RSA_sign(md_nid,
 						md,
 						md_len,
-						(const unsigned char *)options.GetED25519PrivateKey().c_str()) != 0)
-				throw DKIM::PermanentError("Message could not be signed");
-			tmp3 = std::string((const char*)sig, crypto_sign_BYTES);
+						sig,
+						&sig_len,
+						rsa);
+
+				if (r != 1)
+				{
+					delete [] sig;
+					throw DKIM::PermanentError("Message could not be signed");
+				}
+
+				tmp3 = std::string((const char*)sig, sig_len);
+				delete [] sig;
+			}
+			break;
+			case DKIM::DKIM_SA_ED25519:
+			{
+				unsigned char sig[crypto_sign_BYTES];
+				if (crypto_sign_detached(sig,
+							nullptr,
+							md,
+							md_len,
+							(const unsigned char *)signature.GetED25519PrivateKey().c_str()) != 0)
+					throw DKIM::PermanentError("Message could not be signed");
+				tmp3 = std::string((const char*)sig, crypto_sign_BYTES);
+			}
+			break;
 		}
-		break;
-	}
 
-	size_t offset = 3; // "\tb=";
-	std::string split = Base64_Encode(tmp3);
-	while (!split.empty())
-	{
-		dkimHeader += split.substr(0, 80 - offset);
-		split.erase(0, 80 - offset);
-		if (!split.empty())
-			dkimHeader += "\r\n\t ";
-		offset = 2; // "\t ";
-	}
+		size_t offset = 3; // "\tb=";
+		std::string split = Base64_Encode(tmp3);
+		while (!split.empty())
+		{
+			dkimHeader += split.substr(0, 80 - offset);
+			split.erase(0, 80 - offset);
+			if (!split.empty())
+				dkimHeader += "\r\n\t ";
+			offset = 2; // "\t ";
+		}
 
-	return dkimHeader;
+		if (!dkimHeaders.empty())
+			dkimHeaders.append("\r\n");
+		dkimHeaders += dkimHeader;
+	}
+	return dkimHeaders;
 }

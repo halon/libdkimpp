@@ -36,6 +36,37 @@
 
 namespace DKIM
 {
+	class AdditionalSignaturesOptions
+	{
+		public:
+			AdditionalSignaturesOptions();
+			~AdditionalSignaturesOptions();
+
+			AdditionalSignaturesOptions& SetPrivateKey(const std::string& privatekey);
+			AdditionalSignaturesOptions& SetRSAPrivateKey(RSA* privatekey, bool privatekeyfree);
+			AdditionalSignaturesOptions& SetDomain(const std::string& domain);
+			AdditionalSignaturesOptions& SetSelector(const std::string& selector);
+			AdditionalSignaturesOptions& SetSignatureAlgorithm(SignatureAlgorithm signatureAlgorithm);
+
+			RSA* GetRSAPrivateKey() const
+			{ return m_privateKeyRSA; }
+			std::string GetED25519PrivateKey() const
+			{ return m_privateKeyED25519; }
+			const std::string& GetDomain() const
+			{ return m_domain; }
+			const std::string& GetSelector() const
+			{ return m_selector; }
+			SignatureAlgorithm GetSignatureAlgorithm() const
+			{ return m_signatureAlgorithm; }
+
+			RSA* m_privateKeyRSA;
+			bool m_privateKeyRSAFree;
+			std::string m_privateKeyED25519;
+			SignatureAlgorithm m_signatureAlgorithm;
+
+			std::string m_domain;
+			std::string m_selector;
+	};
 	class SignatoryOptions
 	{
 		public:
@@ -58,19 +89,22 @@ namespace DKIM
 			SignatoryOptions& SetTimestamp(time_t timestamp);
 			SignatoryOptions& SetExpiration(time_t expiration, bool absolute = true);
 			SignatoryOptions& SetIdentity(const std::string& identity);
+			AdditionalSignaturesOptions& AddAdditionalSignature();
+			const std::list<AdditionalSignaturesOptions>& GetAdditionalSignatures() const
+			{ return m_signatures; }
 
 			RSA* GetRSAPrivateKey() const
-			{ return m_privateKeyRSA; }
+			{ return *m_privateKeyRSA; }
 			std::string GetED25519PrivateKey() const
-			{ return m_privateKeyED25519; }
+			{ return *m_privateKeyED25519; }
 			const std::string& GetDomain() const
-			{ return m_domain; }
+			{ return *m_domain; }
 			const std::string& GetSelector() const
-			{ return m_selector; }
+			{ return *m_selector; }
 			DigestAlgorithm GetDigestAlgorithm() const
 			{ return m_digestAlgorithm; }
 			SignatureAlgorithm GetSignatureAlgorithm() const
-			{ return m_signatureAlgorithm; }
+			{ return *m_signatureAlgorithm; }
 			const std::list<std::string>& GetHeaders() const
 			{ return m_headers; }
 			const std::list<std::string>& GetOversignHeaders() const
@@ -100,13 +134,12 @@ namespace DKIM
 		private:
 			SignatoryOptions(const SignatoryOptions&);
 
-			RSA* m_privateKeyRSA;
-			bool m_privateKeyRSAFree;
-			std::string m_privateKeyED25519;
-			SignatureAlgorithm m_signatureAlgorithm;
-
-			std::string m_domain;
-			std::string m_selector;
+			RSA** m_privateKeyRSA;
+			bool* m_privateKeyRSAFree;
+			std::string* m_privateKeyED25519;
+			SignatureAlgorithm* m_signatureAlgorithm;
+			std::string* m_domain;
+			std::string* m_selector;
 
 			DigestAlgorithm m_digestAlgorithm;
 
@@ -127,6 +160,7 @@ namespace DKIM
 			time_t m_expiration;
 
 			std::string m_identity;
+			std::list<AdditionalSignaturesOptions> m_signatures;
 	};
 }
 
