@@ -114,7 +114,9 @@ std::string CanonicalizationHeader::FilterHeader(const std::string& input) const
 		x.erase(colonSplit + 1, (colonAfter - 1) - (colonSplit));
 	size_t colonBefore = x.substr(0, colonSplit).find_last_not_of(' ');
 	if (colonBefore != std::string::npos && colonBefore + 1 != colonSplit)
+	{
 		x.erase(colonBefore + 1, colonSplit - (colonBefore + 1));
+	}
 
 	return x;
 }
@@ -131,31 +133,22 @@ bool DKIM::Conversion::CanonicalizationBody(std::istream& stream, DKIM::CanonMod
 
 		bool pendingwsp = false;
 		size_t lines = 0;
-		char buffer[8096];
-		std::string buf;
-
 		while (stream.good())
 		{
 			if (bodyLimit && bodySize == 0) break;
 
+			char buffer[8096];
 			stream.read(buffer, sizeof buffer);
-			buf.clear();
 
-			ssize_t gcount = stream.gcount();
-			if (gcount < 0)
-				return false;
-			for (size_t i = 0; i < (size_t)gcount;)
+			std::string buf;
+			for (size_t i = 0; i < stream.gcount(); ++i)
 			{
 				if (buffer[i] == '\r')
-				{
-					++i;
 					continue;
-				}
 				if (buffer[i] == '\n')
 				{
 					pendingwsp = false;
 					++lines;
-					++i;
 					continue;
 				}
 
@@ -166,7 +159,6 @@ bool DKIM::Conversion::CanonicalizationBody(std::istream& stream, DKIM::CanonMod
 				if (type == DKIM::DKIM_C_RELAXED && (buffer[i] == ' ' || buffer[i] == '\t'))
 				{
 					pendingwsp = true;
-					++i;
 					continue;
 				}
 
@@ -190,21 +182,7 @@ bool DKIM::Conversion::CanonicalizationBody(std::istream& stream, DKIM::CanonMod
 					pendingwsp = false;
 				}
 
-				size_t s = i;
-				while (i < (size_t)gcount)
-				{
-					if (buffer[i] == '\r' || buffer[i] == '\n')
-						break;
-					if (type == DKIM::DKIM_C_RELAXED && (buffer[i] == ' ' || buffer[i] == '\t'))
-					{
-						if (i + 1 >= (size_t)gcount ||
-							buffer[i + 1] == ' ' || buffer[i + 1] == '\r' ||
-							buffer[i + 1] == '\n' || buffer[i + 1] == '\t')
-							break;
-					}
-					++i;
-				}
-				buf.append(buffer + s, i - s);
+				buf += buffer[i];
 			}
 
 			if (bodyLimit)
