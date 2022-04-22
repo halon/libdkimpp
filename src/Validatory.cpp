@@ -160,7 +160,7 @@ void Validatory::CheckBodyHash(const DKIM::Signature& sig)
 	if (sig.GetBodyHash().size() != md_len ||
 			memcmp(sig.GetBodyHash().c_str(), md_value, md_len) != 0)
 	{
-		throw DKIM::PermanentError("Body hash did not verify");
+		throw DKIM::PermanentError("Body hash did not verify", AR_FAIL);
 	}
 }
 
@@ -267,7 +267,7 @@ void Validatory::CheckSignature(const std::shared_ptr<DKIM::Header> header,
 						(unsigned int)sig.GetSignatureData().size(),
 						pub.GetRSAPublicKey());
 			if (r != 1)
-				throw DKIM::PermanentError("Signature did not verify");
+				throw DKIM::PermanentError("Signature did not verify", AR_FAIL);
 		}
 		break;
 		case DKIM::DKIM_SA_ED25519:
@@ -275,7 +275,7 @@ void Validatory::CheckSignature(const std::shared_ptr<DKIM::Header> header,
 						md,
 						md_len,
 						(const unsigned char *)pub.GetED25519PublicKey().c_str()) != 0)
-					throw DKIM::PermanentError("Signature did not verify");
+					throw DKIM::PermanentError("Signature did not verify", AR_FAIL);
 		break;
 	}
 

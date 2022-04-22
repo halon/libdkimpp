@@ -183,12 +183,15 @@ int main(int argc, char* argv[])
 				mail.CheckSignature(*i, sig, pub);
 				printf("[%s][%s][%s] OK\n", argv[x], sig.GetDomain().c_str(), sig.GetSelector().c_str());
 			} catch (DKIM::TemporaryError& e) {
-				printf("[%s][%s][%s] TEMPERR:%s\n", argv[x], sig.GetDomain().c_str(), sig.GetSelector().c_str(), e.what());
+				printf("[%s][%s][%s](%s) TEMPERR:%s\n", argv[x], sig.GetDomain().c_str(), sig.GetSelector().c_str(),
+					e.getAuthenticationResult(), e.what());
 			} catch (DKIM::PermanentError& e) {
 				if (pub.SoftFail())
-					printf("[%s][%s][%s] SOFT:%s\n", argv[x], sig.GetDomain().c_str(), sig.GetSelector().c_str(), e.what());
+					printf("[%s][%s][%s](%s) SOFT:%s\n", argv[x], sig.GetDomain().c_str(), sig.GetSelector().c_str(),
+						e.getAuthenticationResult(), e.what());
 				else
-					printf("[%s][%s][%s] = %s\n", argv[x], sig.GetDomain().c_str(), sig.GetSelector().c_str(), e.what());
+					printf("[%s][%s][%s](%s) = %s\n", argv[x], sig.GetDomain().c_str(), sig.GetSelector().c_str(),
+						e.getAuthenticationResult(), e.what());
 			}
 		}
 	}

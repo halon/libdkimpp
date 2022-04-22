@@ -25,17 +25,60 @@
 
 namespace DKIM
 {
+	enum AR_CLASS {
+		AR_NONE,
+		AR_PASS,
+		AR_FAIL,
+		AR_POLICY,
+		AR_NEUTRAL,
+		AR_TEMPERROR,
+		AR_PERMERROR,
+	};
 	class PermanentError : public std::runtime_error {
 		public:
-			PermanentError(std::string const& msg):
-				std::runtime_error(msg)
-		{}
+			PermanentError(std::string const& msg, AR_CLASS ar_class_ = AR_CLASS::AR_PERMERROR):
+				std::runtime_error(msg),
+				ar_class(ar_class_)
+			{}
+			const char* getAuthenticationResult()
+			{
+				switch (ar_class)
+				{
+					case AR_NONE: return "none";
+					case AR_PASS: return "pass";
+					case AR_FAIL: return "fail";
+					case AR_POLICY: return "policy";
+					case AR_NEUTRAL: return "neutral";
+					case AR_TEMPERROR: return "temperror";
+					case AR_PERMERROR: return "permerror";
+				}
+				return "permerror";
+			}
+		private:
+			AR_CLASS ar_class;
 	};
 	class TemporaryError : public std::runtime_error {
 		public:
-			TemporaryError(std::string const& msg):
-				std::runtime_error(msg)
-		{}
+			TemporaryError(std::string const& msg, AR_CLASS ar_class_ = AR_CLASS::AR_TEMPERROR):
+				std::runtime_error(msg),
+				ar_class(ar_class_)
+			{}
+			const char* getAuthenticationResult()
+			{
+				switch (ar_class)
+				{
+					case AR_NONE: return "none";
+					case AR_PASS: return "pass";
+					case AR_FAIL: return "fail";
+					case AR_POLICY: return "policy";
+					case AR_NEUTRAL: return "neutral";
+					case AR_TEMPERROR: return "temperror";
+					case AR_PERMERROR: return "permerror";
+				}
+				return "permerror";
+			}
+		private:
+			AR_CLASS ar_class;
 	};
 }
 
