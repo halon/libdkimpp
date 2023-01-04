@@ -205,6 +205,13 @@ SignatoryOptions& SignatoryOptions::AddHeaders(const std::list<std::string>& hea
 	return *this;
 }
 
+SignatoryOptions& SignatoryOptions::DelHeaders(const std::list<std::string>& headers)
+{
+	for (const auto & header : headers)
+		m_headers.remove(header);
+	return *this;
+}
+
 SignatoryOptions& SignatoryOptions::SetOversignHeaders(const std::list<std::string>& headers)
 {
 	m_oversignheaders = headers;

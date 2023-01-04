@@ -81,6 +81,7 @@ namespace DKIM
 			SignatoryOptions& SetSignatureAlgorithm(SignatureAlgorithm signatureAlgorithm);
 			SignatoryOptions& SetHeaders(const std::list<std::string>& headers);
 			SignatoryOptions& AddHeaders(const std::list<std::string>& headers);
+			SignatoryOptions& DelHeaders(const std::list<std::string>& headers);
 			SignatoryOptions& SetOversignHeaders(const std::list<std::string>& headers);
 			SignatoryOptions& SetSignBodyLength(unsigned long bodylength);
 			SignatoryOptions& SetCanonModeHeader(CanonMode mode);
