@@ -64,11 +64,13 @@ SignatoryOptions::SignatoryOptions()
 	m_headers.push_back("list-id");
 	m_headers.push_back("list-help");
 	m_headers.push_back("list-unsubscribe");
-	m_headers.push_back("list-unsubscribe-post");
+	m_headers.push_back("list-unsubscribe-post"); // rfc8085
 	m_headers.push_back("list-subscribe");
 	m_headers.push_back("list-post");
 	m_headers.push_back("list-owner");
 	m_headers.push_back("list-archive");
+	m_headers.push_back("cfbl-address");	 // rfc9477
+	m_headers.push_back("cfbl-feedback-id"); // rfc9477
 
 	m_bodyLength = 0;	
 	m_bodySignLength = false;
