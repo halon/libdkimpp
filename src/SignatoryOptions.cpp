@@ -64,6 +64,7 @@ SignatoryOptions::SignatoryOptions()
 	m_headers.push_back("list-id");
 	m_headers.push_back("list-help");
 	m_headers.push_back("list-unsubscribe");
+	m_headers.push_back("list-unsubscribe-post");
 	m_headers.push_back("list-subscribe");
 	m_headers.push_back("list-post");
 	m_headers.push_back("list-owner");
