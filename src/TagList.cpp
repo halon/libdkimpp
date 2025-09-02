@@ -94,7 +94,7 @@ void TagList::Reset()
 	m_tags.clear();
 }
 
-void TagList::Parse(const std::string& input)
+void TagList::Parse(const std::string& input, bool casesensitive)
 {
 	std::stringstream data(input);
 
@@ -187,6 +187,11 @@ void TagList::Parse(const std::string& input)
 
 		// save
 		tagEntry.SetValue(value);
+
+		// if case-insensitive
+		if (!casesensitive)
+			transform(name.begin(), name.end(), name.begin(), tolower);
+
 		m_tags[name] = tagEntry;
 
 		// [ ';' ]

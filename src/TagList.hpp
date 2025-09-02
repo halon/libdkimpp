@@ -49,7 +49,7 @@ namespace DKIM {
 		public:
 			void Reset();
 
-			void Parse(const std::string& input);
+			void Parse(const std::string& input, bool casesensitive = true);
 
 			bool GetTag(const std::string& name, TagListEntry& tag) const;
 

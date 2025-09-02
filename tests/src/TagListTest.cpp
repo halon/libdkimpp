@@ -54,6 +54,20 @@ class TagListTest : public CppUnit::TestFixture {
 		CPPUNIT_ASSERT ( myEntry.GetValue().empty() );
 		CPPUNIT_ASSERT ( myTag.GetTag("z", myEntry) );
 		CPPUNIT_ASSERT ( myEntry.GetValue() == "m" );
+
+		myTag.Reset();
+		CPPUNIT_ASSERT_NO_THROW ( myTag.Parse("V=FOO; z=bar; Z=BAZ") );
+
+		CPPUNIT_ASSERT ( !myTag.GetTag("v", myEntry) );
+
+		myTag.Reset();
+		CPPUNIT_ASSERT_NO_THROW ( myTag.Parse("V=FOO; z=bar; Z=BAZ", false) );
+
+		CPPUNIT_ASSERT ( myTag.GetTag("v", myEntry) );
+		CPPUNIT_ASSERT ( myEntry.GetValue() == "FOO" );
+
+		CPPUNIT_ASSERT ( myTag.GetTag("z", myEntry) );
+		CPPUNIT_ASSERT ( myEntry.GetValue() == "BAZ" );
 	}
 };
 
