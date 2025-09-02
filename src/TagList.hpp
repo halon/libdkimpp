@@ -24,6 +24,8 @@
 #include <string>
 #include <map>
 #include <iostream>
+#include <ctype.h>
+#include <algorithm>
 
 namespace DKIM {
 	class TagListEntry
@@ -38,6 +40,12 @@ namespace DKIM {
 			/* Get */
 			const std::string& GetValue() const
 			{ return m_value; }
+			std::string GetLCaseValue() const
+			{
+				std::string value = m_value;
+				std::transform(value.begin(), value.end(), value.begin(), tolower);
+				return value;
+			}
 			std::streamoff GetValueOffset() const
 			{ return m_valueOffset; }
 		private:

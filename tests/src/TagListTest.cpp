@@ -68,6 +68,7 @@ class TagListTest : public CppUnit::TestFixture {
 
 		CPPUNIT_ASSERT ( myTag.GetTag("z", myEntry) );
 		CPPUNIT_ASSERT ( myEntry.GetValue() == "BAZ" );
+		CPPUNIT_ASSERT ( myEntry.GetLCaseValue() == "baz" );
 	}
 };
 
