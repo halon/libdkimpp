@@ -98,7 +98,7 @@ SignatoryOptions& SignatoryOptions::SetPrivateKey(const std::string& privatekey)
 				BIO *o = BIO_new(BIO_s_mem());
 				if (!o)
 					throw DKIM::PermanentError("BIO could not be created for RSA key");
-				BIO_write(o, privatekey.c_str(), privatekey.size());
+				BIO_write(o, privatekey.c_str(), (int)privatekey.size());
 				(void) BIO_flush(o);
 				EVP_PKEY* privateKey = PEM_read_bio_PrivateKey(o, nullptr, nullptr, nullptr);
 				BIO_free_all(o);
@@ -328,7 +328,7 @@ AdditionalSignaturesOptions& AdditionalSignaturesOptions::SetPrivateKey(const st
 				BIO *o = BIO_new(BIO_s_mem());
 				if (!o)
 					throw DKIM::PermanentError("BIO could not be created for RSA key");
-				BIO_write(o, privatekey.c_str(), privatekey.size());
+				BIO_write(o, privatekey.c_str(), (int)privatekey.size());
 				(void) BIO_flush(o);
 				EVP_PKEY* privateKey = PEM_read_bio_PrivateKey(o, nullptr, nullptr, nullptr);
 				BIO_free_all(o);

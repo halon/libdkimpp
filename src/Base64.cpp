@@ -32,7 +32,7 @@ std::string DKIM::Conversion::Base64_Decode(const std::string& data)
 	BIO_set_flags(i, BIO_FLAGS_BASE64_NO_NL);
 	o = BIO_new(BIO_s_mem());
 	l = BIO_push(i, o);
-	BIO_write(o, data.c_str(), data.size());
+	BIO_write(o, data.c_str(), (int)data.size());
 	(void) BIO_flush(o);
 
 	char b[1024];
@@ -52,7 +52,7 @@ std::string DKIM::Conversion::Base64_Encode(const std::string& data)
 	o = BIO_new(BIO_s_mem());
 	l = BIO_push(i, o);
 	BIO_set_flags(l, BIO_FLAGS_BASE64_NO_NL);
-	BIO_write(l, data.c_str(), data.size());
+	BIO_write(l, data.c_str(), (int)data.size());
 	(void) BIO_flush(l);
 	std::string str;
 
