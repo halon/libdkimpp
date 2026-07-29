@@ -87,7 +87,7 @@ std::string Signatory::CreateSignature(const SignatoryOptions& options)
 
 	// create signature for our header
 	std::unique_ptr<EVP_MD_CTX, std::function<void(EVP_MD_CTX*)>> evpmdhead(EVP_MD_CTX_create(), [] (EVP_MD_CTX* p) { EVP_MD_CTX_destroy(p); });
-	int md_nid;
+	int md_nid = NID_undef;
 	switch (options.GetDigestAlgorithm())
 	{
 		case DKIM::DKIM_A_SHA1:
