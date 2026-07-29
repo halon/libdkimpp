@@ -141,7 +141,7 @@ bool DKIM::Conversion::CanonicalizationBody(std::istream& stream, DKIM::CanonMod
 			stream.read(buffer, sizeof buffer);
 
 			std::string buf;
-			for (size_t i = 0; i < stream.gcount(); ++i)
+			for (std::streamsize i = 0; i < stream.gcount(); ++i)
 			{
 				if (buffer[i] == '\r')
 					continue;
